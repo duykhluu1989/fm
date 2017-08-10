@@ -1,16 +1,23 @@
 <?php
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
+Route::group(['namespace' => 'Frontend', 'middleware' => ['locale']], function() {
 
-Route::get('/', function () {
-    return view('welcome');
+    Route::group(['middleware' => 'guest'], function() {
+
+        Route::post('login', ['middleware' => 'throttle:5,30', 'uses' => 'UserController@login']);
+
+        Route::post('loginWithFacebook', ['middleware' => 'throttle:5,30', 'uses' => 'UserController@loginWithFacebook']);
+
+        Route::post('register', ['middleware' => 'throttle:5,30', 'uses' => 'UserController@register']);
+
+    });
+
+    Route::group(['middleware' => ['auth', 'access']], function() {
+
+        Route::get('logout', 'UserController@logout');
+
+    });
+
+    Route::get('/', 'HomeController@home');
+
 });

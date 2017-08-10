@@ -28,7 +28,7 @@ class User extends Authenticatable
         $user->username = 'admin';
         $user->password = Hash::make('123456');
         $user->status = Utility::ACTIVE_DB;
-        $user->email = 'admin@fm.vn';
+        $user->email = 'admin@parcelpost.vn';
         $user->admin = Utility::ACTIVE_DB;
         $user->created_at = date('Y-m-d H:i:s');
         $user->save();

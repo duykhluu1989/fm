@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 
 class RedirectIfAuthenticated
 {
@@ -17,8 +18,12 @@ class RedirectIfAuthenticated
      */
     public function handle($request, Closure $next, $guard = null)
     {
-        if (Auth::guard($guard)->check()) {
-            return redirect('/home');
+        if(Auth::guard($guard)->check())
+        {
+            if(Route::current()->getPrefix() == 'admin')
+                return redirect()->action('Backend\HomeController@home');
+            else
+                return redirect()->action('Frontend\HomeController@home');
         }
 
         return $next($request);
