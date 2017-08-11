@@ -18,7 +18,7 @@
                     <div class="col-lg-12">
                         <h2 class="title_sub">ĐƠN ĐẶT HÀNG</h2>
                         <div class="row">
-                            <div class="col-lg-6 col-lg-offset-3">
+                            <div class="col-lg-8 col-lg-offset-2">
                                 <form class="frm_donDH" action="{{ action('Frontend\OrderController@placeOrder') }}" method="POST" role="form">
                                     <p><b>Thông tin lấy hàng</b></p>
 
@@ -178,80 +178,115 @@
 
                                     @endif
 
+                                    <p><b>Thông tin sản phẩm</b></p>
                                     <div class="row">
                                         <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                                             <div class="form-group">
-                                                <label>Kích cỡ sản phẩm: (*)</label>
-                                                <input type="text" class="form-control" id="" placeholder="">
+                                                <label>Tên sản phẩm: (*)</label>
+                                                <input type="text" class="form-control" name="item[name][]" required="required" />
                                             </div>
                                         </div>
-                                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
                                             <div class="form-group">
-                                                <label class="hidden-xs" for="">&nbsp;</label>
-                                                <input type="number" class="form-control" id="" placeholder="2">
+                                                <label>Số lượng: (*)</label>
+                                                <input type="text" class="form-control" name="item[quantity][]" required="required" />
                                             </div>
                                         </div>
-                                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                        <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12">
                                             <div class="form-group">
-                                                <label class="hidden-xs" style="display: block;" for="">&nbsp;</label>
-                                                <a href="#" class="btn btnThem"><i class="fa fa-plus" aria-hidden="true"></i> Thêm</a>
-                                                <a href="#" class="btn btnThem"><i class="fa fa-times" aria-hidden="true"></i> Xoá</a>
+                                                <label>Kích cỡ sản phẩm:</label>
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" name="item[dimension][]" placeholder="W x H x L" />
+                                                    <span class="input-group-btn">
+                                                        <a href="#" class="btn btnThem"><i class="fa fa-times" aria-hidden="true"></i> Xoá</a>
+                                                    </span>
+                                                </div>
                                             </div>
+                                        </div>
+                                        <div class="col-xs-12">
+                                            <a href="#" class="btn btnThem"><i class="fa fa-plus" aria-hidden="true"></i> Thêm</a>
                                         </div>
                                     </div>
-
                                     <p><b>Thông tin người nhận hàng</b></p>
                                     <div class="form-group">
-                                        <label for="">Nhập số điện thoại: (*)</label>
-                                        <input type="text" class="form-control" id="" placeholder="">
+                                        <label>Tên khách hàng: (*)</label>
+                                        <input type="text" class="form-control" name="receiver_name" value="{{ old('receiver_name') }}" required="required" />
                                     </div>
                                     <div class="form-group">
-                                        <label for="">Tên khách hàng: (*)</label>
-                                        <input type="text" class="form-control" id="" placeholder="">
+                                        <label>Số điện thoại: (*)</label>
+                                        <input type="text" class="form-control" name="receiver_phone" value="{{ old('receiver_phone') }}" required="required" />
                                     </div>
                                     <div class="form-group">
-                                        <label for="">Quận/ huyện: (*)</label>
-                                        <select name="" id="" class="form-control">
-                                            <option value="">...</option>
+                                        <label>Địa chỉ giao hàng (*)</label>
+                                        <input type="text" class="form-control" name="receiver_address" value="{{ old('receiver_address') }}" required="required" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Thành phố: (*)</label>
+                                        <select name="receiver_province" id="ReceiverProvince" class="form-control" required="required">
+                                            <?php
+                                            $province = old('receiver_province');
+                                            ?>
+
+                                            <option value=""></option>
+
+                                            @foreach(\App\Libraries\Helpers\Area::$provinces as $code => $data)
+                                                @if($province == $code)
+                                                    <option selected="selected" value="{{ $code }}">{{ $data['name'] }}</option>
+                                                @else
+                                                    <option value="{{ $code }}">{{ $data['name'] }}</option>
+                                                @endif
+                                            @endforeach
                                         </select>
                                     </div>
                                     <div class="form-group">
-                                        <label for="">Phường/ xã: (*)</label>
-                                        <select name="" id="" class="form-control">
-                                            <option value="">...</option>
+                                        <label>Quận / huyện: (*)</label>
+                                        <select name="receiver_district" id="ReceiverDistrict" class="form-control" required="required">
+                                            <?php
+                                            $district = old('receiver_district');
+                                            ?>
+
+                                            <option value=""></option>
+
+                                            @if($district && isset(\App\Libraries\Helpers\Area::$provinces[$province]['cities']))
+                                                @foreach(\App\Libraries\Helpers\Area::$provinces[$province]['cities'] as $code => $data)
+                                                    @if($district == $code)
+                                                        <option selected="selected" value="{{ $code }}">{{ $data }}</option>
+                                                    @else
+                                                        <option value="{{ $code }}">{{ $data }}</option>
+                                                    @endif
+                                                @endforeach
+                                            @endif
                                         </select>
                                     </div>
                                     <div class="form-group">
-                                        <label for="">Thành phố: (*)</label>
-                                        <select name="" id="" class="form-control">
-                                            <option value="">...</option>
-                                        </select>
+                                        <label>Phường / xã: (*)</label>
+                                        <input name="receiver_ward" class="form-control" value="{{ old('receiver_ward') }}" required="required" />
                                     </div>
                                     <div class="form-group">
-                                        <label for="">Thu tiền hộ: (*)</label>
-                                        <input type="text" class="form-control" id="" placeholder="">
+                                        <label>Thu tiền hộ: (*)</label>
+                                        <input type="text" class="form-control" name="cod_price" value="{{ old('cod_price') }}" required="required" />
                                     </div>
                                     <div class="form-group">
-                                        <label for="">Phí ship: (*)</label>
-                                        <input type="text" class="form-control" id="" placeholder="">
+                                        <label>Phí ship: (*)</label>
+                                        <input type="text" class="form-control" name="shipping_price" value="{{ old('shipping_price') }}" required="required" />
                                     </div>
                                     <div class="form-group">
                                         <div class="radio">
                                             <label>
-                                                <input type="radio" name="1" id="" value="" checked="checked">
+                                                <input type="radio" name="shipping_payment" value="{{ \App\Models\Order::SHIPPING_PAYMENT_SENDER_DB }}" checked="checked" />
                                                 Shop trả
                                             </label>
                                         </div>
                                         <div class="radio">
                                             <label>
-                                                <input type="radio" name="1" id="" value="">
+                                                <input type="radio" name="shipping_payment" value="{{ \App\Models\Order::SHIPPING_PAYMENT_RECEIVER_DB }}" />
                                                 Khách trả
                                             </label>
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="">Ghi chú:  (*)</label>
-                                        <textarea name="" id="" class="form-control" rows="8"></textarea>
+                                        <label for="">Ghi chú:</label>
+                                        <textarea name="note" class="form-control" rows="8">{{ old('note') }}</textarea>
                                     </div>
                                     <button type="submit" class="btn btnDangDH"><i class="fa fa-upload fa-lg" aria-hidden="true"></i> ĐĂNG ĐƠN HÀNG</button>
                                     {{ csrf_field() }}
@@ -275,3 +310,53 @@
     </main>
 
 @stop
+
+
+@push('scripts')
+    <script type="text/javascript">
+        $('#RegisterProvince').change(function() {
+
+            changeProvince($(this), $('#RegisterDistrict'));
+
+        });
+
+        $('#ReceiverProvince').change(function() {
+
+            changeProvince($(this), $('#ReceiverDistrict'));
+
+        });
+
+        function changeProvince(provinceElem, districtElem)
+        {
+            districtElem.html('' +
+                '<option value=""></option>' +
+            '');
+
+            if(provinceElem.val() != '')
+            {
+                $.ajax({
+                    url: '{{ action('Frontend\OrderController@getListDistrict') }}',
+                    type: 'get',
+                    data: 'province_code=' + provinceElem.val(),
+                    success: function(result) {
+                        if(result)
+                        {
+                            result = JSON.parse(result);
+
+                            for(var code in result)
+                            {
+                                if(result.hasOwnProperty(code))
+                                {
+                                    districtElem.append('' +
+                                        '<option value="' + code + '">' + result[code] + '</option>' +
+                                    '');
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+    </script>
+@endpush
+

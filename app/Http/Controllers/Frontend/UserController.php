@@ -13,6 +13,7 @@ use App\Libraries\Helpers\Area;
 use App\Models\User;
 use App\Models\UserAddress;
 use App\Models\Setting;
+use App\Models\Order;
 
 class UserController extends Controller
 {
@@ -178,7 +179,13 @@ class UserController extends Controller
 
     public function quanlydonhang()
     {
-        return view('frontend.users.quanlydonhang');
+        $user = auth()->user();
+
+        $orders = Order::where('user_id', $user->id)->get();
+
+        return view('frontend.users.quanlydonhang', [
+            'orders' => $orders,
+        ]);
     }
 
     public function tongquanchung()

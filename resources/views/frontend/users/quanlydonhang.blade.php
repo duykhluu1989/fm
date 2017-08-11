@@ -119,41 +119,33 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr>
-                                <td>&nbsp;</td>
-                                <td>&nbsp;</td>
-                                <td>&nbsp;</td>
-                                <td>&nbsp;</td>
-                                <td>&nbsp;</td>
-                            </tr>
-                            <tr>
-                                <td>&nbsp;</td>
-                                <td>&nbsp;</td>
-                                <td>&nbsp;</td>
-                                <td>&nbsp;</td>
-                                <td>&nbsp;</td>
-                            </tr>
-                            <tr>
-                                <td>&nbsp;</td>
-                                <td>&nbsp;</td>
-                                <td>&nbsp;</td>
-                                <td>&nbsp;</td>
-                                <td>&nbsp;</td>
-                            </tr>
-                            <tr>
-                                <td>&nbsp;</td>
-                                <td>&nbsp;</td>
-                                <td>&nbsp;</td>
-                                <td>&nbsp;</td>
-                                <td>&nbsp;</td>
-                            </tr>
-                            <tr>
-                                <td>&nbsp;</td>
-                                <td>&nbsp;</td>
-                                <td>&nbsp;</td>
-                                <td>&nbsp;</td>
-                                <td>&nbsp;</td>
-                            </tr>
+
+                            @foreach($orders as $order)
+                                <tr>
+                                    <td>{{ $order->number }}</td>
+                                    <td>
+                                        <?php
+                                        foreach($order->orderAddresses as $orderAddress)
+                                        {
+                                            if($orderAddress->type == \App\Models\OrderAddress::TYPE_SENDER_DB)
+                                            {
+                                                echo $orderAddress->name;
+                                                break;
+                                            }
+                                        }
+                                        ?>
+                                    </td>
+                                    <td>
+                                        <?php
+                                        foreach($order->orderItems as $orderItem)
+                                            echo $orderItem->name;
+                                        ?>
+                                    </td>
+                                    <td>{{ $order->note }}</td>
+                                    <td></td>
+                                </tr>
+                            @endforeach
+
                             </tbody>
                         </table>
                         <a href="#" class="btn btninDH"><i class="fa fa-print fa-lg" aria-hidden="true"></i> IN ĐƠN HÀNG</a>

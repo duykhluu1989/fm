@@ -62,11 +62,11 @@
                     </div>
                     <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 thongtin_items">
                         <figure>
-                            <a class="btnThongtin" href="">
+                            <a class="btnThongtin" href="{{ action('Frontend\OrderController@placeOrder') }}">
                                 <img src="{{ asset('themes/images/img03.jpg') }}" alt="" class="img-responsive">
                             </a>
                         </figure>
-                        <h3><a href="">ĐĂNG ĐƠN HÀNG</a></h3>
+                        <h3><a href="{{ action('Frontend\OrderController@placeOrder') }}">ĐĂNG ĐƠN HÀNG</a></h3>
                     </div>
                 </div>
             </div>
