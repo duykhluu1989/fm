@@ -124,13 +124,7 @@ class UserController extends Controller
 
                 auth()->login($user);
 
-                Mail::send('frontend.emails.register', [], function($message) use($user) {
-
-                    $message->from(Setting::getSettings(Setting::CATEGORY_GENERAL_DB, Setting::WEB_TITLE), Setting::getSettings(Setting::CATEGORY_GENERAL_DB, Setting::WEB_TITLE));
-                    $message->to($user->email, $user->name);
-                    $message->subject(Setting::getSettings(Setting::CATEGORY_GENERAL_DB, Setting::WEB_TITLE) . ' | Đăng ký tài khoản thành công');
-
-                });
+                register_shutdown_function([get_class(new self), 'sendRegisterEmail'], $user, $inputs['register_password']);
 
                 return redirect()->action('Frontend\HomeController@home')->with('messageSuccess', 'Đăng ký tài khoản thành công');
             }
@@ -143,5 +137,23 @@ class UserController extends Controller
         }
         else
             return redirect()->action('Frontend\UserController@login')->withErrors($validator)->withInput($request->except('register_password'));
+    }
+
+    public static function sendRegisterEmail($user, $password)
+    {
+        try
+        {
+            Mail::send('frontend.emails.register', ['user' => $user, 'password' => $password], function($message) use($user) {
+
+                $message->from(Setting::getSettings(Setting::CATEGORY_GENERAL_DB, Setting::WEB_TITLE), Setting::getSettings(Setting::CATEGORY_GENERAL_DB, Setting::WEB_TITLE));
+                $message->to($user->email, $user->name);
+                $message->subject(Setting::getSettings(Setting::CATEGORY_GENERAL_DB, Setting::WEB_TITLE) . ' | Đăng ký tài khoản thành công');
+
+            });
+        }
+        catch(\Exception $e)
+        {
+
+        }
     }
 }
