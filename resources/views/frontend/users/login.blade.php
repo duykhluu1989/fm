@@ -1,6 +1,6 @@
 @extends('frontend.layouts.main')
 
-@section('page_heading', 'Trang chủ')
+@section('page_heading', 'Đăng nhập - Đăng ký')
 
 @section('section')
 

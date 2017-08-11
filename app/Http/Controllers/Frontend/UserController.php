@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Frontend;
 
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -11,6 +12,7 @@ use App\Libraries\Helpers\Utility;
 use App\Libraries\Helpers\Area;
 use App\Models\User;
 use App\Models\UserAddress;
+use App\Models\Setting;
 
 class UserController extends Controller
 {
@@ -121,6 +123,14 @@ class UserController extends Controller
                 DB::commit();
 
                 auth()->login($user);
+
+                Mail::send('frontend.emails.register', [], function($message) use($user) {
+
+                    $message->from(Setting::getSettings(Setting::CATEGORY_GENERAL_DB, Setting::WEB_TITLE), Setting::getSettings(Setting::CATEGORY_GENERAL_DB, Setting::WEB_TITLE));
+                    $message->to($user->email, $user->name);
+                    $message->subject(Setting::getSettings(Setting::CATEGORY_GENERAL_DB, Setting::WEB_TITLE) . ' | Đăng ký tài khoản thành công');
+
+                });
 
                 return redirect()->action('Frontend\HomeController@home')->with('messageSuccess', 'Đăng ký tài khoản thành công');
             }
