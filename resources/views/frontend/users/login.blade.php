@@ -185,7 +185,7 @@
                                 <div class="checkbox">
                                     <label>
                                         <input type="checkbox" name="register_accept_policy" checked="checked" required="required" />
-                                        Tôi đồng ý với <a href="chinhsach.php"><span class="red">chính sách dịch vụ</span></a> của ParcelPost
+                                        Tôi đồng ý với <a href="{{ action('Frontend\PageController@chinhsach') }}"><span class="red">chính sách dịch vụ</span></a> của ParcelPost
                                     </label>
                                 </div>
                             </div>

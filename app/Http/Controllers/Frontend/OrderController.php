@@ -11,7 +11,16 @@ class OrderController extends Controller
 {
     public function placeOrder()
     {
-        return view('frontend.orders.place_order');
+        $user = auth()->user();
+
+        if($user)
+            $userAddresses = $user->userAddresses;
+        else
+            $userAddresses = array();
+
+        return view('frontend.orders.place_order', [
+            'userAddresses' => $userAddresses,
+        ]);
     }
 
     public function getListDistrict(Request $request)
