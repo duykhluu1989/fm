@@ -15,19 +15,19 @@
                         <form action="{{ action('Frontend\UserController@login') }}" method="POST" role="form">
                             <div class="form-group">
                                 <label>Email / ID Name (*)</label>
-                                <input type="text" class="form-control" name="email_username" required="required" />
-                                @if($errors->has('email_username'))
+                                <input type="text" class="form-control" name="login_email_username" value="{{ old('login_email_username') }}" required="required" />
+                                @if($errors->has('login_email_username'))
                                     <span class="has-error">
-                                        <span class="help-block">* {{ $errors->first('email_username') }}</span>
+                                        <span class="help-block">* {{ $errors->first('login_email_username') }}</span>
                                     </span>
                                 @endif
                             </div>
                             <div class="form-group">
                                 <label>Mật khẩu (*)</label>
-                                <input type="password" class="form-control" name="password" required="required" />
-                                @if($errors->has('password'))
+                                <input type="password" class="form-control" name="login_password" required="required" />
+                                @if($errors->has('login_password'))
                                     <span class="has-error">
-                                        <span class="help-block">* {{ $errors->first('password') }}</span>
+                                        <span class="help-block">* {{ $errors->first('login_password') }}</span>
                                     </span>
                                 @endif
                             </div>
@@ -41,51 +41,76 @@
                         <h2 class="title_sub">ĐĂNG KÝ</h2>
                         <form action="{{ action('Frontend\UserController@register') }}" method="POST" role="form">
                             <div class="form-group">
-                                <label for="">Họ tên (*)</label>
-                                <input type="text" class="form-control" id="" placeholder="">
+                                <label>Họ tên (*)</label>
+                                <input type="text" class="form-control" name="register_name" value="{{ old('register_name') }}" required="required" />
+                                @if($errors->has('register_name'))
+                                    <span class="has-error">
+                                        <span class="help-block">* {{ $errors->first('register_name') }}</span>
+                                    </span>
+                                @endif
                             </div>
                             <div class="form-group">
-                                <label for="">Số điện thoại  (*)</label>
-                                <input type="text" class="form-control" id="" placeholder="">
+                                <label>Số điện thoại (*)</label>
+                                <input type="text" class="form-control" name="register_phone" value="{{ old('register_phone') }}" required="required" />
+                                @if($errors->has('register_phone'))
+                                    <span class="has-error">
+                                        <span class="help-block">* {{ $errors->first('register_phone') }}</span>
+                                    </span>
+                                @endif
                             </div>
                             <div class="form-group">
-                                <label for="">Email  (*)</label>
-                                <input type="text" class="form-control" id="" placeholder="">
+                                <label>Email (*)</label>
+                                <input type="text" class="form-control" name="register_email" value="{{ old('register_email') }}" required="required" />
+                                @if($errors->has('register_email'))
+                                    <span class="has-error">
+                                        <span class="help-block">* {{ $errors->first('register_email') }}</span>
+                                    </span>
+                                @endif
                             </div>
                             <div class="form-group">
-                                <label for="">Mật khẩu  (*)</label>
-                                <input type="text" class="form-control" id="" placeholder="">
+                                <label>Mật khẩu (*)</label>
+                                <input type="text" class="form-control" name="register_password" value="{{ old('register_password') }}" required="required" />
+                                @if($errors->has('register_password'))
+                                    <span class="has-error">
+                                        <span class="help-block">* {{ $errors->first('register_password') }}</span>
+                                    </span>
+                                @endif
                             </div>
                             <div class="form-group">
-                                <label for="">Địa chỉ lấy hàng (*)</label>
-                                <input type="text" class="form-control" id="" placeholder="">
+                                <label>Địa chỉ lấy hàng (*)</label>
+                                <input type="text" class="form-control" name="register_address" value="{{ old('register_address') }}" required="required" />
+                                @if($errors->has('register_address'))
+                                    <span class="has-error">
+                                        <span class="help-block">* {{ $errors->first('register_address') }}</span>
+                                    </span>
+                                @endif
                             </div>
                             <div class="form-group">
-                                <label for="">Quận/huyện</label>
-                                <select name="" id="" class="form-control">
-                                    <option value=""></option>
-                                    <option value=""></option>
-                                    <option value=""></option>
+                                <label>Tỉnh / thành phố (*)</label>
+                                <select name="register_province" class="form-control" required="required">
+
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="">Phường/ xã</label>
-                                <select name="" id="" class="form-control">
-                                    <option value=""></option>
-                                    <option value=""></option>
-                                    <option value=""></option>
+                                <label>Quận / huyện (*)</label>
+                                <select name="register_district" class="form-control" required="required">
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Phường / xã (*)</label>
+                                <select name="register_ward" class="form-control" required="required">
                                 </select>
                             </div>
                             <hr>
                             <p>Thông tin Ngân hàng sử dụng cho mục đích chuyển trả tiền thu hộ</p>
                             <h2 class="title_sub">THÔNG TIN NGÂN HÀNG</h2>
                             <div class="form-group">
-                                <label for="">Chủ tài khoản ngân hàng:</label>
-                                <input type="text" class="form-control" id="" placeholder="NGUYỄN HOÀNG TRIỆU">
+                                <label>Chủ tài khoản ngân hàng:</label>
+                                <input type="text" class="form-control" name="register_bank" />
                             </div>
                             <div class="form-group">
-                                <label for="">Số tài khoản ngân hàng:</label>
-                                <input type="text" class="form-control" id="" placeholder="123456789">
+                                <label>Số tài khoản ngân hàng:</label>
+                                <input type="text" class="form-control" name="register_bank_number" />
                             </div>
                             <div class="form-group">
                                 <label for="">Tên ngân hàng:</label>

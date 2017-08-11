@@ -117,7 +117,8 @@ return [
     */
 
     'attributes' => [
-
+        'login_email_username' => 'email / ID name',
+        'login_password' => 'mật khẩu',
     ],
 
 ];

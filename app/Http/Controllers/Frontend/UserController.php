@@ -18,25 +18,25 @@ class UserController extends Controller
             $inputs = $request->all();
 
             $validator = Validator::make($inputs, [
-                'email_username' => 'required',
-                'password' => 'required',
+                'login_email_username' => 'required',
+                'login_password' => 'required',
             ]);
 
             if($validator->passes())
             {
-                if(filter_var($inputs['email_username'], FILTER_VALIDATE_EMAIL) !== false)
+                if(filter_var($inputs['login_email_username'], FILTER_VALIDATE_EMAIL) !== false)
                 {
                     $credentials = [
-                        'email' => $inputs['email_username'],
-                        'password' => $inputs['password'],
+                        'email' => $inputs['login_email_username'],
+                        'password' => $inputs['login_password'],
                         'status' => Utility::ACTIVE_DB,
                     ];
                 }
                 else
                 {
                     $credentials = [
-                        'username' => $inputs['email_username'],
-                        'password' => $inputs['password'],
+                        'username' => $inputs['login_email_username'],
+                        'password' => $inputs['login_password'],
                         'status' => Utility::ACTIVE_DB,
                     ];
                 }
@@ -44,10 +44,10 @@ class UserController extends Controller
                 if(auth()->attempt($credentials))
                     return redirect()->action('Frontend\HomeController@home');
                 else
-                    return redirect()->action('Frontend\UserController@login')->withErrors(['email_username' => 'Thông tin đăng nhập không đúng'])->withInput($request->except('password'));
+                    return redirect()->action('Frontend\UserController@login')->withErrors(['login_email_username' => 'Thông tin đăng nhập không đúng'])->withInput($request->except('login_password'));
             }
             else
-                return redirect()->action('Frontend\UserController@login')->withErrors($validator)->withInput($request->except('password'));
+                return redirect()->action('Frontend\UserController@login')->withErrors($validator)->withInput($request->except('login_password'));
         }
 
         return view('frontend.users.login');
@@ -62,6 +62,10 @@ class UserController extends Controller
 
     public function register(Request $request)
     {
+        $inputs = $request->all();
 
+        $validator = Validator::make($inputs, [
+
+        ]);
     }
 }
