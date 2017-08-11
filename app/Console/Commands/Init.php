@@ -5,6 +5,9 @@ namespace App\Console\Commands;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Console\Command;
 use App\Models\Setting;
+use App\Models\User;
+use App\Models\Role;
+use App\Models\UserRole;
 
 class Init extends Command
 {
@@ -21,6 +24,14 @@ class Init extends Command
             try
             {
                 DB::beginTransaction();
+
+                Setting::initCoreSettings();
+
+                User::initCoreUser();
+
+                Role::initCoreRoles();
+
+                UserRole::initCoreUserRoles();
 
                 DB::commit();
 

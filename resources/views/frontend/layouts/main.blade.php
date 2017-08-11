@@ -38,17 +38,19 @@
 
     @yield('section')
 
+    @include('frontend.layouts.partials.footer')
+
 </div>
-<script src="{{ asset('assets/js/jquery.min.js') }}"></script>
+<script src="{{ asset('themes/js/jquery-1.9.1.min.js') }}"></script>
 <script src="{{ asset('assets/js/jquery-ui.min.js') }}"></script>
 <script src="{{ asset('themes/js/jquery-ui-1.10.3.custom.min.js') }}"></script>
+<script src="{{ asset('themes/js/animsition.min.js') }}"></script>
 <script src="{{ asset('themes/js/jquery.easing.1.3.js') }}"></script>
 <script src="{{ asset('assets/js/bootstrap.min.js') }}"></script>
 <script src="{{ asset('themes/owlcarousel/owl.carousel.js') }}"></script>
 <script src="{{ asset('themes/js/jquery.matchHeight-min.js') }}"></script>
 <script src="{{ asset('themes/js/t-scroll.min.js') }}"></script>
 <script src="{{ asset('themes/js/swiper.jquery.min.js') }}"></script>
-<script src="{{ asset('themes/js/animsition.min.js') }}"></script>
 <script src="{{ asset('themes/js/functions.js') }}"></script>
 <script src="{{ asset('themes/js/jquery.mCustomScrollbar.concat.min.js') }}"></script>
 <script src="{{ asset('themes/js/modernizr.custom.js') }}"></script>

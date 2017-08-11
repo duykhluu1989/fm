@@ -9,8 +9,8 @@ class Utility
     const ACTIVE_DB = 1;
     const INACTIVE_DB = 0;
 
-    const TRUE_LABEL = 'Kích Hoạt';
-    const FALSE_LABEL = 'Vô Hiệu';
+    const TRUE_LABEL = 'Active';
+    const FALSE_LABEL = 'Inactive';
 
     const AUTO_COMPLETE_LIMIT = 20;
 

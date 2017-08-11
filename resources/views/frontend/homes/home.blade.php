@@ -4,13 +4,15 @@
 
 @section('section')
 
+    @include('frontend.layouts.partials.menu')
+
     <section class="banner">
         <div class="owl_banner owl-carousel owl-theme">
             <div class="item">
-                <img src="images/banner01.jpg" alt="" class="img-responsive">
+                <img src="{{ asset('themes/images/banner01.jpg') }}" alt="" class="img-responsive">
             </div>
             <div class="item">
-                <img src="images/banner01.jpg" alt="" class="img-responsive">
+                <img src="{{ asset('themes/images/banner01.jpg') }}" alt="" class="img-responsive">
             </div>
         </div>
     </section>
@@ -44,16 +46,16 @@
                 <div class="row text-center">
                     <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 thongtin_items">
                         <figure>
-                            <a class="btnThongtin" href="dangkydangnhap.php">
-                                <img src="images/img01.jpg" alt="" class="img-responsive">
+                            <a class="btnThongtin" href="{{ action('Frontend\UserController@login') }}">
+                                <img src="{{ asset('themes/images/img01.jpg') }}" alt="" class="img-responsive">
                             </a>
                         </figure>
-                        <h3><a href="dangkydangnhap.php">ĐĂNG KÝ - ĐĂNG NHẬP</a></h3>
+                        <h3><a href="{{ action('Frontend\UserController@login') }}">ĐĂNG KÝ - ĐĂNG NHẬP</a></h3>
                     </div>
                     <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 thongtin_items">
                         <figure>
                             <a class="btnThongtin" href="">
-                                <img src="images/img02.jpg" alt="" class="img-responsive">
+                                <img src="{{ asset('themes/images/img02.jpg') }}" alt="" class="img-responsive">
                             </a>
                         </figure>
                         <h3><a href="">TRA CỨU ĐƠN HÀNG</a></h3>
@@ -61,7 +63,7 @@
                     <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 thongtin_items">
                         <figure>
                             <a class="btnThongtin" href="">
-                                <img src="images/img03.jpg" alt="" class="img-responsive">
+                                <img src="{{ asset('themes/images/img03.jpg') }}" alt="" class="img-responsive">
                             </a>
                         </figure>
                         <h3><a href="">ĐĂNG ĐƠN HÀNG</a></h3>
@@ -76,25 +78,25 @@
                 <div class="row text-center">
                     <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
                         <a href="">
-                            <img src="images/img04.jpg" alt="" class="img-reponsive">
+                            <img src="{{ asset('themes/images/img04.jpg') }}" alt="" class="img-reponsive">
                             <h3>GIAO HÀNG TIẾT KIỆM</h3>
                         </a>
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
                         <a href="">
-                            <img src="images/img05.jpg" alt="" class="img-reponsive">
+                            <img src="{{ asset('themes/images/img05.jpg') }}" alt="" class="img-reponsive">
                             <h3>CHUYỂN PHÁT NHANH</h3>
                         </a>
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
                         <a href="">
-                            <img src="images/img06.jpg" alt="" class="img-reponsive">
+                            <img src="{{ asset('themes/images/img06.jpg') }}" alt="" class="img-reponsive">
                             <h3>CHUYỂN PHÁT HOẢ TỐC</h3>
                         </a>
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
                         <a href="">
-                            <img src="images/img07.jpg" alt="" class="img-reponsive">
+                            <img src="{{ asset('themes/images/img07.jpg') }}" alt="" class="img-reponsive">
                             <h3>GIAO HÀNG TIẾT KIỆM</h3>
                         </a>
                     </div>
@@ -183,3 +185,31 @@
     </main>
 
 @stop
+
+@push('scripts')
+    <script src="{{ asset('themes/js/jquery.samesizr-min.js') }}"></script>
+    <script type="text/javascript">
+        $(window).on("load resize", function() {
+            $('.example').samesizr({
+                mobile: 0
+            });
+        });
+
+        $(document).ready(function() {
+            $('.btn-animation').on('click', function() {
+                var st = $(this).parents('.section').next().offset().top;
+                $('html, body').animate({
+                    scrollTop: st
+                }, 300);
+            });
+            Tu.t_scroll({
+                't_element': '.zoomOut'
+            })
+            Tu.t_scroll({
+                't_element': '.news .slideDown',
+                't_duration': 0.1,
+                't_delay': 0.8
+            })
+        });
+    </script>
+@endpush
