@@ -18,6 +18,10 @@ Route::group(['namespace' => 'Frontend', 'middleware' => ['locale']], function()
 
     });
 
+    Route::get('district', 'OrderController@getListDistrict');
+
     Route::get('/', 'HomeController@home');
+
+    Route::post('refreshCsrfToken', 'HomeController@refreshCsrfToken');
 
 });

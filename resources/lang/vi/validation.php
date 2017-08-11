@@ -119,6 +119,18 @@ return [
     'attributes' => [
         'login_email_username' => 'email / ID name',
         'login_password' => 'mật khẩu',
+        'register_name' => 'họ tên',
+        'register_phone' => 'số điện thoại',
+        'register_email' => 'email',
+        'register_password' => 'mật khẩu',
+        'register_address' => 'địa chỉ',
+        'register_province' => 'tỉnh / thành phố',
+        'register_district' => 'quận / huyện',
+        'register_ward' => 'phường / xã',
+        'register_bank_holder' => 'chủ tài khoản',
+        'register_bank_number' => 'số tài khoản',
+        'register_bank' => 'ngân hàng',
+        'register_bank_branch' => 'chi nhánh',
     ],
 
 ];

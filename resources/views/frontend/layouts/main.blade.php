@@ -56,5 +56,48 @@
 <script src="{{ asset('themes/js/modernizr.custom.js') }}"></script>
 <script src="{{ asset('assets/js/sweetalert.min.js') }}"></script>
 @stack('scripts')
+@if(session('messageSuccess'))
+    <script type="text/javascript">
+        $(document).ready(function() {
+            swal({
+                title: '{{ session('messageSuccess') }}',
+                type: 'success',
+                confirmButtonClass: 'btn-success',
+                allowOutsideClick: true
+            });
+        });
+    </script>
+@elseif(session('messageError'))
+    <script type="text/javascript">
+        $(document).ready(function() {
+            swal({
+                title: '{{ session('messageError') }}',
+                type: 'error',
+                confirmButtonClass: 'btn-danger',
+                allowOutsideClick: true
+            });
+        });
+    </script>
+@endif
+<script type="text/javascript">
+    if($('input[name="_token"]').length > 0)
+    {
+        setInterval(function() {
+            $.ajax({
+                url: '{{ action('Frontend\HomeController@refreshCsrfToken') }}',
+                type: 'post',
+                data: '_token=' + $('input[name="_token"]').first().val(),
+                success: function(result) {
+                    if(result)
+                    {
+                        $('input[name="_token"]').each(function() {
+                            $(this).val(result);
+                        });
+                    }
+                }
+            });
+        }, 600000);
+    }
+</script>
 </body>
 </html>

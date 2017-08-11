@@ -119,6 +119,18 @@ return [
     'attributes' => [
         'login_email_username' => 'email / ID name',
         'login_password' => 'password',
+        'register_name' => 'name',
+        'register_phone' => 'phone',
+        'register_email' => 'email',
+        'register_password' => 'password',
+        'register_address' => 'address',
+        'register_province' => 'province',
+        'register_district' => 'district',
+        'register_ward' => 'ward',
+        'register_bank_holder' => 'bank holder',
+        'register_bank_number' => 'bank number',
+        'register_bank' => 'bank',
+        'register_bank_branch' => 'bank branch',
     ],
 
 ];
