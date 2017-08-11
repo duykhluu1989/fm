@@ -33,7 +33,7 @@
                             </div>
                             <hr>
                             <button type="submit" class="btn btnDangnhap"><i class="fa fa-lock fa-lg" aria-hidden="true"></i> ĐĂNG NHẬP</button>
-                            <p><a class="btn btn-link" href="quenmatkhau.php">Quên mật khẩu?</a></p>
+                            <p><a class="btn btn-link" href="{{ action('Frontend\UserController@quenmatkhau') }}">Quên mật khẩu?</a></p>
                             {{ csrf_field() }}
                         </form>
                     </div>
@@ -198,7 +198,7 @@
             </div>
         </section>
 
-        @include('frontend.layouts.partials.proccess')
+        @include('frontend.layouts.partials.process')
 
     </main>
 

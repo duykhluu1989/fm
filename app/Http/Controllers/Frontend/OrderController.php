@@ -9,6 +9,11 @@ use App\Libraries\Helpers\Area;
 
 class OrderController extends Controller
 {
+    public function placeOrder()
+    {
+        return view('frontend.orders.place_order');
+    }
+
     public function getListDistrict(Request $request)
     {
         if($request->ajax() == false)

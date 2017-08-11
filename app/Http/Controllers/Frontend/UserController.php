@@ -156,4 +156,33 @@ class UserController extends Controller
 
         }
     }
+
+    public function quenmatkhau()
+    {
+        return view('frontend.users.quenmatkhau');
+    }
+
+    public function editAccount(Request $request)
+    {
+        $user = auth()->user();
+
+        return view('frontend.users.edit_account', [
+            'user' => $user,
+        ]);
+    }
+
+    public function quanlydongtien()
+    {
+        return view('frontend.users.quanlydongtien');
+    }
+
+    public function quanlydonhang()
+    {
+        return view('frontend.users.quanlydonhang');
+    }
+
+    public function tongquanchung()
+    {
+        return view('frontend.users.tongquanchung');
+    }
 }
