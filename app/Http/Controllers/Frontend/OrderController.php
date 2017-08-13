@@ -7,18 +7,22 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Libraries\Helpers\Area;
+use App\Libraries\Helpers\Area as LibraryArea;
 use App\Libraries\Helpers\Utility;
 use App\Models\User;
 use App\Models\UserAddress;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\OrderAddress;
+use App\Models\Customer;
+use App\Models\Area;
 
 class OrderController extends Controller
 {
     public function placeOrder(Request $request)
     {
+        $receiverAreas = Area::getProvinces();
+
         $user = auth()->user();
 
         if($user)
@@ -30,52 +34,86 @@ class OrderController extends Controller
         {
             $inputs = $request->all();
 
-            if(count($userAddresses) > 0)
+            if(!empty($inputs['weight']))
+                $inputs['weight'] = implode('', explode('.', $inputs['weight']));
+
+            if(!empty($inputs['cod_price']))
+                $inputs['cod_price'] = implode('', explode('.', $inputs['cod_price']));
+
+            if(!empty($inputs['dimension']))
+                $inputs['dimension'] = Utility::removeWhitespace($inputs['dimension']);
+
+            $rules = [
+                'item.name' => 'required|array',
+                'item.quantity' => 'required|array',
+                'receiver_name' => 'required|string|max:255',
+                'receiver_phone' => [
+                    'required',
+                    'numeric',
+                    'regex:/^(01[2689]|09)[0-9]{8}$/',
+                ],
+                'receiver_address' => 'required|max:255',
+                'receiver_province' => 'required',
+                'receiver_district' => 'required',
+                'receiver_ward' => 'required|max:255',
+                'weight' => 'nullable|integer|min:1',
+                'cod_price' => 'nullable|integer|min:1',
+                'note' => 'nullable|max:255',
+            ];
+
+            if(count($userAddresses) == 0)
             {
-                $validator = Validator::make($inputs, [
-                    'user_address' => 'required|integer|min:1',
-                    'receiver_name' => 'required|string|max:255',
-                    'receiver_phone' => [
-                        'required',
-                        'numeric',
-                        'regex:/^(01[2689]|09)[0-9]{8}$/',
-                    ],
-                    'receiver_address' => 'required|max:255',
-                    'receiver_province' => 'required',
-                    'receiver_district' => 'required',
-                    'receiver_ward' => 'required|max:255',
-                ]);
-            }
-            else
-            {
-                $validator = Validator::make($inputs, [
+                $rules = array_merge($rules, [
                     'register_name' => 'required|string|max:255',
                     'register_phone' => [
                         'required',
                         'numeric',
                         'regex:/^(01[2689]|09)[0-9]{8}$/',
                     ],
-                    'register_email' => 'required|email|max:255|unique:user,email',
                     'register_address' => 'required|max:255',
                     'register_province' => 'required',
                     'register_district' => 'required',
                     'register_ward' => 'required|max:255',
+                ]);
+            }
+
+            if(empty($user))
+            {
+                $rules = array_merge($rules, [
+                    'register_email' => 'required|email|max:255|unique:user,email',
                     'register_bank_holder' => 'nullable|max:255',
                     'register_bank_number' => 'nullable|numeric',
                     'register_bank' => 'nullable|max:255',
                     'register_bank_branch' => 'nullable|max:255',
-                    'receiver_name' => 'required|string|max:255',
-                    'receiver_phone' => [
-                        'required',
-                        'numeric',
-                        'regex:/^(01[2689]|09)[0-9]{8}$/',
-                    ],
-                    'receiver_address' => 'required|max:255',
-                    'receiver_province' => 'required',
-                    'receiver_district' => 'required',
-                    'receiver_ward' => 'required|max:255',
                 ]);
             }
+
+            $validator = Validator::make($inputs, $rules);
+
+            $validator->after(function($validator) use(&$inputs) {
+                foreach($inputs['item']['name'] as $key => $name)
+                {
+                    if(empty($name))
+                        $validator->errors()->add('item.name.' . $key, trans('validation.required', ['attribute' => 'tên sản phẩm']));
+
+                    if(!isset($inputs['quantity'][$key]) || is_numeric($inputs['quantity'][$key]) || $inputs['quantity'][$key] < 1)
+                        $validator->errors()->add('item.quantity.' . $key, trans('validation.numeric', ['attribute' => 'số lượng']));
+                }
+
+                if(!empty($inputs['dimension']))
+                {
+                    $dimensions = explode('x', $inputs['dimension']);
+
+                    if(count($dimensions) != 3)
+                        $validator->errors()->add('dimension', trans('validation.dimensions', ['attribute' => 'kích thước']));
+
+                    foreach($dimensions as $dimension)
+                    {
+                        if(empty($dimension) || is_numeric($dimension) || $dimension < 1)
+                            $validator->errors()->add('dimension', trans('validation.dimensions', ['attribute' => 'kích thước']));
+                    }
+                }
+            });
 
             if($validator->passes())
             {
@@ -104,8 +142,8 @@ class OrderController extends Controller
                         $userAddress->name = $inputs['register_name'];
                         $userAddress->phone = $inputs['register_phone'];
                         $userAddress->address = $inputs['register_address'];
-                        $userAddress->province = Area::$provinces[$inputs['register_province']]['name'];
-                        $userAddress->district = Area::$provinces[$inputs['register_province']]['cities'][$inputs['register_district']];
+                        $userAddress->province = LibraryArea::$provinces[$inputs['register_province']]['name'];
+                        $userAddress->district = LibraryArea::$provinces[$inputs['register_province']]['cities'][$inputs['register_district']];
                         $userAddress->ward = $inputs['register_ward'];
                         $userAddress->default = Utility::ACTIVE_DB;
                         $userAddress->save();
@@ -119,8 +157,8 @@ class OrderController extends Controller
                         $userAddress->name = $inputs['register_name'];
                         $userAddress->phone = $inputs['register_phone'];
                         $userAddress->address = $inputs['register_address'];
-                        $userAddress->province = Area::$provinces[$inputs['register_province']]['name'];
-                        $userAddress->district = Area::$provinces[$inputs['register_province']]['cities'][$inputs['register_district']];
+                        $userAddress->province = LibraryArea::$provinces[$inputs['register_province']]['name'];
+                        $userAddress->district = LibraryArea::$provinces[$inputs['register_province']]['cities'][$inputs['register_district']];
                         $userAddress->ward = $inputs['register_ward'];
                         $userAddress->default = Utility::ACTIVE_DB;
                         $userAddress->save();
@@ -129,24 +167,45 @@ class OrderController extends Controller
                     $order = new Order();
                     $order->user_id = $user->id;
                     $order->created_at = date('Y-m-d H:i:s');
-                    $order->cod_price = $inputs['cod_price'];
-                    $order->shipping_price = $inputs['shipping_price'];
+                    $order->cod_price = !empty($inputs['cod_price']) ? $inputs['cod_price'] : 0;
+
+                    $order->shipping_price = 0;
+
                     $order->shipping_payment = $inputs['shipping_payment'];
+
+                    if($order->shipping_payment == Order::SHIPPING_PAYMENT_RECEIVER_DB)
+                        $order->total_cod_price = $order->cod_price + $order->shipping_price;
+                    else
+                        $order->total_cod_price = $order->cod_price;
+
                     $order->note = $inputs['note'];
                     $order->save();
 
-                    if(empty($user) || count($userAddresses) == 0)
+                    if(empty($user->customerInformation))
                     {
-                        $orderAddress = new OrderAddress();
-                        $orderAddress->order_id = $order->id;
-                        $orderAddress->name = $inputs['register_name'];
-                        $orderAddress->phone = $inputs['register_phone'];
-                        $orderAddress->address = $inputs['register_address'];
-                        $orderAddress->province = Area::$provinces[$inputs['register_province']]['name'];
-                        $orderAddress->district = Area::$provinces[$inputs['register_province']]['cities'][$inputs['register_district']];
-                        $orderAddress->ward = $inputs['register_ward'];
-                        $orderAddress->type = OrderAddress::TYPE_SENDER_DB;
-                        $orderAddress->save();
+                        $customer = new Customer();
+                        $customer->user_id = $user->id;
+                        $customer->order_count = 1;
+                        $customer->save();
+                    }
+                    else
+                    {
+                        $user->customerInformation->order_count += 1;
+                        $user->customerInformation->save();
+                    }
+
+                    if(count($userAddresses) == 0)
+                    {
+                        $senderAddress = new OrderAddress();
+                        $senderAddress->order_id = $order->id;
+                        $senderAddress->name = $inputs['register_name'];
+                        $senderAddress->phone = $inputs['register_phone'];
+                        $senderAddress->address = $inputs['register_address'];
+                        $senderAddress->province = LibraryArea::$provinces[$inputs['register_province']]['name'];
+                        $senderAddress->district = LibraryArea::$provinces[$inputs['register_province']]['cities'][$inputs['register_district']];
+                        $senderAddress->ward = $inputs['register_ward'];
+                        $senderAddress->type = OrderAddress::TYPE_SENDER_DB;
+                        $senderAddress->save();
                     }
                     else
                     {
@@ -154,30 +213,30 @@ class OrderController extends Controller
                         {
                             if($userAddress->id == $inputs['user_address'])
                             {
-                                $orderAddress = new OrderAddress();
-                                $orderAddress->order_id = $order->id;
-                                $orderAddress->name = $userAddress->name;
-                                $orderAddress->phone = $userAddress->phone;
-                                $orderAddress->address = $userAddress->address;
-                                $orderAddress->province = $userAddress->province;
-                                $orderAddress->district = $userAddress->district;
-                                $orderAddress->ward = $userAddress->ward;
-                                $orderAddress->type = OrderAddress::TYPE_SENDER_DB;
-                                $orderAddress->save();
+                                $senderAddress = new OrderAddress();
+                                $senderAddress->order_id = $order->id;
+                                $senderAddress->name = $userAddress->name;
+                                $senderAddress->phone = $userAddress->phone;
+                                $senderAddress->address = $userAddress->address;
+                                $senderAddress->province = $userAddress->province;
+                                $senderAddress->district = $userAddress->district;
+                                $senderAddress->ward = $userAddress->ward;
+                                $senderAddress->type = OrderAddress::TYPE_SENDER_DB;
+                                $senderAddress->save();
                             }
                         }
                     }
 
-                    $orderAddress = new OrderAddress();
-                    $orderAddress->order_id = $order->id;
-                    $orderAddress->name = $inputs['receiver_name'];
-                    $orderAddress->phone = $inputs['receiver_phone'];
-                    $orderAddress->address = $inputs['receiver_address'];
-                    $orderAddress->province = Area::$provinces[$inputs['receiver_province']]['name'];
-                    $orderAddress->district = Area::$provinces[$inputs['receiver_province']]['cities'][$inputs['receiver_district']];
-                    $orderAddress->ward = $inputs['receiver_ward'];
-                    $orderAddress->type = OrderAddress::TYPE_RECEIVER_DB;
-                    $orderAddress->save();
+                    $receiverAddress = new OrderAddress();
+                    $receiverAddress->order_id = $order->id;
+                    $receiverAddress->name = $inputs['receiver_name'];
+                    $receiverAddress->phone = $inputs['receiver_phone'];
+                    $receiverAddress->address = $inputs['receiver_address'];
+                    $receiverAddress->province = $receiverAreas[$inputs['receiver_province']]['name'];
+                    $receiverAddress->district = Area::getDistricts($inputs['receiver_province'], $inputs['receiver_district'])['name'];
+                    $receiverAddress->ward = $inputs['receiver_ward'];
+                    $receiverAddress->type = OrderAddress::TYPE_RECEIVER_DB;
+                    $receiverAddress->save();
 
                     foreach($inputs['item']['name'] as $key => $name)
                     {
@@ -185,7 +244,6 @@ class OrderController extends Controller
                         $orderItem->order_id = $order->id;
                         $orderItem->name = $name;
                         $orderItem->quantity = $inputs['item']['quantity'][$key];
-                        $orderItem->dimension = $inputs['item']['dimension'][$key];
                         $orderItem->save();
                     }
 
@@ -206,6 +264,7 @@ class OrderController extends Controller
 
         return view('frontend.orders.place_order', [
             'userAddresses' => $userAddresses,
+            'receiverAreas' => $receiverAreas,
         ]);
     }
 
@@ -218,16 +277,29 @@ class OrderController extends Controller
 
         $validator = Validator::make($inputs, [
             'province_code' => 'required',
+            'receiver' => 'nullable',
         ]);
 
         if($validator->passes())
         {
-            $provinces = Area::$provinces;
+            if(empty($inputs['receiver']))
+            {
+                $provinces = LibraryArea::$provinces;
 
-            if(isset($provinces[$inputs['province_code']]))
-                return json_encode($provinces[$inputs['province_code']]['cities']);
+                if(isset($provinces[$inputs['province_code']]))
+                    return json_encode($provinces[$inputs['province_code']]['cities']);
+                else
+                    return '';
+            }
             else
-                return '';
+            {
+                $districts = Area::getDistricts($inputs['province_code']);
+
+                if(!empty($districts))
+                    return json_encode($districts);
+                else
+                    return '';
+            }
         }
         else
             return '';

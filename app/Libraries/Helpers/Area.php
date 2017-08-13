@@ -43,29 +43,95 @@ class Area
         'HOCHIMINH' => [
             'name' => 'Hồ Chí Minh',
             'cities' => [
-                'QUAN1' => 'Quận 1',
-                'QUAN2' => 'Quận 2',
-                'QUAN3' => 'Quận 3',
-                'QUAN4' => 'Quận 4',
-                'QUAN5' => 'Quận 5',
-                'QUAN6' => 'Quận 6',
-                'QUAN7' => 'Quận 7',
-                'QUAN8' => 'Quận 8',
-                'QUAN9' => 'Quận 9',
-                'QUAN10' => 'Quận 10',
-                'QUAN11' => 'Quận 11',
-                'QUAN12' => 'Quận 12',
-                'QUANGOVAP' => 'Quận Gò Vấp',
-                'QUANTANBINH' => 'Quận Tân Bình',
-                'QUANTANPHU' => 'Quận Tân Phú',
-                'QUANBINHTHANH' => 'Quận Bình Thạnh',
-                'QUANPHUNHUAN' => 'Quận Phú Nhuận',
-                'QUANTHUDUC' => 'Quận Thủ Đức',
-                'QUANBINHTAN' => 'Quận Bình Tân',
-                'HUYENBINHCHANH' => 'Huyện Bình Chánh',
+                'QUAN1' => [
+                    'name' => 'Quận 1',
+                    'price' => 20000,
+                ],
+                'QUAN2' => [
+                    'name' => 'Quận 2',
+                    'price' => 25000,
+                ],
+                'QUAN3' => [
+                    'name' => 'Quận 3',
+                    'price' => 20000,
+                ],
+                'QUAN4' => [
+                    'name' => 'Quận 4',
+                    'price' => 20000,
+                ],
+                'QUAN5' => [
+                    'name' => 'Quận 5',
+                    'price' => 20000,
+                ],
+                'QUAN6' => [
+                    'name' => 'Quận 6',
+                    'price' => 20000,
+                ],
+                'QUAN7' => [
+                    'name' => 'Quận 7',
+                    'price' => 20000,
+                ],
+                'QUAN8' => [
+                    'name' => 'Quận 8',
+                    'price' => 20000,
+                ],
+                'QUAN9' => [
+                    'name' => 'Quận 9',
+                    'price' => 25000,
+                ],
+                'QUAN10' => [
+                    'name' => 'Quận 10',
+                    'price' => 20000,
+                ],
+                'QUAN11' => [
+                    'name' => 'Quận 11',
+                    'price' => 20000,
+                ],
+                'QUAN12' => [
+                    'name' => 'Quận 12',
+                    'price' => 25000,
+                ],
+                'QUANGOVAP' => [
+                    'name' => 'Quận Gò Vấp',
+                    'price' => 25000,
+                ],
+                'QUANTANBINH' => [
+                    'name' => 'Quận Tân Bình',
+                    'price' => 20000,
+                ],
+                'QUANTANPHU' => [
+                    'name' => 'Quận Tân Phú',
+                    'price' => 25000,
+                ],
+                'QUANBINHTHANH' => [
+                    'name' => 'Quận Bình Thạnh',
+                    'price' => 20000,
+                ],
+                'QUANPHUNHUAN' => [
+                    'name' => 'Quận Phú Nhuận',
+                    'price' => 20000,
+                ],
+                'QUANTHUDUC' => [
+                    'name' => 'Quận Thủ Đức',
+                    'price' => 25000,
+                ],
+                'QUANBINHTAN' => [
+                    'name' => 'Quận Bình Tân',
+                    'price' => 25000,
+                ],
+                'HUYENBINHCHANH' => [
+                    'name' => 'Huyện Bình Chánh',
+                    'price' => 40000,
+                ],
                 'HUYENCUCHI' => 'Huyện Củ Chi',
-                'HUYENHOCMON' => 'Huyện Hóc Môn',
-                'HUYENNHABE' => 'Huyện Nhà Bè',
+                'HUYENHOCMON' => [
+                    'name' => 'Huyện Hóc Môn',
+                    'price' => 40000,
+                ],
+                'HUYENNHABE' => [
+                    'name' => 'Huyện Nhà Bè',
+                    'price' => 40000,
+                ],
                 'HUYENCANGIO' => 'Huyện Cần Giờ',
                 'HOCHIMINHKHAC' => 'Quận/Huyện khác',
             ]

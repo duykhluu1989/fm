@@ -131,6 +131,15 @@ return [
         'register_bank_number' => 'bank number',
         'register_bank' => 'bank',
         'register_bank_branch' => 'bank branch',
+        'receiver_name' => 'name',
+        'receiver_phone' => 'phone',
+        'receiver_address' => 'address',
+        'receiver_province' => 'province',
+        'receiver_district' => 'district',
+        'receiver_ward' => 'ward',
+        'item.name' => 'product name',
+        'item.quantity' => 'quantity',
+        'cod_price' => 'COD price',
     ],
 
 ];

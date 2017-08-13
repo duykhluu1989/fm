@@ -18,14 +18,14 @@
                     <div class="col-lg-12">
                         <h2 class="title_sub">ĐƠN ĐẶT HÀNG</h2>
                         <div class="row">
-                            <div class="col-lg-8 col-lg-offset-2">
+                            <div class="col-lg-6 col-lg-offset-3">
                                 <form class="frm_donDH" action="{{ action('Frontend\OrderController@placeOrder') }}" method="POST" role="form">
                                     <p><b>Thông tin lấy hàng</b></p>
 
                                     @if(count($userAddresses) > 0)
 
                                         <div class="form-group">
-                                            <label>Địa chỉ: (*)</label>
+                                            <label>Địa chỉ (*)</label>
                                             <select name="user_address" class="form-control" required="required">
                                                 <?php
                                                 $userAddressId = old('user_address');
@@ -61,15 +61,19 @@
                                                 </span>
                                             @endif
                                         </div>
-                                        <div class="form-group">
-                                            <label>Email (*)</label>
-                                            <input type="text" class="form-control" name="register_email" value="{{ old('register_email') }}" required="required" />
-                                            @if($errors->has('register_email'))
-                                                <span class="has-error">
-                                                    <span class="help-block">* {{ $errors->first('register_email') }}</span>
-                                                </span>
-                                            @endif
-                                        </div>
+
+                                        @if(auth()->guest())
+                                            <div class="form-group">
+                                                <label>Email (*)</label>
+                                                <input type="text" class="form-control" name="register_email" value="{{ old('register_email') }}" required="required" />
+                                                @if($errors->has('register_email'))
+                                                    <span class="has-error">
+                                                        <span class="help-block">* {{ $errors->first('register_email') }}</span>
+                                                    </span>
+                                                @endif
+                                            </div>
+                                        @endif
+
                                         <div class="form-group">
                                             <label>Địa chỉ lấy hàng (*)</label>
                                             <input type="text" class="form-control" name="register_address" value="{{ old('register_address') }}" required="required" />
@@ -136,92 +140,174 @@
                                                 </span>
                                             @endif
                                         </div>
-                                        <hr>
-                                        <p>Thông tin Ngân hàng sử dụng cho mục đích chuyển trả tiền thu hộ</p>
-                                        <h2 class="title_sub">THÔNG TIN NGÂN HÀNG</h2>
-                                        <div class="form-group">
-                                            <label>Chủ tài khoản ngân hàng:</label>
-                                            <input type="text" class="form-control" name="register_bank_holder" value="{{ old('register_bank_holder') }}" />
-                                            @if($errors->has('register_bank_holder'))
-                                                <span class="has-error">
-                                                    <span class="help-block">* {{ $errors->first('register_bank_holder') }}</span>
-                                                </span>
-                                            @endif
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Số tài khoản ngân hàng:</label>
-                                            <input type="text" class="form-control" name="register_bank_number" value="{{ old('register_bank_number') }}"  />
-                                            @if($errors->has('register_bank_number'))
-                                                <span class="has-error">
-                                                    <span class="help-block">* {{ $errors->first('register_bank_number') }}</span>
-                                                </span>
-                                            @endif
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Tên ngân hàng:</label>
-                                            <input type="text" class="form-control" name="register_bank" value="{{ old('register_bank') }}" />
-                                            @if($errors->has('register_bank'))
-                                                <span class="has-error">
-                                                    <span class="help-block">* {{ $errors->first('register_bank') }}</span>
-                                                </span>
-                                            @endif
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Chi nhánh ngân hàng:</label>
-                                            <input type="text" class="form-control" name="register_bank_branch" value="{{ old('register_bank_branch') }}" />
-                                            @if($errors->has('register_bank_branch'))
-                                                <span class="has-error">
-                                                    <span class="help-block">* {{ $errors->first('register_bank_branch') }}</span>
-                                                </span>
-                                            @endif
-                                        </div>
+
+                                        @if(auth()->guest())
+                                            <hr>
+                                            <p>Thông tin Ngân hàng sử dụng cho mục đích chuyển trả tiền thu hộ</p>
+                                            <h2 class="title_sub">THÔNG TIN NGÂN HÀNG</h2>
+                                            <div class="form-group">
+                                                <label>Chủ tài khoản ngân hàng</label>
+                                                <input type="text" class="form-control" name="register_bank_holder" value="{{ old('register_bank_holder') }}" />
+                                                @if($errors->has('register_bank_holder'))
+                                                    <span class="has-error">
+                                                        <span class="help-block">* {{ $errors->first('register_bank_holder') }}</span>
+                                                    </span>
+                                                @endif
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Số tài khoản ngân hàng</label>
+                                                <input type="text" class="form-control" name="register_bank_number" value="{{ old('register_bank_number') }}"  />
+                                                @if($errors->has('register_bank_number'))
+                                                    <span class="has-error">
+                                                        <span class="help-block">* {{ $errors->first('register_bank_number') }}</span>
+                                                    </span>
+                                                @endif
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Tên ngân hàng</label>
+                                                <input type="text" class="form-control" name="register_bank" value="{{ old('register_bank') }}" />
+                                                @if($errors->has('register_bank'))
+                                                    <span class="has-error">
+                                                        <span class="help-block">* {{ $errors->first('register_bank') }}</span>
+                                                    </span>
+                                                @endif
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Chi nhánh ngân hàng</label>
+                                                <input type="text" class="form-control" name="register_bank_branch" value="{{ old('register_bank_branch') }}" />
+                                                @if($errors->has('register_bank_branch'))
+                                                    <span class="has-error">
+                                                        <span class="help-block">* {{ $errors->first('register_bank_branch') }}</span>
+                                                    </span>
+                                                @endif
+                                            </div>
+                                        @endif
 
                                     @endif
 
+                                    <hr>
                                     <p><b>Thông tin sản phẩm</b></p>
-                                    <div class="row">
-                                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-                                            <div class="form-group">
-                                                <label>Tên sản phẩm: (*)</label>
-                                                <input type="text" class="form-control" name="item[name][]" required="required" />
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
-                                            <div class="form-group">
-                                                <label>Số lượng: (*)</label>
-                                                <input type="text" class="form-control" name="item[quantity][]" required="required" />
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12">
-                                            <div class="form-group">
-                                                <label>Kích cỡ sản phẩm:</label>
-                                                <div class="input-group">
-                                                    <input type="text" class="form-control" name="item[dimension][]" placeholder="W x H x L" />
-                                                    <span class="input-group-btn">
-                                                        <a href="#" class="btn btnThem"><i class="fa fa-times" aria-hidden="true"></i> Xoá</a>
-                                                    </span>
+                                    <div id="ListOrderItemDiv">
+                                        <?php
+                                        $itemNames = old('item.name');
+                                        ?>
+
+                                        @if(is_array($itemNames) && count($itemNames) > 0)
+                                            <?php
+                                            $i = 1;
+                                            ?>
+                                            @foreach($itemNames as $key => $itemName)
+                                                @if($i > 1)
+                                                    <div class="row">
+                                                        <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                                                            <div class="form-group">
+                                                                <label>Tên sản phẩm (*)</label>
+                                                                <input type="text" class="form-control" name="item[name][]" value="{{ $itemName }}" required="required" />
+                                                                @if($errors->has('item.name.' . $key))
+                                                                    <span class="has-error">
+                                                                        <span class="help-block">* {{ $errors->first('item.name.' . $key) }}</span>
+                                                                    </span>
+                                                                @endif
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12">
+                                                            <div class="form-group">
+                                                                <label>Số lượng (*)</label>
+                                                                <div class="input-group">
+                                                                    <input type="text" class="form-control" name="item[quantity][]" value="{{ old('item.quantity.' . $key) }}" required="required" />
+                                                                    <span class="input-group-btn">
+                                                                        <a href="javascript:void(0)" class="btn btnThem"><i class="fa fa-times" aria-hidden="true"></i> Xoá</a>
+                                                                    </span>
+                                                                </div>
+                                                                @if($errors->has('item.quantity.' . $key))
+                                                                    <span class="has-error">
+                                                                        <span class="help-block">* {{ $errors->first('item.quantity.' . $key) }}</span>
+                                                                    </span>
+                                                                @endif
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                @else
+                                                    <div class="row">
+                                                        <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                                                            <div class="form-group">
+                                                                <label>Tên sản phẩm (*)</label>
+                                                                <input type="text" class="form-control" name="item[name][]" value="{{ $itemName }}" required="required" />
+                                                                @if($errors->has('item.name.' . $key))
+                                                                    <span class="has-error">
+                                                                        <span class="help-block">* {{ $errors->first('item.name.' . $key) }}</span>
+                                                                    </span>
+                                                                @endif
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12">
+                                                            <div class="form-group">
+                                                                <label>Số lượng (*)</label>
+                                                                <input type="text" class="form-control" name="item[quantity][]" value="{{ old('item.quantity.' . $key) }}" required="required" />
+                                                                @if($errors->has('item.quantity.' . $key))
+                                                                    <span class="has-error">
+                                                                        <span class="help-block">* {{ $errors->first('item.quantity.' . $key) }}</span>
+                                                                    </span>
+                                                                @endif
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                @endif
+                                            @endforeach
+                                        @else
+                                            <div class="row">
+                                                <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                                                    <div class="form-group">
+                                                        <label>Tên sản phẩm (*)</label>
+                                                        <input type="text" class="form-control" name="item[name][]" required="required" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12">
+                                                    <div class="form-group">
+                                                        <label>Số lượng (*)</label>
+                                                        <input type="text" class="form-control" name="item[quantity][]" required="required" />
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        @endif
+
+                                    </div>
+                                    <div class="row">
                                         <div class="col-xs-12">
-                                            <a href="#" class="btn btnThem"><i class="fa fa-plus" aria-hidden="true"></i> Thêm</a>
+                                            <a href="javascript:void(0)" id="AddMoreOrderItemButton" class="btn btnThem"><i class="fa fa-plus" aria-hidden="true"></i> Thêm</a>
                                         </div>
                                     </div>
+                                    <hr>
                                     <p><b>Thông tin người nhận hàng</b></p>
                                     <div class="form-group">
-                                        <label>Tên khách hàng: (*)</label>
+                                        <label>Tên người nhận (*)</label>
                                         <input type="text" class="form-control" name="receiver_name" value="{{ old('receiver_name') }}" required="required" />
+                                        @if($errors->has('receiver_name'))
+                                            <span class="has-error">
+                                                <span class="help-block">* {{ $errors->first('receiver_name') }}</span>
+                                            </span>
+                                        @endif
                                     </div>
                                     <div class="form-group">
-                                        <label>Số điện thoại: (*)</label>
+                                        <label>Số điện thoại (*)</label>
                                         <input type="text" class="form-control" name="receiver_phone" value="{{ old('receiver_phone') }}" required="required" />
+                                        @if($errors->has('receiver_phone'))
+                                            <span class="has-error">
+                                                <span class="help-block">* {{ $errors->first('receiver_phone') }}</span>
+                                            </span>
+                                        @endif
                                     </div>
                                     <div class="form-group">
                                         <label>Địa chỉ giao hàng (*)</label>
                                         <input type="text" class="form-control" name="receiver_address" value="{{ old('receiver_address') }}" required="required" />
+                                        @if($errors->has('receiver_address'))
+                                            <span class="has-error">
+                                                <span class="help-block">* {{ $errors->first('receiver_address') }}</span>
+                                            </span>
+                                        @endif
                                     </div>
                                     <div class="form-group">
-                                        <label>Thành phố: (*)</label>
+                                        <label>Thành phố (*)</label>
                                         <select name="receiver_province" id="ReceiverProvince" class="form-control" required="required">
                                             <?php
                                             $province = old('receiver_province');
@@ -229,17 +315,22 @@
 
                                             <option value=""></option>
 
-                                            @foreach(\App\Libraries\Helpers\Area::$provinces as $code => $data)
-                                                @if($province == $code)
-                                                    <option selected="selected" value="{{ $code }}">{{ $data['name'] }}</option>
+                                            @foreach($receiverAreas as $id => $area)
+                                                @if($province == $id)
+                                                    <option selected="selected" value="{{ $id }}">{{ $area['name'] }}</option>
                                                 @else
-                                                    <option value="{{ $code }}">{{ $data['name'] }}</option>
+                                                    <option value="{{ $id }}">{{ $area['name'] }}</option>
                                                 @endif
                                             @endforeach
                                         </select>
+                                        @if($errors->has('receiver_province'))
+                                            <span class="has-error">
+                                                <span class="help-block">* {{ $errors->first('receiver_province') }}</span>
+                                            </span>
+                                        @endif
                                     </div>
                                     <div class="form-group">
-                                        <label>Quận / huyện: (*)</label>
+                                        <label>Quận / huyện (*)</label>
                                         <select name="receiver_district" id="ReceiverDistrict" class="form-control" required="required">
                                             <?php
                                             $district = old('receiver_district');
@@ -247,28 +338,61 @@
 
                                             <option value=""></option>
 
-                                            @if($district && isset(\App\Libraries\Helpers\Area::$provinces[$province]['cities']))
-                                                @foreach(\App\Libraries\Helpers\Area::$provinces[$province]['cities'] as $code => $data)
-                                                    @if($district == $code)
-                                                        <option selected="selected" value="{{ $code }}">{{ $data }}</option>
+                                            @if($district && isset($receiverAreas[$province]['children_areas']))
+                                                @foreach($receiverAreas[$province]['children_areas'] as $area)
+                                                    @if($district == $area['id'])
+                                                        <option selected="selected" value="{{ $area['id'] }}">{{ $area['name'] }}</option>
                                                     @else
-                                                        <option value="{{ $code }}">{{ $data }}</option>
+                                                        <option value="{{ $area['id'] }}">{{ $area['name'] }}</option>
                                                     @endif
                                                 @endforeach
                                             @endif
                                         </select>
+                                        @if($errors->has('receiver_district'))
+                                            <span class="has-error">
+                                                <span class="help-block">* {{ $errors->first('receiver_district') }}</span>
+                                            </span>
+                                        @endif
                                     </div>
                                     <div class="form-group">
-                                        <label>Phường / xã: (*)</label>
+                                        <label>Phường / xã (*)</label>
                                         <input name="receiver_ward" class="form-control" value="{{ old('receiver_ward') }}" required="required" />
+                                        @if($errors->has('receiver_ward'))
+                                            <span class="has-error">
+                                                <span class="help-block">* {{ $errors->first('receiver_ward') }}</span>
+                                            </span>
+                                        @endif
                                     </div>
                                     <div class="form-group">
-                                        <label>Thu tiền hộ: (*)</label>
-                                        <input type="text" class="form-control" name="cod_price" value="{{ old('cod_price') }}" required="required" />
+                                        <label>Trọng lượng gói hàng (gr)</label>
+                                        <input type="text" class="form-control" name="weight" value="{{ old('weight') }}" />
+                                        @if($errors->has('weight'))
+                                            <span class="has-error">
+                                                <span class="help-block">* {{ $errors->first('weight') }}</span>
+                                            </span>
+                                        @endif
                                     </div>
                                     <div class="form-group">
-                                        <label>Phí ship: (*)</label>
-                                        <input type="text" class="form-control" name="shipping_price" value="{{ old('shipping_price') }}" required="required" />
+                                        <label>Kích thước gói hàng (mm)</label>
+                                        <input type="text" class="form-control" name="dimension" value="{{ old('dimension') }}" placeholder="Dài x Rộng x Cao" />
+                                        @if($errors->has('dimension'))
+                                            <span class="has-error">
+                                                <span class="help-block">* {{ $errors->first('dimension') }}</span>
+                                            </span>
+                                        @endif
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Tiền thu hộ</label>
+                                        <input type="text" class="form-control InputForNumber" name="cod_price" value="{{ old('cod_price') }}" />
+                                        @if($errors->has('cod_price'))
+                                            <span class="has-error">
+                                                <span class="help-block">* {{ $errors->first('cod_price') }}</span>
+                                            </span>
+                                        @endif
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Phí ship (tạm tính)</label>
+                                        <input type="text" class="form-control" readonly="readonly" />
                                     </div>
                                     <div class="form-group">
                                         <div class="radio">
@@ -285,8 +409,17 @@
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="">Ghi chú:</label>
-                                        <textarea name="note" class="form-control" rows="8">{{ old('note') }}</textarea>
+                                        <label>Tổng tiền thu hộ</label>
+                                        <input type="text" class="form-control" readonly="readonly" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Ghi chú</label>
+                                        <textarea name="note" class="form-control">{{ old('note') }}</textarea>
+                                        @if($errors->has('note'))
+                                            <span class="has-error">
+                                                <span class="help-block">* {{ $errors->first('note') }}</span>
+                                            </span>
+                                        @endif
                                     </div>
                                     <button type="submit" class="btn btnDangDH"><i class="fa fa-upload fa-lg" aria-hidden="true"></i> ĐĂNG ĐƠN HÀNG</button>
                                     {{ csrf_field() }}
@@ -315,29 +448,18 @@
 @push('scripts')
     <script type="text/javascript">
         $('#RegisterProvince').change(function() {
+            var districtElem = $('#RegisterDistrict');
 
-            changeProvince($(this), $('#RegisterDistrict'));
-
-        });
-
-        $('#ReceiverProvince').change(function() {
-
-            changeProvince($(this), $('#ReceiverDistrict'));
-
-        });
-
-        function changeProvince(provinceElem, districtElem)
-        {
             districtElem.html('' +
                 '<option value=""></option>' +
             '');
 
-            if(provinceElem.val() != '')
+            if($(this).val() != '')
             {
                 $.ajax({
                     url: '{{ action('Frontend\OrderController@getListDistrict') }}',
                     type: 'get',
-                    data: 'province_code=' + provinceElem.val(),
+                    data: 'province_code=' + $(this).val(),
                     success: function(result) {
                         if(result)
                         {
@@ -356,7 +478,66 @@
                     }
                 });
             }
-        }
+        });
+
+        $('#ReceiverProvince').change(function() {
+            var districtElem = $('#ReceiverDistrict');
+
+            districtElem.html('' +
+                '<option value=""></option>' +
+            '');
+
+            if($(this).val() != '')
+            {
+                $.ajax({
+                    url: '{{ action('Frontend\OrderController@getListDistrict') }}',
+                    type: 'get',
+                    data: 'province_code=' + $(this).val() + '&receiver=1',
+                    success: function(result) {
+                        if(result)
+                        {
+                            result = JSON.parse(result);
+
+                            for(var i = 0;i < result.length;i ++)
+                            {
+                                districtElem.append('' +
+                                    '<option value="' + result[i].id + '">' + result[i].name + '</option>' +
+                                '');
+                            }
+                        }
+                    }
+                });
+            }
+        });
+
+        $('#AddMoreOrderItemButton').click(function() {
+            $('#ListOrderItemDiv').append('' +
+                '<div class="row">' +
+                '<div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">' +
+                '<div class="form-group">' +
+                '<label>Tên sản phẩm (*)</label>' +
+                '<input type="text" class="form-control" name="item[name][]" required="required" />' +
+                '</div>' +
+                '</div>' +
+                '<div class="col-lg-5 col-md-5 col-sm-5 col-xs-12">' +
+                '<div class="form-group">' +
+                '<label>Số lượng (*)</label>' +
+                '<div class="input-group">' +
+                '<input type="text" class="form-control" name="item[quantity][]" required="required" />' +
+                '<span class="input-group-btn">' +
+                '<a href="javascript:void(0)" class="btn btnThem RemoveOrderItemButton"><i class="fa fa-times" aria-hidden="true"></i> Xoá</a>' +
+                '</span>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+            '');
+        });
+
+        $('#ListOrderItemDiv').on('click', 'a', function() {
+            if($(this).hasClass('RemoveOrderItemButton'))
+                $(this).parent().parent().parent().parent().parent().remove();
+        });
     </script>
 @endpush
 

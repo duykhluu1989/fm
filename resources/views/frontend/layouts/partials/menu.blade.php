@@ -8,6 +8,7 @@
                         <ul class="list_menuTop">
                             <li><a href="{{ action('Frontend\UserController@editAccount') }}"><i class="fa fa-user" aria-hidden="true"></i> Xin chào {{ auth()->user()->name }}</a></li>
                             <li><a href="{{ action('Frontend\OrderController@placeOrder') }}"><i class="fa fa-id-card-o" aria-hidden="true"></i> Tạo đơn hàng</a></li>
+                            <li><a href="{{ action('Frontend\UserController@logout') }}"><i class="fa fa-sign-out" aria-hidden="true"></i> Đăng xuất</a></li>
                         </ul>
                     </div>
                 </div>

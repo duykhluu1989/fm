@@ -12,7 +12,6 @@ class CreateOrderItemTable extends Migration
             $table->increments('id');
             $table->unsignedInteger('order_id');
             $table->unsignedInteger('quantity')->default(0);
-            $table->string('dimension', 255)->nullable();
             $table->string('name', 255);
         });
     }

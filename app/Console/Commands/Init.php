@@ -8,6 +8,7 @@ use App\Models\Setting;
 use App\Models\User;
 use App\Models\Role;
 use App\Models\UserRole;
+use App\Models\Area;
 
 class Init extends Command
 {
@@ -26,6 +27,8 @@ class Init extends Command
                 DB::beginTransaction();
 
                 Setting::initCoreSettings();
+
+                Area::initCoreAreas();
 
                 User::initCoreUser();
 

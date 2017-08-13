@@ -55,6 +55,7 @@
 <script src="{{ asset('themes/js/jquery.mCustomScrollbar.concat.min.js') }}"></script>
 <script src="{{ asset('themes/js/modernizr.custom.js') }}"></script>
 <script src="{{ asset('assets/js/sweetalert.min.js') }}"></script>
+<script src="{{ asset('assets/js/frontend.js') }}"></script>
 @stack('scripts')
 @if(session('messageSuccess'))
     <script type="text/javascript">

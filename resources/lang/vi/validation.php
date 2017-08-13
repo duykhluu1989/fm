@@ -131,6 +131,18 @@ return [
         'register_bank_number' => 'số tài khoản',
         'register_bank' => 'ngân hàng',
         'register_bank_branch' => 'chi nhánh',
+        'receiver_name' => 'họ tên',
+        'receiver_phone' => 'số điện thoại',
+        'receiver_address' => 'địa chỉ',
+        'receiver_province' => 'tỉnh / thành phố',
+        'receiver_district' => 'quận / huyện',
+        'receiver_ward' => 'phường / xã',
+        'note' => 'ghi chú',
+        'item.name' => 'tên sản phẩm',
+        'item.quantity' => 'số lượng',
+        'weight' => 'trọng lượng',
+        'dimension' => 'kích thước',
+        'cod_price' => 'tiền thu hộ',
     ],
 
 ];

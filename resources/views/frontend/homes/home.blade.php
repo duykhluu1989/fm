@@ -46,11 +46,11 @@
                 <div class="row text-center">
                     <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 thongtin_items">
                         <figure>
-                            <a class="btnThongtin" href="{{ action('Frontend\UserController@login') }}">
+                            <a class="btnThongtin" href="{{ (auth()->guest() ? action('Frontend\UserController@login') : action('Frontend\UserController@editAccount')) }}">
                                 <img src="{{ asset('themes/images/img01.jpg') }}" alt="" class="img-responsive">
                             </a>
                         </figure>
-                        <h3><a href="{{ action('Frontend\UserController@login') }}">ĐĂNG KÝ - ĐĂNG NHẬP</a></h3>
+                        <h3><a href="{{ action('Frontend\UserController@login') }}">{{ (auth()->guest() ? 'ĐĂNG KÝ - ĐĂNG NHẬP' : 'TÀI KHOẢN') }}</a></h3>
                     </div>
                     <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 thongtin_items">
                         <figure>

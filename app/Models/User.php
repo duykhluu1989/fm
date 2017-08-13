@@ -22,6 +22,11 @@ class User extends Authenticatable
         return $this->hasMany('App\Models\UserAddress', 'user_id');
     }
 
+    public function customerInformation()
+    {
+        return $this->hasOne('App\Models\Customer', 'user_id');
+    }
+
     public static function initCoreUser()
     {
         $user = new User();
