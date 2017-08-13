@@ -52,4 +52,62 @@ class Order extends Model
 
         $this->do .= (100000 + $count + 1);
     }
+
+    public static function calculateShippingPrice($provinceId, $districtId, $weight, $dimension)
+    {
+        $shippingPrice = 0;
+
+        $netWeight = 0;
+
+        if(!empty($weight))
+        {
+            $weight = $weight / 1000;
+
+            if($weight - (int)$weight > 0)
+                $weight = (int)$weight + 1;
+        }
+        else
+            $weight = 0;
+
+        if(!empty($dimension))
+        {
+            $dimensions = explode('x', $dimension);
+
+            $volume = 0;
+
+            foreach($dimensions as $d)
+            {
+                $d = trim($d);
+                if($volume == 0)
+                    $volume = $d;
+                else
+                    $volume = $volume * $d;
+            }
+
+            $weightFromDimension = $volume / 5000000;
+
+            if($weightFromDimension - (int)$weightFromDimension > 0)
+                $weightFromDimension = (int)$weightFromDimension + 1;
+        }
+        else
+            $weightFromDimension = 0;
+
+        if($weight > $weightFromDimension)
+            $netWeight = $weight;
+        else
+            $netWeight = $weightFromDimension;
+
+        $district = Area::getDistricts($provinceId, $districtId);
+
+        if(!empty($district))
+        {
+            $shippingPrice += $district['shipping_price'];
+            $netWeight -= 3;
+        }
+
+        if($netWeight > 0)
+            $shippingPrice += ($netWeight * 4000);
+
+        return $shippingPrice;
+    }
 }

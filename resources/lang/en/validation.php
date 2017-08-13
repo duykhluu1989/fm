@@ -140,6 +140,8 @@ return [
         'item.name' => 'product name',
         'item.quantity' => 'quantity',
         'cod_price' => 'COD price',
+        'province_code' => 'province',
+        'district_code' => 'district',
     ],
 
 ];

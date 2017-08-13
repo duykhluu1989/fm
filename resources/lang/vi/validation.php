@@ -143,6 +143,8 @@ return [
         'weight' => 'trọng lượng',
         'dimension' => 'kích thước',
         'cod_price' => 'tiền thu hộ',
+        'province_code' => 'tỉnh / thành phố',
+        'district_code' => 'quận / huyện',
     ],
 
 ];

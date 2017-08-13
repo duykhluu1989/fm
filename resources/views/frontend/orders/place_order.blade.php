@@ -341,9 +341,9 @@
                                             @if($district && isset($receiverAreas[$province]['children_areas']))
                                                 @foreach($receiverAreas[$province]['children_areas'] as $area)
                                                     @if($district == $area['id'])
-                                                        <option selected="selected" value="{{ $area['id'] }}">{{ $area['name'] }}</option>
+                                                        <option selected="selected" data-shipping-price="{{ $area['shipping_price'] }}" value="{{ $area['id'] }}">{{ $area['name'] }}</option>
                                                     @else
-                                                        <option value="{{ $area['id'] }}">{{ $area['name'] }}</option>
+                                                        <option data-shipping-price="{{ $area['shipping_price'] }}" value="{{ $area['id'] }}">{{ $area['name'] }}</option>
                                                     @endif
                                                 @endforeach
                                             @endif
@@ -365,7 +365,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label>Trọng lượng gói hàng (gr)</label>
-                                        <input type="text" class="form-control" name="weight" value="{{ old('weight') }}" />
+                                        <input type="text" class="form-control" id="OrderWeightInput" name="weight" value="{{ old('weight') }}" />
                                         @if($errors->has('weight'))
                                             <span class="has-error">
                                                 <span class="help-block">* {{ $errors->first('weight') }}</span>
@@ -374,7 +374,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label>Kích thước gói hàng (mm)</label>
-                                        <input type="text" class="form-control" name="dimension" value="{{ old('dimension') }}" placeholder="Dài x Rộng x Cao" />
+                                        <input type="text" class="form-control" id="OrderDimensionInput" name="dimension" value="{{ old('dimension') }}" placeholder="Dài x Rộng x Cao" />
                                         @if($errors->has('dimension'))
                                             <span class="has-error">
                                                 <span class="help-block">* {{ $errors->first('dimension') }}</span>
@@ -383,7 +383,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label>Tiền thu hộ</label>
-                                        <input type="text" class="form-control InputForNumber" name="cod_price" value="{{ old('cod_price') }}" />
+                                        <input type="text" class="form-control InputForNumber" name="cod_price" id="OrderCodPriceInput" value="{{ old('cod_price') }}" />
                                         @if($errors->has('cod_price'))
                                             <span class="has-error">
                                                 <span class="help-block">* {{ $errors->first('cod_price') }}</span>
@@ -392,7 +392,12 @@
                                     </div>
                                     <div class="form-group">
                                         <label>Phí ship (tạm tính)</label>
-                                        <input type="text" class="form-control" readonly="readonly" />
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" readonly="readonly" id="OrderShippingPriceInput" />
+                                            <span class="input-group-btn">
+                                                <a href="javascript:void(0)" id="CalculateOrderShippingPriceButton" class="btn btnThem"><i class="fa fa-truck" aria-hidden="true"></i> Tính phí ship</a>
+                                            </span>
+                                        </div>
                                     </div>
                                     <div class="form-group">
                                         <div class="radio">
@@ -410,7 +415,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label>Tổng tiền thu hộ</label>
-                                        <input type="text" class="form-control" readonly="readonly" />
+                                        <input type="text" class="form-control" readonly="readonly" id="OrderTotalCodPriceInput" />
                                     </div>
                                     <div class="form-group">
                                         <label>Ghi chú</label>
@@ -498,10 +503,12 @@
                         {
                             result = JSON.parse(result);
 
-                            for(var i = 0;i < result.length;i ++)
+                            var i;
+
+                            for(i = 0;i < result.length;i ++)
                             {
                                 districtElem.append('' +
-                                    '<option value="' + result[i].id + '">' + result[i].name + '</option>' +
+                                    '<option data-shipping-price="' + result[i].shipping_price + '" value="' + result[i].id + '">' + result[i].name + '</option>' +
                                 '');
                             }
                         }
@@ -537,6 +544,46 @@
         $('#ListOrderItemDiv').on('click', 'a', function() {
             if($(this).hasClass('RemoveOrderItemButton'))
                 $(this).parent().parent().parent().parent().parent().remove();
+        });
+
+        $('#CalculateOrderShippingPriceButton').click(function() {
+            $.ajax({
+                url: '{{ action('Frontend\OrderController@calculateShippingPrice') }}',
+                type: 'get',
+                data: 'province_code=' + $('#ReceiverProvince').val() + '&district_code=' + $('#ReceiverDistrict').val() + '&weight=' + $('#OrderWeightInput').val() + '&dimension=' + $('#OrderDimensionInput').val(),
+                success: function(result) {
+                    if(result)
+                    {
+                        if(!isNaN(result))
+                        {
+                            $('#OrderShippingPriceInput').val(formatNumber(result, '.'));
+
+                            var codElem = $('#OrderCodPriceInput');
+
+                            if($('input[type="radio"][name="shipping_payment"]:checked').val() == '{{ \App\Models\Order::SHIPPING_PAYMENT_RECEIVER_DB }}')
+                            {
+                                if(codElem.val() != '')
+                                    $('#OrderTotalCodPriceInput').val(formatNumber((parseInt(codElem.val().split('.').join('')) + parseInt(result)).toString(), '.'));
+                                else
+                                    $('#OrderTotalCodPriceInput').val(formatNumber(result, '.'));
+                            }
+                            else
+                                $('#OrderTotalCodPriceInput').val(codElem.val());
+                        }
+                        else
+                        {
+                            result = JSON.parse(result);
+
+                            swal({
+                                title: result[0],
+                                type: 'error',
+                                confirmButtonClass: 'btn-danger',
+                                allowOutsideClick: true
+                            });
+                        }
+                    }
+                }
+            });
         });
     </script>
 @endpush

@@ -96,7 +96,7 @@ class OrderController extends Controller
                     if(empty($name))
                         $validator->errors()->add('item.name.' . $key, trans('validation.required', ['attribute' => 'tên sản phẩm']));
 
-                    if(!isset($inputs['quantity'][$key]) || is_numeric($inputs['quantity'][$key]) || $inputs['quantity'][$key] < 1)
+                    if(!isset($inputs['item']['quantity'][$key]) || !is_numeric($inputs['item']['quantity'][$key]) || $inputs['item']['quantity'][$key] < 1)
                         $validator->errors()->add('item.quantity.' . $key, trans('validation.numeric', ['attribute' => 'số lượng']));
                 }
 
@@ -109,7 +109,8 @@ class OrderController extends Controller
 
                     foreach($dimensions as $dimension)
                     {
-                        if(empty($dimension) || is_numeric($dimension) || $dimension < 1)
+                        $dimension = trim($dimension);
+                        if(empty($dimension) || !is_numeric($dimension) || $dimension < 1)
                             $validator->errors()->add('dimension', trans('validation.dimensions', ['attribute' => 'kích thước']));
                     }
                 }
@@ -168,11 +169,8 @@ class OrderController extends Controller
                     $order->user_id = $user->id;
                     $order->created_at = date('Y-m-d H:i:s');
                     $order->cod_price = !empty($inputs['cod_price']) ? $inputs['cod_price'] : 0;
-
-                    $order->shipping_price = 0;
-
+                    $order->shipping_price = Order::calculateShippingPrice($inputs['receiver_province'], $inputs['receiver_district'], $inputs['weight'], $inputs['dimension']);
                     $order->shipping_payment = $inputs['shipping_payment'];
-
                     if($order->shipping_payment == Order::SHIPPING_PAYMENT_RECEIVER_DB)
                         $order->total_cod_price = $order->cod_price + $order->shipping_price;
                     else
@@ -303,5 +301,44 @@ class OrderController extends Controller
         }
         else
             return '';
+    }
+
+    public function calculateShippingPrice(Request $request)
+    {
+        if($request->ajax() == false)
+            return view('frontend.errors.404');
+
+        $inputs = $request->all();
+
+        if(!empty($inputs['dimension']))
+            $inputs['dimension'] = Utility::removeWhitespace($inputs['dimension']);
+
+        $validator = Validator::make($inputs, [
+            'province_code' => 'required',
+            'district_code' => 'required',
+            'weight' => 'nullable|integer|min:1',
+        ]);
+
+        $validator->after(function($validator) use(&$inputs) {
+            if(!empty($inputs['dimension']))
+            {
+                $dimensions = explode('x', $inputs['dimension']);
+
+                if(count($dimensions) != 3)
+                    $validator->errors()->add('dimension', trans('validation.dimensions', ['attribute' => 'kích thước']));
+
+                foreach($dimensions as $dimension)
+                {
+                    $dimension = trim($dimension);
+                    if(empty($dimension) || !is_numeric($dimension) || $dimension < 1)
+                        $validator->errors()->add('dimension', trans('validation.dimensions', ['attribute' => 'kích thước']));
+                }
+            }
+        });
+
+        if($validator->passes())
+            return Order::calculateShippingPrice($inputs['province_code'], $inputs['district_code'], $inputs['weight'], $inputs['dimension']);
+        else
+            return json_encode($validator->errors()->all());
     }
 }
