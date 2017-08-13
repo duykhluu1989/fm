@@ -20,9 +20,11 @@ Route::group(['namespace' => 'Frontend', 'middleware' => ['locale']], function()
 
         Route::match(['get', 'post'], 'account', 'UserController@editAccount');
 
-        Route::get('quanlydongtien', 'UserController@quanlydongtien');
+        Route::get('account/order', 'UserController@adminOrder');
 
-        Route::get('quanlydonhang', 'UserController@quanlydonhang');
+        Route::get('account/order/{id}/detail', 'UserController@detailOrder');
+
+        Route::get('quanlydongtien', 'UserController@quanlydongtien');
 
         Route::get('tongquanchung', 'UserController@tongquanchung');
 

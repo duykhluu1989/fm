@@ -9,6 +9,8 @@ class Setting extends Model
     const WEB_TITLE = 'web_title';
     const WEB_DESCRIPTION = 'web_description';
     const WEB_KEYWORD = 'web_keyword';
+    const HOT_LINE = 'hot_line';
+    const CONTACT_EMAIL = 'contact_email';
 
     const TYPE_STRING_DB = 0;
     const TYPE_INT_DB = 1;
@@ -28,6 +30,8 @@ class Setting extends Model
             [self::WEB_TITLE, 'Tiêu Đề Website', self::TYPE_STRING_DB, 'parcelpost', self::CATEGORY_GENERAL_DB],
             [self::WEB_DESCRIPTION, 'Mô Tả Website', self::TYPE_STRING_DB, 'parcelpost', self::CATEGORY_GENERAL_DB],
             [self::WEB_KEYWORD, 'Từ Khóa', self::TYPE_STRING_DB, 'parcelpost', self::CATEGORY_GENERAL_DB],
+            [self::HOT_LINE, 'Hot Line', self::TYPE_STRING_DB, '', self::CATEGORY_GENERAL_DB],
+            [self::CONTACT_EMAIL, 'Contact Line', self::TYPE_STRING_DB, '', self::CATEGORY_GENERAL_DB],
         ];
 
         foreach($coreSettings as $coreSetting)

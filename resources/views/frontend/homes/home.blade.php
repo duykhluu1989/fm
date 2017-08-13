@@ -54,7 +54,7 @@
                     </div>
                     <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 thongtin_items">
                         <figure>
-                            <a class="btnThongtin" href="">
+                            <a class="btnThongtin" href="{{ (auth()->guest() ? action('Frontend\UserController@login') : action('Frontend\UserController@adminOrder')) }}">
                                 <img src="{{ asset('themes/images/img02.jpg') }}" alt="" class="img-responsive">
                             </a>
                         </figure>

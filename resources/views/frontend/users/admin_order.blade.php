@@ -111,23 +111,27 @@
                         <table class="table table-bordered table-hover table_QLDH">
                             <thead>
                             <tr>
-                                <th>Thông tin đơn hàng</th>
+                                <th>Mã đơn hàng</th>
                                 <th>Khách hàng</th>
                                 <th>Hàng hoá</th>
                                 <th>Ghi chú</th>
-                                <th>Thao tác</th>
+                                <th>Tiền thu hộ</th>
+                                <th>Phí ship</th>
+                                <th>Trạng thái</th>
                             </tr>
                             </thead>
                             <tbody>
 
                             @foreach($orders as $order)
                                 <tr>
-                                    <td>{{ $order->number }}</td>
+                                    <td>
+                                        <a class="label label-danger" href="{{ action('Frontend\UserController@detailOrder', ['id' => $order->id]) }}">{{ $order->number }}</a>
+                                    </td>
                                     <td>
                                         <?php
                                         foreach($order->orderAddresses as $orderAddress)
                                         {
-                                            if($orderAddress->type == \App\Models\OrderAddress::TYPE_SENDER_DB)
+                                            if($orderAddress->type == \App\Models\OrderAddress::TYPE_RECEIVER_DB)
                                             {
                                                 echo $orderAddress->name;
                                                 break;
@@ -138,11 +142,13 @@
                                     <td>
                                         <?php
                                         foreach($order->orderItems as $orderItem)
-                                            echo $orderItem->name;
+                                            echo $orderItem->quantity . ' x ' . $orderItem->name . '<br />';
                                         ?>
                                     </td>
                                     <td>{{ $order->note }}</td>
-                                    <td></td>
+                                    <td>{{ $order->cod_price }}</td>
+                                    <td>{{ $order->shipping_price }}</td>
+                                    <td>{{ $order->status }}</td>
                                 </tr>
                             @endforeach
 

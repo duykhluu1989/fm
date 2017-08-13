@@ -21,6 +21,8 @@ class Utility
 
     const MINUTE_ONE_MONTH = 43200;
 
+    const FRONTEND_ROWS_PER_PAGE = 20;
+
     public static function getTrueFalse($value = null)
     {
         $trueFalse = [

@@ -177,14 +177,29 @@ class UserController extends Controller
         return view('frontend.users.quanlydongtien');
     }
 
-    public function quanlydonhang()
+    public function adminOrder()
     {
         $user = auth()->user();
 
-        $orders = Order::where('user_id', $user->id)->get();
+        $orders = Order::where('user_id', $user->id)
+            ->orderBy('id', 'desc')
+            ->paginate(Utility::FRONTEND_ROWS_PER_PAGE);
 
-        return view('frontend.users.quanlydonhang', [
+        return view('frontend.users.admin_order', [
             'orders' => $orders,
+        ]);
+    }
+
+    public function detailOrder($id)
+    {
+        $user = auth()->user();
+
+        $order = Order::where('user_id', $user->id)
+            ->where('id', $id)
+            ->first();
+
+        return view('frontend.users.detail_order', [
+            'order' => $order,
         ]);
     }
 

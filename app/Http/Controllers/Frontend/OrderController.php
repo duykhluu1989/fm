@@ -247,7 +247,7 @@ class OrderController extends Controller
 
                     DB::commit();
 
-                    return redirect()->action('Frontend\UserController@quanlydonhang');
+                    return redirect()->action('Frontend\UserController@adminOrder');
                 }
                 catch(\Exception $e)
                 {
