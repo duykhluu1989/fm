@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
+    const STATUS_PENDING_APPROVE_DB = 'Pending Approve';
+
     const SHIPPING_PAYMENT_SENDER_DB = 0;
     const SHIPPING_PAYMENT_RECEIVER_DB = 1;
 
@@ -24,6 +26,11 @@ class Order extends Model
             $order->generateDo();
             $order->save();
         });
+    }
+
+    public function user()
+    {
+        return $this->belongsTo('App\Models\User', 'user_id');
     }
 
     public function orderItems()
@@ -56,8 +63,6 @@ class Order extends Model
     public static function calculateShippingPrice($provinceId, $districtId, $weight, $dimension)
     {
         $shippingPrice = 0;
-
-        $netWeight = 0;
 
         if(!empty($weight))
         {

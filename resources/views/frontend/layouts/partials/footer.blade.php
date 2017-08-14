@@ -4,12 +4,12 @@
             <div class="row">
                 <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 display_table boxmH text-center">
                     <div class="table_content">
-                        <a href="index.php"><img src="{{ asset('themes/images/logo_white.png') }}" alt="" class="img-reponsive"></a>
+                        <a href="{{ action('Frontend\HomeController@home') }}"><img src="{{ asset('themes/images/logo_white.png') }}" alt="" class="img-reponsive"></a>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 display_table boxmH">
                     <h2>VỀ CHÚNG TÔI</h2>
-                    <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet </p>
+                    <p>{{ \App\Models\Setting::getSettings(\App\Models\Setting::CATEGORY_GENERAL_DB, \App\Models\Setting::ABOUT_US) }}</p>
                     <p><b>Hotline</b> : {{ \App\Models\Setting::getSettings(\App\Models\Setting::CATEGORY_GENERAL_DB, \App\Models\Setting::HOT_LINE) }}<br>
                         <b>Website</b> : <a href="{{ action('Frontend\HomeController@home') }}">{{ request()->getHost() }}</a><br>
                         <b>Email</b> : <a href="mailto:{{ \App\Models\Setting::getSettings(\App\Models\Setting::CATEGORY_GENERAL_DB, \App\Models\Setting::CONTACT_EMAIL) }}">{{ \App\Models\Setting::getSettings(\App\Models\Setting::CATEGORY_GENERAL_DB, \App\Models\Setting::CONTACT_EMAIL) }}</a></p>
@@ -25,6 +25,11 @@
                 </div>
                 <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
                     <h2>FACEBOOK</h2>
+                    <div class="fb-page" data-href="{{ \App\Models\Setting::getSettings(\App\Models\Setting::CATEGORY_SOCIAL_DB, \App\Models\Setting::FACEBOOK_PAGE_URL) }}" data-tabs="timeline" data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true">
+                        <blockquote cite="{{ \App\Models\Setting::getSettings(\App\Models\Setting::CATEGORY_SOCIAL_DB, \App\Models\Setting::FACEBOOK_PAGE_URL) }}" class="fb-xfbml-parse-ignore">
+                        </blockquote>
+                    </div>
+
                     <a href="#"><img src="{{ asset('themes/images/img_fanfage.jpg') }}" alt="" class="img-responsive"></a>
                 </div>
             </div>

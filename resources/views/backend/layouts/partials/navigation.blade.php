@@ -32,6 +32,9 @@
                     <li class="{{ (request()->is('admin/setting') ? 'active' : '') }}">
                         <a href="{{ action('Backend\SettingController@adminSetting') }}">Tổng quan</a>
                     </li>
+                    <li class="{{ (request()->is('admin/setting/social') ? 'active' : '') }}">
+                        <a href="{{ action('Backend\SettingController@adminSettingSocial') }}">Mạng Xã Hội</a>
+                    </li>
                 </ul>
             </li>
         </ul>

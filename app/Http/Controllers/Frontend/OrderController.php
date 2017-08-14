@@ -177,6 +177,7 @@ class OrderController extends Controller
                         $order->total_cod_price = $order->cod_price;
 
                     $order->note = $inputs['note'];
+                    $order->status = Order::STATUS_PENDING_APPROVE_DB;
                     $order->save();
 
                     if(empty($user->customerInformation))

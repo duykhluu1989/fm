@@ -12,12 +12,19 @@ class Setting extends Model
     const HOT_LINE = 'hot_line';
     const CONTACT_EMAIL = 'contact_email';
     const WORKING_TIME = 'working_time';
+    const ABOUT_US = 'about_us';
+
+    const FACEBOOK_APP_ID = 'facebook_app_id';
+    const FACEBOOK_APP_SECRET = 'facebook_app_secret';
+    const FACEBOOK_GRAPH_VERSION = 'facebook_graph_version';
+    const FACEBOOK_PAGE_URL = 'facebook_page_url';
 
     const TYPE_STRING_DB = 0;
     const TYPE_INT_DB = 1;
     const TYPE_JSON_DB = 2;
 
     const CATEGORY_GENERAL_DB = 0;
+    const CATEGORY_SOCIAL_DB = 2;
 
     protected static $settings;
 
@@ -34,6 +41,12 @@ class Setting extends Model
             [self::HOT_LINE, 'Hot Line', self::TYPE_STRING_DB, '', self::CATEGORY_GENERAL_DB],
             [self::CONTACT_EMAIL, 'Email Liên Hệ', self::TYPE_STRING_DB, '', self::CATEGORY_GENERAL_DB],
             [self::WORKING_TIME, 'Thời Gian Làm Việc', self::TYPE_STRING_DB, '', self::CATEGORY_GENERAL_DB],
+            [self::ABOUT_US, 'Về Chúng Tôi', self::TYPE_STRING_DB, '', self::CATEGORY_GENERAL_DB],
+
+            [self::FACEBOOK_APP_ID, 'Facebook App Id', self::TYPE_STRING_DB, '', self::CATEGORY_SOCIAL_DB],
+            [self::FACEBOOK_APP_SECRET, 'Facebook App Secret', self::TYPE_STRING_DB, '', self::CATEGORY_SOCIAL_DB],
+            [self::FACEBOOK_GRAPH_VERSION, 'Facebook Graph Version', self::TYPE_STRING_DB, 'v2.9', self::CATEGORY_SOCIAL_DB],
+            [self::FACEBOOK_PAGE_URL, 'Facebook Page', self::TYPE_STRING_DB, '', self::CATEGORY_SOCIAL_DB],
         ];
 
         foreach($coreSettings as $coreSetting)
