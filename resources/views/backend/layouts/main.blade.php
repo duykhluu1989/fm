@@ -30,6 +30,7 @@
                 <ul class="nav navbar-nav">
                     <li class="dropdown user user-menu">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="fa fa-user fa-fw"></i>
                             <span class="hidden-xs">{{ auth()->user()->username }}</span>
                         </a>
                         <ul class="dropdown-menu">

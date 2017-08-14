@@ -151,7 +151,10 @@ class UserController extends Controller
 
     public function createUser(Request $request)
     {
-        Utility::setBackUrlCookie($request, '/admin/user?');
+        Utility::setBackUrlCookie($request, [
+            '/admin/userCustomer',
+            '/admin/user?',
+        ]);
 
         $user = new User();
         $user->status = Utility::ACTIVE_DB;
@@ -193,7 +196,10 @@ class UserController extends Controller
 
     public function editUser(Request $request, $id)
     {
-        Utility::setBackUrlCookie($request, '/admin/user?');
+        Utility::setBackUrlCookie($request, [
+            '/admin/userCustomer',
+            '/admin/user?',
+        ]);
 
         $user = User::with('userRoles', 'customerInformation', 'userAddresses')->find($id);
 
@@ -288,6 +294,130 @@ class UserController extends Controller
     public function generateApiKey()
     {
         return User::generateApiKey();
+    }
+
+    public function adminUserCustomer(Request $request)
+    {
+        $dataProvider = User::with('customerInformation')
+            ->select('id', 'username', 'name', 'email', 'status')
+            ->orderBy('id', 'desc');
+
+        $inputs = $request->all();
+
+        if(count($inputs) > 0)
+        {
+            if(!empty($inputs['username']))
+                $dataProvider->where('username', 'like', '%' . $inputs['username'] . '%');
+
+            if(!empty($inputs['email']))
+                $dataProvider->where('email', 'like', '%' . $inputs['email'] . '%');
+
+            if(!empty($inputs['name']))
+                $dataProvider->where('name', 'like', '%' . $inputs['name'] . '%');
+
+            if(isset($inputs['status']) && $inputs['status'] !== '')
+                $dataProvider->where('status', $inputs['status']);
+
+            if(isset($inputs['wholesale']) && $inputs['wholesale'] !== '')
+            {
+                if($inputs['wholesale'] == Utility::ACTIVE_DB)
+                    $dataProvider->whereNotNull('api_key');
+                else
+                    $dataProvider->whereNull('api_key');
+            }
+        }
+
+        $dataProvider = $dataProvider->paginate(GridView::ROWS_PER_PAGE);
+
+        $columns = [
+            [
+                'title' => 'Tên Tài Khoản',
+                'data' => function($row) {
+                    echo Html::a($row->username, [
+                        'href' => action('Backend\UserController@editUser', ['id' => $row->id]),
+                    ]);
+                },
+            ],
+            [
+                'title' => 'Email',
+                'data' => 'email',
+            ],
+            [
+                'title' => 'Tên',
+                'data' => function($row) {
+                    echo $row->name;
+                },
+            ],
+            [
+                'title' => 'Trạng Thái',
+                'data' => function($row) {
+                    $status = Utility::getTrueFalse($row->status);
+                    if($row->status == Utility::ACTIVE_DB)
+                        echo Html::span($status, ['class' => 'label label-success']);
+                    else
+                        echo Html::span($status, ['class' => 'label label-danger']);
+                },
+            ],
+            [
+                'title' => 'Tổng Số Đơn Hàng',
+                'data' => function($row) {
+                    if(!empty($row->customerInformation))
+                        echo Utility::formatNumber($row->customerInformation->order_count);
+                },
+            ],
+            [
+                'title' => 'Đơn Hàng Hoàn Thành',
+                'data' => function($row) {
+                    if(!empty($row->customerInformation))
+                        echo Utility::formatNumber($row->customerInformation->complete_order_count);
+                },
+            ],
+            [
+                'title' => 'Đơn Hàng Không Giao Được',
+                'data' => function($row) {
+                    if(!empty($row->customerInformation))
+                        echo Utility::formatNumber($row->customerInformation->fail_order_count);
+                },
+            ],
+            [
+                'title' => 'Đơn Hàng Hủy',
+                'data' => function($row) {
+                    if(!empty($row->customerInformation))
+                        echo Utility::formatNumber($row->customerInformation->cancel_order_count);
+                },
+            ],
+        ];
+
+        $gridView = new GridView($dataProvider, $columns);
+        $gridView->setFilters([
+            [
+                'title' => 'Tên Tài Khoản',
+                'name' => 'username',
+                'type' => 'input',
+            ],
+            [
+                'title' => 'Email',
+                'name' => 'email',
+                'type' => 'input',
+            ],
+            [
+                'title' => 'Trạng Thái',
+                'name' => 'status',
+                'type' => 'select',
+                'options' => Utility::getTrueFalse(),
+            ],
+            [
+                'title' => 'Wholesale',
+                'name' => 'wholesale',
+                'type' => 'select',
+                'options' => Utility::getTrueFalse(),
+            ],
+        ]);
+        $gridView->setFilterValues($inputs);
+
+        return view('backend.users.admin_user_customer', [
+            'gridView' => $gridView,
+        ]);
     }
 
     public function editAccount(Request $request)

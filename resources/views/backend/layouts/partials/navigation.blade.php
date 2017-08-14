@@ -18,6 +18,9 @@
                     <li class="{{ (request()->is('admin/user') ? 'active' : '') }}">
                         <a href="{{ action('Backend\UserController@adminUser') }}">Quản Trị Viên</a>
                     </li>
+                    <li class="{{ (request()->is('admin/userCustomer') ? 'active' : '') }}">
+                        <a href="{{ action('Backend\UserController@adminUserCustomer') }}">Khách Hàng</a>
+                    </li>
                 </ul>
             </li>
             <li class="{{ (request()->is('admin/role*') ? 'active' : '') }}">
