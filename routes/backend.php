@@ -20,6 +20,8 @@ Route::group(['namespace' => 'Backend'], function() {
 
         Route::post('refreshCsrfToken', 'HomeController@refreshCsrfToken');
 
+        Route::get('user/generateApiKey', 'UserController@generateApiKey');
+
     });
 
     Route::group(['middleware' => ['auth', 'access', 'permission']], function() {
@@ -37,6 +39,22 @@ Route::group(['namespace' => 'Backend'], function() {
         Route::match(['get', 'post'], 'elFinder/popupConnector', 'ElFinderController@popupConnector');
 
         Route::get('elFinder/tinymce', 'ElFinderController@tinymce');
+
+        Route::get('user', 'UserController@adminUser');
+
+        Route::match(['get', 'post'], 'user/create', 'UserController@createUser');
+
+        Route::match(['get', 'post'], 'user/{id}/edit', 'UserController@editUser');
+
+        Route::get('role', 'RoleController@adminRole');
+
+        Route::match(['get', 'post'], 'role/create', 'RoleController@createRole');
+
+        Route::match(['get', 'post'], 'role/{id}/edit', 'RoleController@editRole');
+
+        Route::get('role/{id}/delete', 'RoleController@deleteRole');
+
+        Route::get('role/controlDelete', 'RoleController@controlDeleteRole');
 
         Route::match(['get', 'post'], 'setting', 'SettingController@adminSetting');
 

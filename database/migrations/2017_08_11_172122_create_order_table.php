@@ -15,6 +15,7 @@ class CreateOrderTable extends Migration
             $table->dateTime('created_at');
             $table->dateTime('cancelled_at')->nullable();
             $table->dateTime('shipped_at')->nullable();
+            $table->dateTime('failed_at')->nullable();
             $table->double('cod_price')->unsigned()->default(0);
             $table->double('shipping_price')->unsigned()->default(0);
             $table->double('total_cod_price')->unsigned()->default(0);

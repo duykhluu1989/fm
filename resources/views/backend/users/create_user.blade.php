@@ -25,18 +25,9 @@
                     <div class="col-sm-12">
                         <div class="form-group{{ $errors->has('first_name') ? ' has-error': '' }}">
                             <label>Tên <i>(bắt buộc)</i></label>
-                            <input type="text" class="form-control" name="first_name" required="required" value="{{ old('first_name') }}" />
-                            @if($errors->has('first_name'))
-                                <span class="help-block">{{ $errors->first('first_name') }}</span>
-                            @endif
-                        </div>
-                    </div>
-                    <div class="col-sm-12">
-                        <div class="form-group{{ $errors->has('last_name') ? ' has-error': '' }}">
-                            <label>Họ</label>
-                            <input type="text" class="form-control" name="last_name" value="{{ old('last_name') }}" />
-                            @if($errors->has('last_name'))
-                                <span class="help-block">{{ $errors->first('last_name') }}</span>
+                            <input type="text" class="form-control" name="name" required="required" value="{{ old('name') }}" />
+                            @if($errors->has('name'))
+                                <span class="help-block">{{ $errors->first('name') }}</span>
                             @endif
                         </div>
                     </div>
@@ -57,7 +48,7 @@
                             ?>
                             <div class="checkbox">
                                 <label>
-                                    <input type="checkbox" name="status" value="{{ \App\Libraries\Helpers\Utility::ACTIVE_DB }}"<?php echo ($status == \App\Libraries\Helpers\Utility::ACTIVE_DB ? ' checked="checked"' : ''); ?> data-toggle="toggle" data-on="{{ \App\Models\User::STATUS_ACTIVE_LABEL }}" data-off="{{ \App\Models\User::STATUS_INACTIVE_LABEL }}" data-onstyle="success" data-offstyle="danger" />
+                                    <input type="checkbox" name="status" value="{{ \App\Libraries\Helpers\Utility::ACTIVE_DB }}"<?php echo ($status == \App\Libraries\Helpers\Utility::ACTIVE_DB ? ' checked="checked"' : ''); ?> data-toggle="toggle" data-on="{{ \App\Libraries\Helpers\Utility::TRUE_LABEL }}" data-off="{{ \App\Libraries\Helpers\Utility::FALSE_LABEL }}" data-onstyle="success" data-offstyle="danger" />
                                 </label>
                             </div>
                         </div>
@@ -73,51 +64,6 @@
                             <div class="checkbox">
                                 <label>
                                     <input type="checkbox" name="admin" value="{{ \App\Libraries\Helpers\Utility::ACTIVE_DB }}"<?php echo ($admin == \App\Libraries\Helpers\Utility::ACTIVE_DB ? ' checked="checked"' : ''); ?> data-toggle="toggle" data-on="{{ \App\Libraries\Helpers\Utility::TRUE_LABEL }}" data-off="{{ \App\Libraries\Helpers\Utility::FALSE_LABEL }}" data-onstyle="success" data-offstyle="danger" />
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-4">
-                        <div class="form-group">
-                            <label>Cộng Tác Viên</label>
-                            <?php
-                            $collaborator = old('collaborator', $user->collaborator);
-                            ?>
-                            <div class="checkbox">
-                                <label>
-                                    <input type="checkbox" name="collaborator" value="{{ \App\Libraries\Helpers\Utility::ACTIVE_DB }}"<?php echo ($collaborator == \App\Libraries\Helpers\Utility::ACTIVE_DB ? ' checked="checked"' : ''); ?> data-toggle="toggle" data-on="{{ \App\Libraries\Helpers\Utility::TRUE_LABEL }}" data-off="{{ \App\Libraries\Helpers\Utility::FALSE_LABEL }}" data-onstyle="success" data-offstyle="danger" />
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-4">
-                        <div class="form-group">
-                            <label>Giảng Viên</label>
-                            <?php
-                            $teacher = old('teacher', $user->teacher);
-                            ?>
-                            <div class="checkbox">
-                                <label>
-                                    <input type="checkbox" name="teacher" value="{{ \App\Libraries\Helpers\Utility::ACTIVE_DB }}"<?php echo ($teacher == \App\Libraries\Helpers\Utility::ACTIVE_DB ? ' checked="checked"' : ''); ?> data-toggle="toggle" data-on="{{ \App\Libraries\Helpers\Utility::TRUE_LABEL }}" data-off="{{ \App\Libraries\Helpers\Utility::FALSE_LABEL }}" data-onstyle="success" data-offstyle="danger" />
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-4">
-                        <div class="form-group">
-                            <label>Chuyên Gia</label>
-                            <?php
-                            $expert = old('expert', $user->expert);
-                            ?>
-                            <div class="checkbox">
-                                <label>
-                                    <input type="checkbox" name="expert" value="{{ \App\Libraries\Helpers\Utility::ACTIVE_DB }}"<?php echo ($expert == \App\Libraries\Helpers\Utility::ACTIVE_DB ? ' checked="checked"' : ''); ?> data-toggle="toggle" data-on="{{ \App\Libraries\Helpers\Utility::TRUE_LABEL }}" data-off="{{ \App\Libraries\Helpers\Utility::FALSE_LABEL }}" data-onstyle="success" data-offstyle="danger" />
                                 </label>
                             </div>
                         </div>

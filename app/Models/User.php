@@ -39,4 +39,31 @@ class User extends Authenticatable
         $user->created_at = date('Y-m-d H:i:s');
         $user->save();
     }
+
+    public static function generateApiKey()
+    {
+        $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+        $charactersLength = strlen($characters);
+        $times = 0;
+        $maxTimes = 20;
+
+        do
+        {
+            $randomString = '';
+
+            for($i = 0; $i < 48; $i++)
+                $randomString .= $characters[rand(0, $charactersLength - 1)];
+
+            $key = User::where('api_key', $randomString)->first();
+
+            $times ++;
+        }
+        while(!empty($key) && $times < $maxTimes);
+
+        if(empty($key))
+            return $randomString;
+
+        return null;
+    }
 }

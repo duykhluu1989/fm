@@ -15,29 +15,26 @@
                 <div class="nav-tabs-custom">
                     <ul class="nav nav-tabs">
                         <li class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="true"><b>Thông Tin Tài Khoản</b></a></li>
-                        <li class=""><a href="#tab_2" data-toggle="tab" aria-expanded="false"><b>Thông Tin Thành Viên</b></a></li>
+                        <li class=""><a href="#tab_2" data-toggle="tab" aria-expanded="false"><b>Địa Chỉ</b></a></li>
                     </ul>
                     <div class="tab-content">
                         <div class="tab-pane active" id="tab_1">
                             <div class="row">
-                                <div class="col-sm-4">
-                                    <div class="form-group{{ $errors->has('avatar') ? ' has-error': '' }}">
-                                        <label>Ảnh Đại Diện <i>(200 x 200)</i></label>
-                                        <input type="file" class="form-control" name="avatar" accept="{{ implode(', ', \App\Libraries\Helpers\Utility::getValidImageExt(true)) }}" />
-                                        @if($errors->has('avatar'))
-                                            <span class="help-block">{{ $errors->first('avatar') }}</span>
-                                        @endif
-                                        @if(!empty($user->avatar))
-                                            <img src="{{ $user->avatar }}" width="150px" alt="User Avatar" />
-                                        @endif
-                                    </div>
-                                </div>
                                 <div class="col-sm-12">
                                     <div class="form-group{{ $errors->has('username') ? ' has-error': '' }}">
                                         <label>Tên Tài Khoản <i>(bắt buộc)</i></label>
                                         <input type="text" class="form-control" name="username" required="required" value="{{ old('username', $user->username) }}" />
                                         @if($errors->has('username'))
                                             <span class="help-block">{{ $errors->first('username') }}</span>
+                                        @endif
+                                    </div>
+                                </div>
+                                <div class="col-sm-12">
+                                    <div class="form-group{{ $errors->has('name') ? ' has-error': '' }}">
+                                        <label>Tên <i>(bắt buộc)</i></label>
+                                        <input type="text" class="form-control" name="name" required="required" value="{{ old('name', $user->name) }}" />
+                                        @if($errors->has('name'))
+                                            <span class="help-block">{{ $errors->first('name') }}</span>
                                         @endif
                                     </div>
                                 </div>
@@ -56,34 +53,73 @@
                                         <span class="form-control no-border">{{ $user->created_at }}</span>
                                     </div>
                                 </div>
+                            </div>
+                            <div class="row">
                                 <div class="col-sm-4">
                                     <div class="form-group">
-                                        <label>Số Lượng Khóa Học</label>
-                                        <span class="form-control no-border">{{ !empty($user->studentInformation) ? \App\Libraries\Helpers\Utility::formatNumber($user->studentInformation->course_count) : '' }}</span>
+                                        <label>Tổng Số Đơn Hàng</label>
+                                        <span class="form-control no-border">{{ !empty($user->customerInformation) ? \App\Libraries\Helpers\Utility::formatNumber($user->customerInformation->order_count) : '' }}</span>
                                     </div>
                                 </div>
                                 <div class="col-sm-4">
                                     <div class="form-group">
-                                        <label>Số Lượng Khóa Học Đã Hoàn Thành</label>
-                                        <span class="form-control no-border">{{ !empty($user->studentInformation) ? \App\Libraries\Helpers\Utility::formatNumber($user->studentInformation->finish_course_count) : '' }}</span>
+                                        <label>Đơn Hàng Hoàn Thành</label>
+                                        <span class="form-control no-border">{{ !empty($user->customerInformation) ? \App\Libraries\Helpers\Utility::formatNumber($user->customerInformation->complete_order_count) : '' }}</span>
                                     </div>
                                 </div>
                                 <div class="col-sm-4">
                                     <div class="form-group">
-                                        <label>Tổng Chi Tiêu</label>
-                                        <span class="form-control no-border">{{ !empty($user->studentInformation) ? (\App\Libraries\Helpers\Utility::formatNumber($user->studentInformation->total_spent) . ' VND') : '' }}</span>
+                                        <label>Đơn Hàng Không Giao Được</label>
+                                        <span class="form-control no-border">{{ !empty($user->customerInformation) ? \App\Libraries\Helpers\Utility::formatNumber($user->customerInformation->fail_order_count) : '' }}</span>
                                     </div>
                                 </div>
                                 <div class="col-sm-4">
                                     <div class="form-group">
-                                        <label>Điểm Hiện Tại</label>
-                                        <span class="form-control no-border">{{ !empty($user->studentInformation) ? \App\Libraries\Helpers\Utility::formatNumber($user->studentInformation->current_point) : '' }}</span>
+                                        <label>Đơn Hàng Hủy</label>
+                                        <span class="form-control no-border">{{ !empty($user->customerInformation) ? \App\Libraries\Helpers\Utility::formatNumber($user->customerInformation->cancel_order_count) : '' }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label>Ngân hàng</label>
+                                        <input type="text" class="form-control" name="bank" value="{{ old('bank', $user->bank) }}" />
                                     </div>
                                 </div>
                                 <div class="col-sm-4">
                                     <div class="form-group">
-                                        <label>Tổng Điểm</label>
-                                        <span class="form-control no-border">{{ !empty($user->studentInformation) ? \App\Libraries\Helpers\Utility::formatNumber($user->studentInformation->total_point) : '' }}</span>
+                                        <label>Chủ Tài Khoản</label>
+                                        <input type="text" class="form-control" name="bank_holder" value="{{ old('bank_holder', $user->bank_holder) }}" />
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group{{ $errors->has('bank_number') ? ' has-error': '' }}">
+                                        <label>Số Tài Khoản</label>
+                                        <input type="text" class="form-control" name="bank_number" value="{{ old('bank_number', $user->bank_number) }}" />
+                                        @if($errors->has('bank_number'))
+                                            <span class="help-block">{{ $errors->first('bank_number') }}</span>
+                                        @endif
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label>Chi Nhánh</label>
+                                        <input type="text" class="form-control" name="bank_branch" value="{{ old('bank_branch', $user->bank_branch) }}" />
+                                    </div>
+                                </div>
+                                <div class="col-sm-12">
+                                    <div class="form-group{{ $errors->has('api_key') ? ' has-error': '' }}">
+                                        <label>Api Key</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" id="ApiKeyInput" name="api_key" value="{{ old('api_key', $user->api_key) }}" />
+                                            <span class="input-group-btn">
+                                                <button type="button" class="btn btn-primary" id="GenerateApiKeyButton">Tạo Api Key</button>
+                                            </span>
+                                        </div>
+                                        @if($errors->has('api_key'))
+                                            <span class="help-block">{{ $errors->first('api_key') }}</span>
+                                        @endif
                                     </div>
                                 </div>
                                 <div class="col-sm-4">
@@ -94,7 +130,7 @@
                                         ?>
                                         <div class="checkbox">
                                             <label>
-                                                <input type="checkbox" name="status" value="{{ \App\Libraries\Helpers\Utility::ACTIVE_DB }}"<?php echo ($status == \App\Libraries\Helpers\Utility::ACTIVE_DB ? ' checked="checked"' : ''); ?> data-toggle="toggle" data-on="{{ \App\Models\User::STATUS_ACTIVE_LABEL }}" data-off="{{ \App\Models\User::STATUS_INACTIVE_LABEL }}" data-onstyle="success" data-offstyle="danger" />
+                                                <input type="checkbox" name="status" value="{{ \App\Libraries\Helpers\Utility::ACTIVE_DB }}"<?php echo ($status == \App\Libraries\Helpers\Utility::ACTIVE_DB ? ' checked="checked"' : ''); ?> data-toggle="toggle" data-on="{{ \App\Libraries\Helpers\Utility::TRUE_LABEL }}" data-off="{{ \App\Libraries\Helpers\Utility::FALSE_LABEL }}" data-onstyle="success" data-offstyle="danger" />
                                             </label>
                                         </div>
                                     </div>
@@ -110,51 +146,6 @@
                                         <div class="checkbox">
                                             <label>
                                                 <input type="checkbox" name="admin" value="{{ \App\Libraries\Helpers\Utility::ACTIVE_DB }}"<?php echo ($admin == \App\Libraries\Helpers\Utility::ACTIVE_DB ? ' checked="checked"' : ''); ?> data-toggle="toggle" data-on="{{ \App\Libraries\Helpers\Utility::TRUE_LABEL }}" data-off="{{ \App\Libraries\Helpers\Utility::FALSE_LABEL }}" data-onstyle="success" data-offstyle="danger" />
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-sm-4">
-                                    <div class="form-group">
-                                        <label>Cộng Tác Viên</label>
-                                        <?php
-                                        $collaborator = old('collaborator', $user->collaborator);
-                                        ?>
-                                        <div class="checkbox">
-                                            <label>
-                                                <input type="checkbox" name="collaborator" value="{{ \App\Libraries\Helpers\Utility::ACTIVE_DB }}"<?php echo ($collaborator == \App\Libraries\Helpers\Utility::ACTIVE_DB ? ' checked="checked"' : ''); ?> data-toggle="toggle" data-on="{{ \App\Libraries\Helpers\Utility::TRUE_LABEL }}" data-off="{{ \App\Libraries\Helpers\Utility::FALSE_LABEL }}" data-onstyle="success" data-offstyle="danger" />
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-sm-4">
-                                    <div class="form-group">
-                                        <label>Giảng Viên</label>
-                                        <?php
-                                        $teacher = old('teacher', $user->teacher);
-                                        ?>
-                                        <div class="checkbox">
-                                            <label>
-                                                <input type="checkbox" name="teacher" value="{{ \App\Libraries\Helpers\Utility::ACTIVE_DB }}"<?php echo ($teacher == \App\Libraries\Helpers\Utility::ACTIVE_DB ? ' checked="checked"' : ''); ?> data-toggle="toggle" data-on="{{ \App\Libraries\Helpers\Utility::TRUE_LABEL }}" data-off="{{ \App\Libraries\Helpers\Utility::FALSE_LABEL }}" data-onstyle="success" data-offstyle="danger" />
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-sm-4">
-                                    <div class="form-group">
-                                        <label>Chuyên Gia</label>
-                                        <?php
-                                        $expert = old('expert', $user->expert);
-                                        ?>
-                                        <div class="checkbox">
-                                            <label>
-                                                <input type="checkbox" name="expert" value="{{ \App\Libraries\Helpers\Utility::ACTIVE_DB }}"<?php echo ($expert == \App\Libraries\Helpers\Utility::ACTIVE_DB ? ' checked="checked"' : ''); ?> data-toggle="toggle" data-on="{{ \App\Libraries\Helpers\Utility::TRUE_LABEL }}" data-off="{{ \App\Libraries\Helpers\Utility::FALSE_LABEL }}" data-onstyle="success" data-offstyle="danger" />
                                             </label>
                                         </div>
                                     </div>
@@ -207,125 +198,7 @@
                         </div>
                         <div class="tab-pane" id="tab_2">
                             <div class="row">
-                                <div class="col-sm-12">
-                                    <div class="form-group{{ $errors->has('first_name') ? ' has-error': '' }}">
-                                        <label>Tên <i>(bắt buộc)</i></label>
-                                        <input type="text" class="form-control" name="first_name" required="required" value="{{ old('first_name', $user->profile->first_name) }}" />
-                                        @if($errors->has('first_name'))
-                                            <span class="help-block">{{ $errors->first('first_name') }}</span>
-                                        @endif
-                                    </div>
-                                </div>
-                                <div class="col-sm-12">
-                                    <div class="form-group{{ $errors->has('last_name') ? ' has-error': '' }}">
-                                        <label>Họ</label>
-                                        <input type="text" class="form-control" name="last_name" value="{{ old('last_name', $user->profile->last_name) }}" />
-                                        @if($errors->has('last_name'))
-                                            <span class="help-block">{{ $errors->first('last_name') }}</span>
-                                        @endif
-                                    </div>
-                                </div>
-                                <div class="col-sm-4">
-                                    <div class="form-group">
-                                        <label>Chức Danh</label>
-                                        <input type="text" class="form-control" name="title" value="{{ old('title', $user->profile->title) }}" />
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-sm-4">
-                                    <div class="form-group">
-                                        <label>Giới Tính</label>
-                                        <?php
-                                        $gender = old('gender', $user->profile->gender);
-                                        ?>
-                                        <div>
-                                            @foreach(\App\Models\Profile::getProfileGender() as $value => $label)
-                                                @if($gender == $value)
-                                                    <label class="radio-inline">
-                                                        <input type="radio" name="gender" checked="checked" value="{{ $value }}">{{ $label }}
-                                                    </label>
-                                                @else
-                                                    <label class="radio-inline">
-                                                        <input type="radio" name="gender" value="{{ $value }}">{{ $label }}
-                                                    </label>
-                                                @endif
-                                            @endforeach
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-sm-4">
-                                    <div class="form-group{{ $errors->has('phone') ? ' has-error': '' }}">
-                                        <label>Số Điện Thoại</label>
-                                        <input type="text" class="form-control" name="phone" value="{{ old('phone', $user->profile->phone) }}" />
-                                        @if($errors->has('phone'))
-                                            <span class="help-block">{{ $errors->first('phone') }}</span>
-                                        @endif
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-sm-4">
-                                    <div class="form-group{{ $errors->has('birthday') ? ' has-error': '' }}">
-                                        <label>Ngày Sinh</label>
-                                        <input type="text" class="form-control DatePicker" name="birthday" value="{{ old('birthday', $user->profile->birthday) }}" />
-                                        @if($errors->has('birthday'))
-                                            <span class="help-block">{{ $errors->first('birthday') }}</span>
-                                        @endif
-                                    </div>
-                                </div>
-                                <div class="col-sm-12">
-                                    <div class="form-group">
-                                        <label>Địa Chỉ</label>
-                                        <input type="text" class="form-control" name="address" value="{{ old('address', $user->profile->address) }}" />
-                                    </div>
-                                </div>
-                                <div class="col-sm-4">
-                                    <div class="form-group">
-                                        <label>Tỉnh / Thành Phố</label>
-                                        <select id="ProfileProvince" name="province" class="form-control">
-                                            <?php
-                                            $province = old('province', \App\Libraries\Helpers\Area::getCodeFromName($user->profile->province));
-                                            ?>
-                                            <option value=""></option>
-                                            @foreach(\App\Libraries\Helpers\Area::$provinces as $code => $data)
-                                                @if($province == $code)
-                                                    <option selected="selected" value="{{ $code }}">{{ $data['name'] }}</option>
-                                                @else
-                                                    <option value="{{ $code }}">{{ $data['name'] }}</option>
-                                                @endif
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-sm-4">
-                                    <div class="form-group">
-                                        <label>Quận / Huyện</label>
-                                        <select id="ProfileDistrict" name="district" class="form-control">
-                                            <?php
-                                            $district = old('district', \App\Libraries\Helpers\Area::getCodeFromName($user->profile->district, 'district'));
-                                            ?>
-                                            <option value=""></option>
-                                            @if($district && isset(\App\Libraries\Helpers\Area::$provinces[$province]['cities']))
-                                                @foreach(\App\Libraries\Helpers\Area::$provinces[$province]['cities'] as $code => $data)
-                                                    @if($district == $code)
-                                                        <option selected="selected" value="{{ $code }}">{{ $data }}</option>
-                                                    @else
-                                                        <option value="{{ $code }}">{{ $data }}</option>
-                                                    @endif
-                                                @endforeach
-                                            @endif
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-sm-12">
-                                    <div class="form-group">
-                                        <label>Mô Tả</label>
-                                        <textarea class="form-control" name="description">{{ old('description', $user->profile->description) }}</textarea>
-                                    </div>
-                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -349,37 +222,17 @@
 @push('scripts')
     <script src="{{ asset('assets/js/bootstrap-toggle.min.js') }}"></script>
     <script type="text/javascript">
-        $('#ProfileProvince').change(function() {
-            var districtElem = $('#ProfileDistrict');
-
-            districtElem.html('' +
-                '<option value=""></option>' +
-            '');
-
-            if($(this).val() != '')
-            {
-                $.ajax({
-                    url: '{{ action('Backend\UserController@getListDistrict') }}',
-                    type: 'get',
-                    data: 'province_code=' + $(this).val(),
-                    success: function(result) {
-                        if(result)
-                        {
-                            result = JSON.parse(result);
-
-                            for(var code in result)
-                            {
-                                if(result.hasOwnProperty(code))
-                                {
-                                    districtElem.append('' +
-                                        '<option value="' + code + '">' + result[code] + '</option>' +
-                                    '');
-                                }
-                            }
-                        }
-                    }
-                });
-            }
+        $('#GenerateApiKeyButton').click(function() {
+            $.ajax({
+                url: '{{ action('Backend\UserController@generateApiKey') }}',
+                type: 'get',
+                success: function(result) {
+                    if(result)
+                        $('#ApiKeyInput').val(result);
+                    else
+                        alert('Tạo Api Key Thất Bại');
+                }
+            });
         });
     </script>
 @endpush
