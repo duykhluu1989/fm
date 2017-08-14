@@ -1163,9 +1163,14 @@ class Area
             }
             else
             {
-                foreach($data['cities'] as $districtCode => $districtName)
+                foreach($data['cities'] as $districtCode => $district)
                 {
-                    if($name == $districtName)
+                    if(is_array($district))
+                    {
+                        if($name == $district['name'])
+                            return $districtCode;
+                    }
+                    else if($name == $district)
                         return $districtCode;
                 }
             }

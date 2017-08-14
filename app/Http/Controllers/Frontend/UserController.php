@@ -116,7 +116,7 @@ class UserController extends Controller
                 $userAddress->phone = $inputs['register_phone'];
                 $userAddress->address = $inputs['register_address'];
                 $userAddress->province = Area::$provinces[$inputs['register_province']]['name'];
-                $userAddress->district = Area::$provinces[$inputs['register_province']]['cities'][$inputs['register_district']];
+                $userAddress->district = is_array(Area::$provinces[$inputs['register_province']]['cities'][$inputs['register_district']]) ? Area::$provinces[$inputs['register_province']]['cities'][$inputs['register_district']]['name'] : Area::$provinces[$inputs['register_province']]['cities'][$inputs['register_district']];
                 $userAddress->ward = $inputs['register_ward'];
                 $userAddress->default = Utility::ACTIVE_DB;
                 $userAddress->save();

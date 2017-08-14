@@ -144,7 +144,7 @@ class OrderController extends Controller
                         $userAddress->phone = $inputs['register_phone'];
                         $userAddress->address = $inputs['register_address'];
                         $userAddress->province = LibraryArea::$provinces[$inputs['register_province']]['name'];
-                        $userAddress->district = LibraryArea::$provinces[$inputs['register_province']]['cities'][$inputs['register_district']];
+                        $userAddress->district = is_array(LibraryArea::$provinces[$inputs['register_province']]['cities'][$inputs['register_district']]) ? LibraryArea::$provinces[$inputs['register_province']]['cities'][$inputs['register_district']]['name'] : LibraryArea::$provinces[$inputs['register_province']]['cities'][$inputs['register_district']];
                         $userAddress->ward = $inputs['register_ward'];
                         $userAddress->default = Utility::ACTIVE_DB;
                         $userAddress->save();
@@ -159,7 +159,7 @@ class OrderController extends Controller
                         $userAddress->phone = $inputs['register_phone'];
                         $userAddress->address = $inputs['register_address'];
                         $userAddress->province = LibraryArea::$provinces[$inputs['register_province']]['name'];
-                        $userAddress->district = LibraryArea::$provinces[$inputs['register_province']]['cities'][$inputs['register_district']];
+                        $userAddress->district = is_array(LibraryArea::$provinces[$inputs['register_province']]['cities'][$inputs['register_district']]) ? LibraryArea::$provinces[$inputs['register_province']]['cities'][$inputs['register_district']]['name'] : LibraryArea::$provinces[$inputs['register_province']]['cities'][$inputs['register_district']];
                         $userAddress->ward = $inputs['register_ward'];
                         $userAddress->default = Utility::ACTIVE_DB;
                         $userAddress->save();
@@ -200,7 +200,7 @@ class OrderController extends Controller
                         $senderAddress->phone = $inputs['register_phone'];
                         $senderAddress->address = $inputs['register_address'];
                         $senderAddress->province = LibraryArea::$provinces[$inputs['register_province']]['name'];
-                        $senderAddress->district = LibraryArea::$provinces[$inputs['register_province']]['cities'][$inputs['register_district']];
+                        $senderAddress->district = is_array(LibraryArea::$provinces[$inputs['register_province']]['cities'][$inputs['register_district']]) ? LibraryArea::$provinces[$inputs['register_province']]['cities'][$inputs['register_district']]['name'] : LibraryArea::$provinces[$inputs['register_province']]['cities'][$inputs['register_district']];
                         $senderAddress->ward = $inputs['register_ward'];
                         $senderAddress->type = OrderAddress::TYPE_SENDER_DB;
                         $senderAddress->save();

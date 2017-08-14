@@ -118,9 +118,9 @@
                                                 @if($district && isset(\App\Libraries\Helpers\Area::$provinces[$province]['cities']))
                                                     @foreach(\App\Libraries\Helpers\Area::$provinces[$province]['cities'] as $code => $data)
                                                         @if($district == $code)
-                                                            <option selected="selected" value="{{ $code }}">{{ $data }}</option>
+                                                            <option selected="selected" value="{{ $code }}">{{ (is_array($data) ? $data['name'] : $data) }}</option>
                                                         @else
-                                                            <option value="{{ $code }}">{{ $data }}</option>
+                                                            <option value="{{ $code }}">{{ (is_array($data) ? $data['name'] : $data) }}</option>
                                                         @endif
                                                     @endforeach
                                                 @endif
@@ -497,7 +497,7 @@
                                 if(result.hasOwnProperty(code))
                                 {
                                     districtElem.append('' +
-                                        '<option value="' + code + '">' + result[code] + '</option>' +
+                                        '<option value="' + code + '">' + ((typeof result[code]) == 'string' ? result[code] : result[code].name) + '</option>' +
                                     '');
                                 }
                             }
