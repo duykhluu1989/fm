@@ -158,6 +158,28 @@ class UserController extends Controller
         }
     }
 
+    public function checkRegisterEmail(Request $request)
+    {
+        if($request->ajax() == false)
+            return view('frontend.errors.404');
+
+        $inputs = $request->all();
+
+        $validator = Validator::make($inputs, [
+            'email' => 'required|email',
+        ]);
+
+        if($validator->passes())
+        {
+            $user = User::select('created_at')->where('email', $inputs['email'])->first();
+
+            if(!empty($user))
+                return $user->created_at;
+        }
+
+        return '';
+    }
+
     public function quenmatkhau()
     {
         return view('frontend.users.quenmatkhau');

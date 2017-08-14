@@ -12,6 +12,8 @@ Route::group(['namespace' => 'Frontend', 'middleware' => ['locale']], function()
 
         Route::get('quenmatkhau', 'UserController@quenmatkhau');
 
+        Route::get('checkRegisterEmail', 'UserController@checkRegisterEmail');
+
     });
 
     Route::group(['middleware' => ['auth', 'access']], function() {

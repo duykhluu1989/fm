@@ -65,7 +65,7 @@
                                         @if(auth()->guest())
                                             <div class="form-group">
                                                 <label>Email (*)</label>
-                                                <input type="text" class="form-control" name="register_email" value="{{ old('register_email') }}" required="required" />
+                                                <input type="text" class="form-control" name="register_email" id="RegisterEmailInput" value="{{ old('register_email') }}" required="required" />
                                                 @if($errors->has('register_email'))
                                                     <span class="has-error">
                                                         <span class="help-block">* {{ $errors->first('register_email') }}</span>
@@ -452,6 +452,28 @@
 
 @push('scripts')
     <script type="text/javascript">
+        $('#RegisterEmailInput').change(function() {
+            if($(this).val() != '')
+            {
+                $.ajax({
+                    url: '{{ action('Frontend\UserController@checkRegisterEmail') }}',
+                    type: 'get',
+                    data: 'email=' + $(this).val(),
+                    success: function(result) {
+                        if(result)
+                        {
+                            swal({
+                                title: 'Email này đã đăng ký tài khoản vào ngày ' + result + ', bạn vui lòng đăng nhập tài khoản',
+                                type: 'error',
+                                confirmButtonClass: 'btn-danger',
+                                allowOutsideClick: true
+                            });
+                        }
+                    }
+                });
+            }
+        });
+
         $('#RegisterProvince').change(function() {
             var districtElem = $('#RegisterDistrict');
 
@@ -546,6 +568,30 @@
                 $(this).parent().parent().parent().parent().parent().remove();
         });
 
+        $('#OrderCodPriceInput').change(function() {
+            calculateTotalCodPrice();
+        });
+
+        function calculateTotalCodPrice()
+        {
+            var codElem = $('#OrderCodPriceInput');
+            var shippingElem = $('#OrderShippingPriceInput');
+
+            if($('input[type="radio"][name="shipping_payment"]:checked').val() == '{{ \App\Models\Order::SHIPPING_PAYMENT_RECEIVER_DB }}' && shippingElem.val() != '')
+            {
+                if(codElem.val() != '')
+                    $('#OrderTotalCodPriceInput').val(formatNumber((parseInt(codElem.val().split('.').join('')) + parseInt(shippingElem.val().split('.').join(''))).toString(), '.'));
+                else
+                    $('#OrderTotalCodPriceInput').val(shippingElem.val());
+            }
+            else
+                $('#OrderTotalCodPriceInput').val(codElem.val());
+        }
+
+        $('input[type="radio"][name="shipping_payment"]').change(function() {
+            calculateTotalCodPrice();
+        });
+
         $('#CalculateOrderShippingPriceButton').click(function() {
             $.ajax({
                 url: '{{ action('Frontend\OrderController@calculateShippingPrice') }}',
@@ -558,17 +604,7 @@
                         {
                             $('#OrderShippingPriceInput').val(formatNumber(result, '.'));
 
-                            var codElem = $('#OrderCodPriceInput');
-
-                            if($('input[type="radio"][name="shipping_payment"]:checked').val() == '{{ \App\Models\Order::SHIPPING_PAYMENT_RECEIVER_DB }}')
-                            {
-                                if(codElem.val() != '')
-                                    $('#OrderTotalCodPriceInput').val(formatNumber((parseInt(codElem.val().split('.').join('')) + parseInt(result)).toString(), '.'));
-                                else
-                                    $('#OrderTotalCodPriceInput').val(formatNumber(result, '.'));
-                            }
-                            else
-                                $('#OrderTotalCodPriceInput').val(codElem.val());
+                            calculateTotalCodPrice();
                         }
                         else
                         {
