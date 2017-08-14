@@ -433,74 +433,26 @@ class UserController extends Controller
                 'email' => 'required|email|max:255|unique:user,email,' . $user->id,
                 'password' => 'nullable|alpha_dash|min:6|max:32',
                 're_password' => 'nullable|alpha_dash|min:6|max:32|same:password',
-                'avatar' => 'mimes:' . implode(',', Utility::getValidImageExt()),
-                'first_name' => 'required|max:100',
-                'last_name' => 'nullable|max:100',
-                'phone' => 'nullable|numeric',
-                'birthday' => 'nullable|date',
+                'name' => 'required|max:255',
+                'bank_number' => 'nullable|numeric',
             ]);
 
             if($validator->passes())
             {
-                try
-                {
-                    DB::beginTransaction();
+                $user->username = $inputs['username'];
+                $user->name = $inputs['name'];
+                $user->email = $inputs['email'];
 
-                    if(isset($inputs['avatar']))
-                    {
-                        $savePath = User::AVATAR_UPLOAD_PATH . '/' . $user->id;
+                if(!empty($inputs['password']))
+                    $user->password = Hash::make($inputs['password']);
 
-                        list($imagePath, $imageUrl) = Utility::saveFile($inputs['avatar'], $savePath, Utility::getValidImageExt());
+                $user->bank = $inputs['bank'];
+                $user->bank_holder = $inputs['bank_holder'];
+                $user->bank_number = $inputs['bank_number'];
+                $user->bank_branch = $inputs['bank_branch'];
+                $user->save();
 
-                        if(!empty($imagePath) && !empty($imageUrl))
-                        {
-                            Utility::resizeImage($imagePath, 200);
-
-                            if(!empty($user->avatar))
-                                Utility::deleteFile($user->avatar);
-
-                            $user->avatar = $imageUrl;
-                        }
-                    }
-
-                    $user->username = $inputs['username'];
-                    $user->email = $inputs['email'];
-
-                    if(!empty($inputs['password']))
-                        $user->password = Hash::make($inputs['password']);
-
-                    $user->save();
-
-                    $user->profile->first_name = $inputs['first_name'];
-                    $user->profile->last_name = $inputs['last_name'];
-                    $user->profile->title = $inputs['title'];
-                    $user->profile->name = trim($user->profile->last_name . ' ' . $user->profile->first_name);
-                    $user->profile->gender = $inputs['gender'];
-                    $user->profile->birthday = $inputs['birthday'];
-                    $user->profile->phone = $inputs['phone'];
-                    $user->profile->address = $inputs['address'];
-                    $user->profile->description = $inputs['description'];
-
-                    if(!empty($inputs['province']))
-                    {
-                        $user->profile->province = Area::$provinces[$inputs['province']]['name'];
-
-                        if(!empty($inputs['district']))
-                            $user->profile->district = Area::$provinces[$inputs['province']]['cities'][$inputs['district']];
-                    }
-
-                    $user->profile->save();
-
-                    DB::commit();
-
-                    return redirect()->action('Backend\UserController@editAccount')->with('messageSuccess', 'Thành Công');
-                }
-                catch(\Exception $e)
-                {
-                    DB::rollBack();
-
-                    return redirect()->action('Backend\UserController@editAccount')->withInput()->with('messageError', $e->getMessage());
-                }
+                return redirect()->action('Backend\UserController@editAccount')->with('messageSuccess', 'Thành Công');
             }
             else
                 return redirect()->action('Backend\UserController@editAccount')->withErrors($validator)->withInput();
