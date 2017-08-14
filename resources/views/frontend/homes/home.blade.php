@@ -8,12 +8,23 @@
 
     <section class="banner">
         <div class="owl_banner owl-carousel owl-theme">
-            <div class="item">
-                <img src="{{ asset('themes/images/banner01.jpg') }}" alt="" class="img-responsive">
-            </div>
-            <div class="item">
-                <img src="{{ asset('themes/images/banner01.jpg') }}" alt="" class="img-responsive">
-            </div>
+            <?php
+            $sliderItems = array();
+
+            if(isset($widgets[\App\Models\Widget::HOME_SLIDER]))
+            {
+                if(!empty($widgets[\App\Models\Widget::HOME_SLIDER]->detail))
+                    $sliderItems = json_decode($widgets[\App\Models\Widget::HOME_SLIDER]->detail, true);
+            }
+            ?>
+
+            @foreach($sliderItems as $sliderItem)
+                <div class="item">
+                    <a href="{{ isset($sliderItem['url']) ? $sliderItem['url'] : 'javascript:void(0)' }}">
+                        <img src="{{ isset($sliderItem['image']) ? $sliderItem['image'] : '' }}" alt="{{ \App\Libraries\Helpers\Utility::getValueByLocale($sliderItem, 'title') }}" class="img-responsive">
+                    </a>
+                </div>
+            @endforeach
         </div>
     </section>
 
