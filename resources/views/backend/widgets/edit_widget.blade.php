@@ -37,6 +37,14 @@
 
                             <?php
                             break;
+
+                            case \App\Models\Widget::TYPE_TITLE_SLIDER_DB:
+                            ?>
+
+                            @include('backend.widgets.partials.widget_title_slider_form')
+
+                            <?php
+                            break;
                     }
                     ?>
 

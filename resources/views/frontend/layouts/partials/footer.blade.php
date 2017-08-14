@@ -37,14 +37,15 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                    <p>Copyright © 2017 <a href=".">ParcelPost</a>. All Rights Reserved.</p>
+                    <p>Copyright © 2017 <a href="{{ action('Frontend\HomeController@home') }}">{{ \App\Models\Setting::getSettings(\App\Models\Setting::CATEGORY_GENERAL_DB, \App\Models\Setting::WEB_TITLE) }}</a>. All Rights Reserved.</p>
                 </div>
                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                     <ul class="list_socail">
-                        <li><a href=""><i class="fa fa-facebook-square fa-lg" aria-hidden="true"></i></a></li>
-                        <li><a href=""><i class="fa fa-rss fa-lg" aria-hidden="true"></i></a></li>
-                        <li><a href=""><i class="fa fa-twitter-square fa-lg" aria-hidden="true"></i></a></li>
-                        <li><a href=""><i class="fa fa-instagram fa-lg" aria-hidden="true"></i></a></li>
+
+                        @if(!empty(\App\Models\Setting::getSettings(\App\Models\Setting::CATEGORY_SOCIAL_DB, \App\Models\Setting::FACEBOOK_PAGE_URL)))
+                            <li><a href="{{ \App\Models\Setting::getSettings(\App\Models\Setting::CATEGORY_SOCIAL_DB, \App\Models\Setting::FACEBOOK_PAGE_URL) }}"><i class="fa fa-facebook-square fa-lg" aria-hidden="true"></i></a></li>
+                        @endif
+                        
                     </ul>
                 </div>
             </div>

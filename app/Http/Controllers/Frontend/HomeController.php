@@ -14,6 +14,9 @@ class HomeController extends Controller
     {
         $widgetCodes = [
             Widget::HOME_SLIDER,
+            Widget::HOME_BANNER_TOP,
+            Widget::HOME_BANNER_SERVICE,
+            Widget::HOME_BANNER_ASK,
         ];
 
         $wgs = Widget::select('code', 'detail')->where('status', Utility::ACTIVE_DB)->whereIn('code', $widgetCodes)->get();

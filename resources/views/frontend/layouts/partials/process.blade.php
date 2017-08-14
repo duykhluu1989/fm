@@ -4,31 +4,25 @@
         <div class="row">
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <ul class="list_phuongthuc">
-                    <li>
-                        <i class="fa fa-desktop fa-3x" aria-hidden="true"></i>
-                        <h4>Tiếp nhận đơn hàng</h4>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatem, sequi.</p>
-                    </li>
-                    <li>
-                        <i class="fa fa-handshake-o fa-3x" aria-hidden="true"></i>
-                        <h4>Lấy hàng</h4>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatem, sequi.</p>
-                    </li>
-                    <li>
-                        <i class="fa fa-truck fa-3x" aria-hidden="true"></i>
-                        <h4>Giao hàng</h4>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatem, sequi.</p>
-                    </li>
-                    <li>
-                        <i class="fa fa-usd fa-3x" aria-hidden="true"></i>
-                        <h4>Đối soát</h4>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatem, sequi.</p>
-                    </li>
-                    <li>
-                        <i class="fa fa-check-circle fa-3x" aria-hidden="true"></i>
-                        <h4>Kết thúc</h4>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatem, sequi.</p>
-                    </li>
+                    <?php
+                    $wg = \App\Models\Widget::select('code', 'detail')->where('status', \App\Libraries\Helpers\Utility::ACTIVE_DB)->where('code', \App\Models\Widget::BANNER_PROCESS)->first();
+
+                    $sliderItems = array();
+
+                    if(!empty($wg))
+                    {
+                        if(!empty($wg->detail))
+                            $sliderItems = json_decode($wg->detail, true);
+                    }
+                    ?>
+
+                    @foreach($sliderItems as $sliderItem)
+                        <li>
+                            <i class="fa fa-{{ isset($sliderItem['icon']) ? $sliderItem['icon'] : '' }} fa-3x" aria-hidden="true"></i>
+                            <h4>{{ \App\Libraries\Helpers\Utility::getValueByLocale($sliderItem, 'title') }}</h4>
+                            <p>{{ \App\Libraries\Helpers\Utility::getValueByLocale($sliderItem, 'description') }}</p>
+                        </li>
+                    @endforeach
                 </ul>
             </div>
         </div>

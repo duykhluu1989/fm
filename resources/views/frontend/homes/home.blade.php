@@ -54,30 +54,32 @@
         <section class="thongtin">
             <div class="container">
                 <div class="row text-center">
-                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 thongtin_items">
-                        <figure>
-                            <a class="btnThongtin" href="{{ (auth()->guest() ? action('Frontend\UserController@login') : action('Frontend\UserController@editAccount')) }}">
-                                <img src="{{ asset('themes/images/img01.jpg') }}" alt="" class="img-responsive">
+                    <?php
+                    $sliderItems = array();
+
+                    if(isset($widgets[\App\Models\Widget::HOME_BANNER_TOP]))
+                    {
+                        if(!empty($widgets[\App\Models\Widget::HOME_BANNER_TOP]->detail))
+                            $sliderItems = json_decode($widgets[\App\Models\Widget::HOME_BANNER_TOP]->detail, true);
+                    }
+                    ?>
+
+                    @foreach($sliderItems as $sliderItem)
+                        <div class="item">
+                            <a href="{{ isset($sliderItem['url']) ? $sliderItem['url'] : 'javascript:void(0)' }}">
+                                <img src="{{ isset($sliderItem['image']) ? $sliderItem['image'] : '' }}" alt="{{ \App\Libraries\Helpers\Utility::getValueByLocale($sliderItem, 'title') }}" class="img-responsive">
                             </a>
-                        </figure>
-                        <h3><a href="{{ action('Frontend\UserController@login') }}">{{ (auth()->guest() ? 'ĐĂNG KÝ - ĐĂNG NHẬP' : 'TÀI KHOẢN') }}</a></h3>
-                    </div>
-                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 thongtin_items">
-                        <figure>
-                            <a class="btnThongtin" href="{{ (auth()->guest() ? action('Frontend\UserController@login') : action('Frontend\UserController@adminOrder')) }}">
-                                <img src="{{ asset('themes/images/img02.jpg') }}" alt="" class="img-responsive">
-                            </a>
-                        </figure>
-                        <h3><a href="">TRA CỨU ĐƠN HÀNG</a></h3>
-                    </div>
-                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 thongtin_items">
-                        <figure>
-                            <a class="btnThongtin" href="{{ action('Frontend\OrderController@placeOrder') }}">
-                                <img src="{{ asset('themes/images/img03.jpg') }}" alt="" class="img-responsive">
-                            </a>
-                        </figure>
-                        <h3><a href="{{ action('Frontend\OrderController@placeOrder') }}">ĐĂNG ĐƠN HÀNG</a></h3>
-                    </div>
+                        </div>
+
+                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 thongtin_items">
+                            <figure>
+                                <a class="btnThongtin" href="{{ isset($sliderItem['url']) ? $sliderItem['url'] : 'javascript:void(0)' }}">
+                                    <img src="{{ isset($sliderItem['image']) ? $sliderItem['image'] : '' }}" alt="{{ \App\Libraries\Helpers\Utility::getValueByLocale($sliderItem, 'title') }}" class="img-responsive">
+                                </a>
+                            </figure>
+                            <h3><a href="{{ isset($sliderItem['url']) ? $sliderItem['url'] : 'javascript:void(0)' }}">{{ \App\Libraries\Helpers\Utility::getValueByLocale($sliderItem, 'title') }}</a></h3>
+                        </div>
+                    @endforeach
                 </div>
             </div>
         </section>
@@ -86,30 +88,24 @@
             <div class="container">
                 <h2 class="title">DỊCH VỤ</h2>
                 <div class="row text-center">
-                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
-                        <a href="">
-                            <img src="{{ asset('themes/images/img04.jpg') }}" alt="" class="img-reponsive">
-                            <h3>GIAO HÀNG TIẾT KIỆM</h3>
-                        </a>
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
-                        <a href="">
-                            <img src="{{ asset('themes/images/img05.jpg') }}" alt="" class="img-reponsive">
-                            <h3>CHUYỂN PHÁT NHANH</h3>
-                        </a>
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
-                        <a href="">
-                            <img src="{{ asset('themes/images/img06.jpg') }}" alt="" class="img-reponsive">
-                            <h3>CHUYỂN PHÁT HOẢ TỐC</h3>
-                        </a>
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
-                        <a href="">
-                            <img src="{{ asset('themes/images/img07.jpg') }}" alt="" class="img-reponsive">
-                            <h3>GIAO HÀNG TIẾT KIỆM</h3>
-                        </a>
-                    </div>
+                    <?php
+                    $sliderItems = array();
+
+                    if(isset($widgets[\App\Models\Widget::HOME_BANNER_SERVICE]))
+                    {
+                        if(!empty($widgets[\App\Models\Widget::HOME_BANNER_SERVICE]->detail))
+                            $sliderItems = json_decode($widgets[\App\Models\Widget::HOME_BANNER_SERVICE]->detail, true);
+                    }
+                    ?>
+
+                    @foreach($sliderItems as $sliderItem)
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                            <a href="{{ isset($sliderItem['url']) ? $sliderItem['url'] : 'javascript:void(0)' }}">
+                                <img src="{{ isset($sliderItem['image']) ? $sliderItem['image'] : '' }}" alt="{{ \App\Libraries\Helpers\Utility::getValueByLocale($sliderItem, 'title') }}" class="img-reponsive">
+                                <h3>{{ \App\Libraries\Helpers\Utility::getValueByLocale($sliderItem, 'title') }}</h3>
+                            </a>
+                        </div>
+                    @endforeach
                 </div>
             </div>
         </section>
@@ -118,80 +114,38 @@
             <div class="container text-center">
                 <h2 class="title">Bạn có biết?</h2>
                 <div class="row">
+                    <?php
+                    $sliderItems = array();
+
+                    if(isset($widgets[\App\Models\Widget::HOME_BANNER_ASK]))
+                    {
+                        if(!empty($widgets[\App\Models\Widget::HOME_BANNER_ASK]->detail))
+                            $sliderItems = json_decode($widgets[\App\Models\Widget::HOME_BANNER_ASK]->detail, true);
+                    }
+                    ?>
+
                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                        <h3>Nam eu lectus a ante finibus ullamcorper.</h3>
-                        <a href="#" class="btn btnRed"><i class="fa fa-sign-in fa-lg" aria-hidden="true"></i> ĐĂNG KÝ NGAY</a>
+                        <p>{{ isset($details['custom_detail']['title_1']) ? $details['custom_detail']['title_1'] : '' }}</p>
+                        <h3>{{ isset($details['custom_detail']['title_2']) ? $details['custom_detail']['title_2'] : '' }}</h3>
+                        <a href="{{ action('Frontend\UserController@login') }}" class="btn btnRed"><i class="fa fa-sign-in fa-lg" aria-hidden="true"></i> ĐĂNG KÝ NGAY</a>
                     </div>
                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                         <ul class="list_tienloi">
-                            <li>
-                                <i class="fa fa-list-alt fa-3x" aria-hidden="true"></i>
-                                <h4>Lorem ipsum dolor</h4>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatem, sequi.</p>
-                            </li>
-                            <li>
-                                <i class="fa fa-handshake-o fa-3x" aria-hidden="true"></i>
-                                <h4>Lorem ipsum dolor</h4>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatem, sequi.</p>
-                            </li>
-                            <li>
-                                <i class="fa fa-fighter-jet fa-3x" aria-hidden="true"></i>
-                                <h4>Lorem ipsum dolor</h4>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatem, sequi.</p>
-                            </li>
-                            <li>
-                                <i class="fa fa-clock-o fa-3x" aria-hidden="true"></i>
-                                <h4>Lorem ipsum dolor</h4>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatem, sequi.</p>
-                            </li>
-                            <li>
-                                <i class="fa fa-credit-card-alt fa-3x" aria-hidden="true"></i>
-                                <h4>Lorem ipsum dolor</h4>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatem, sequi.</p>
-                            </li>
+                            @foreach($sliderItems as $sliderItem)
+                                <li>
+                                    <i class="fa fa-{{ isset($sliderItem['icon']) ? $sliderItem['icon'] : '' }} fa-3x" aria-hidden="true"></i>
+                                    <h4>{{ \App\Libraries\Helpers\Utility::getValueByLocale($sliderItem, 'title') }}</h4>
+                                    <p>{{ \App\Libraries\Helpers\Utility::getValueByLocale($sliderItem, 'description') }}</p>
+                                </li>
+                            @endforeach
                         </ul>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section class="phuongthuc">
-            <div class="container">
-                <h2 class="title">Phương thức hoạt động</h2>
-                <div class="row">
-                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                        <ul class="list_phuongthuc">
-                            <li>
-                                <i class="fa fa-desktop fa-3x" aria-hidden="true"></i>
-                                <h4>Tiếp nhận đơn hàng</h4>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatem, sequi.</p>
-                            </li>
-                            <li>
-                                <i class="fa fa-handshake-o fa-3x" aria-hidden="true"></i>
-                                <h4>Lấy hàng</h4>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatem, sequi.</p>
-                            </li>
-                            <li>
-                                <i class="fa fa-truck fa-3x" aria-hidden="true"></i>
-                                <h4>Giao hàng</h4>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatem, sequi.</p>
-                            </li>
-                            <li>
-                                <i class="fa fa-usd fa-3x" aria-hidden="true"></i>
-                                <h4>Đối soát</h4>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatem, sequi.</p>
-                            </li>
-                            <li>
-                                <i class="fa fa-check-circle fa-3x" aria-hidden="true"></i>
-                                <h4>Kết thúc</h4>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatem, sequi.</p>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </section>
+        @include('frontend.layouts.partials.process')
+
     </main>
 
 @stop
