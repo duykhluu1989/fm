@@ -34,7 +34,7 @@
                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                     <div class="hotline">
                         <p class="numberPhone"><i class="fa fa-phone" aria-hidden="true"></i> HOTLINE: <span>{{ \App\Models\Setting::getSettings(\App\Models\Setting::CATEGORY_GENERAL_DB, \App\Models\Setting::HOT_LINE) }}</span></p>
-                        <p class="email"><b><i class="fa fa-envelope" aria-hidden="true"></i> Email:</b> <a href="{{ \App\Models\Setting::getSettings(\App\Models\Setting::CATEGORY_GENERAL_DB, \App\Models\Setting::CONTACT_EMAIL) }}">{{ \App\Models\Setting::getSettings(\App\Models\Setting::CATEGORY_GENERAL_DB, \App\Models\Setting::CONTACT_EMAIL) }}</a></p>
+                        <p class="email"><b><i class="fa fa-envelope" aria-hidden="true"></i> Email:</b> <a href="mailto:{{ \App\Models\Setting::getSettings(\App\Models\Setting::CATEGORY_GENERAL_DB, \App\Models\Setting::CONTACT_EMAIL) }}">{{ \App\Models\Setting::getSettings(\App\Models\Setting::CATEGORY_GENERAL_DB, \App\Models\Setting::CONTACT_EMAIL) }}</a></p>
                         <p class="timeOP"><b><i class="fa fa-clock-o" aria-hidden="true"></i> Thời gian làm việc:</b> {{ \App\Models\Setting::getSettings(\App\Models\Setting::CATEGORY_GENERAL_DB, \App\Models\Setting::WORKING_TIME) }}</p>
                     </div>
                 </div>

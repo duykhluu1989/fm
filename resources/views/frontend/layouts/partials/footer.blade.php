@@ -10,9 +10,9 @@
                 <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 display_table boxmH">
                     <h2>VỀ CHÚNG TÔI</h2>
                     <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet </p>
-                    <p><b>Hotline</b> : 08.668.668.68<br>
-                        <b>Website</b> : <a href="#">parcelpost.vn</a><br>
-                        <b>Email</b> : <a href="mailto:info@parcelpost.vn">info@parcelpost.vn</a></p>
+                    <p><b>Hotline</b> : {{ \App\Models\Setting::getSettings(\App\Models\Setting::CATEGORY_GENERAL_DB, \App\Models\Setting::HOT_LINE) }}<br>
+                        <b>Website</b> : <a href="{{ action('Frontend\HomeController@home') }}">{{ request()->getHost() }}</a><br>
+                        <b>Email</b> : <a href="mailto:{{ \App\Models\Setting::getSettings(\App\Models\Setting::CATEGORY_GENERAL_DB, \App\Models\Setting::CONTACT_EMAIL) }}">{{ \App\Models\Setting::getSettings(\App\Models\Setting::CATEGORY_GENERAL_DB, \App\Models\Setting::CONTACT_EMAIL) }}</a></p>
                 </div>
                 <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
                     <h2>DỊCH VỤ</h2>
