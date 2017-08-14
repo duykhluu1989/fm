@@ -30,30 +30,28 @@
                             <input type="text" class="form-control" name="{{ \App\Models\Setting::WEB_KEYWORD }}" value="{{ old(\App\Models\Setting::WEB_KEYWORD, $settings[\App\Models\Setting::WEB_KEYWORD]->value) }}" />
                         </div>
                     </div>
-                    <div class="col-sm-4">
-                        <div class="form-group{{ $errors->has(\App\Models\Setting::EXCHANGE_USD_RATE) ? ' has-error': '' }}">
-                            <label>{{ $settings[\App\Models\Setting::EXCHANGE_USD_RATE]->name }} <i>(bắt buộc)</i></label>
-                            <div class="input-group">
-                                <input type="text" class="form-control InputForNumber" name="{{ \App\Models\Setting::EXCHANGE_USD_RATE }}" value="{{ old(\App\Models\Setting::EXCHANGE_USD_RATE, \App\Libraries\Helpers\Utility::formatNumber($settings[\App\Models\Setting::EXCHANGE_USD_RATE]->value)) }}" required="required" />
-                                <span class="input-group-addon">VND = 1 USD</span>
-                            </div>
-                            @if($errors->has(\App\Models\Setting::EXCHANGE_USD_RATE))
-                                <span class="help-block">{{ $errors->first(\App\Models\Setting::EXCHANGE_USD_RATE) }}</span>
+                    <div class="col-sm-12">
+                        <div class="form-group{{ $errors->has(\App\Models\Setting::HOT_LINE) ? ' has-error': '' }}">
+                            <label>{{ $settings[\App\Models\Setting::HOT_LINE]->name }}</label>
+                            <input type="text" class="form-control" name="{{ \App\Models\Setting::HOT_LINE }}" value="{{ old(\App\Models\Setting::HOT_LINE, $settings[\App\Models\Setting::HOT_LINE]->value) }}" />
+                            @if($errors->has(\App\Models\Setting::HOT_LINE))
+                                <span class="help-block">{{ $errors->first(\App\Models\Setting::HOT_LINE) }}</span>
                             @endif
                         </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-4">
-                        <div class="form-group{{ $errors->has(\App\Models\Setting::EXCHANGE_POINT_RATE) ? ' has-error': '' }}">
-                            <label>{{ $settings[\App\Models\Setting::EXCHANGE_POINT_RATE]->name }} <i>(bắt buộc)</i></label>
-                            <div class="input-group">
-                                <input type="text" class="form-control InputForNumber" name="{{ \App\Models\Setting::EXCHANGE_POINT_RATE }}" value="{{ old(\App\Models\Setting::EXCHANGE_POINT_RATE, \App\Libraries\Helpers\Utility::formatNumber($settings[\App\Models\Setting::EXCHANGE_POINT_RATE]->value)) }}" required="required" />
-                                <span class="input-group-addon">VND = 1 Điểm</span>
-                            </div>
-                            @if($errors->has(\App\Models\Setting::EXCHANGE_POINT_RATE))
-                                <span class="help-block">{{ $errors->first(\App\Models\Setting::EXCHANGE_POINT_RATE) }}</span>
+                    <div class="col-sm-12">
+                        <div class="form-group{{ $errors->has(\App\Models\Setting::CONTACT_EMAIL) ? ' has-error': '' }}">
+                            <label>{{ $settings[\App\Models\Setting::CONTACT_EMAIL]->name }}</label>
+                            <input type="text" class="form-control" name="{{ \App\Models\Setting::CONTACT_EMAIL }}" value="{{ old(\App\Models\Setting::CONTACT_EMAIL, $settings[\App\Models\Setting::CONTACT_EMAIL]->value) }}" />
+                            @if($errors->has(\App\Models\Setting::CONTACT_EMAIL))
+                                <span class="help-block">{{ $errors->first(\App\Models\Setting::CONTACT_EMAIL) }}</span>
                             @endif
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label>{{ $settings[\App\Models\Setting::WORKING_TIME]->name }}</label>
+                            <input type="text" class="form-control" name="{{ \App\Models\Setting::WORKING_TIME }}" value="{{ old(\App\Models\Setting::WORKING_TIME, $settings[\App\Models\Setting::WORKING_TIME]->value) }}" />
                         </div>
                     </div>
                 </div>
