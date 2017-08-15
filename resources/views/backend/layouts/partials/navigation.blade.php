@@ -12,6 +12,9 @@
             <li class="{{ (request()->is('admin/widget*') ? 'active' : '') }}">
                 <a href="{{ action('Backend\WidgetController@adminWidget') }}"><i class="fa fa-th"></i><span>Tiện Ích</span></a>
             </li>
+            <li class="{{ (request()->is('admin/article*') ? 'active' : '') }}">
+                <a href="{{ action('Backend\ArticleController@adminArticle') }}"><i class="fa fa-file-text"></i><span>Trang Tĩnh</span></a>
+            </li>
             <li class="treeview{{ (request()->is('admin/user*') ? ' active' : '') }}">
                 <a href="#"><i class="fa fa-user"></i><span>Thành Viên</span></a>
                 <ul class="treeview-menu">

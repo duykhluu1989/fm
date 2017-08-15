@@ -10,7 +10,7 @@ use App\Http\Controllers\Controller;
 use App\Libraries\Widgets\GridView;
 use App\Libraries\Helpers\Html;
 use App\Libraries\Helpers\Utility;
-use App\Libraries\Helpers\Area;
+use App\Models\Area;
 use App\Models\User;
 use App\Models\Role;
 use App\Models\UserRole;
@@ -490,15 +490,21 @@ class UserController extends Controller
         $inputs = $request->all();
 
         $validator = Validator::make($inputs, [
-            'province_code' => 'required',
+            'parent_id' => 'required|integer|min:1',
+            'type' => 'required|integer',
         ]);
 
         if($validator->passes())
         {
-            $provinces = Area::$provinces;
+            if($inputs['type'] == Area::TYPE_DISTRICT_DB)
+                $areas = Area::getDistricts($inputs['parent_id']);
+            else if($inputs['type'] == Area::TYPE_WARD_DB)
+                $areas = Area::getWards($inputs['parent_id']);
+            else
+                $areas = Area::getProvinces();
 
-            if(isset($provinces[$inputs['province_code']]))
-                return json_encode($provinces[$inputs['province_code']]['cities']);
+            if(count($areas) > 0)
+                return json_encode($areas->toArray());
             else
                 return '';
         }

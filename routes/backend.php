@@ -40,6 +40,16 @@ Route::group(['namespace' => 'Backend'], function() {
 
         Route::get('elFinder/tinymce', 'ElFinderController@tinymce');
 
+        Route::get('article', 'ArticleController@adminArticle');
+
+        Route::match(['get', 'post'], 'article/create', 'ArticleController@createArticle');
+
+        Route::match(['get', 'post'], 'article/{id}/edit', 'ArticleController@editArticle');
+
+        Route::get('article/{id}/delete', 'ArticleController@deleteArticle');
+
+        Route::get('article/controlDelete', 'ArticleController@controlDeleteArticle');
+
         Route::get('user', 'UserController@adminUser');
 
         Route::get('userCustomer', 'UserController@adminUserCustomer');
