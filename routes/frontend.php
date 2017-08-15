@@ -18,6 +18,8 @@ Route::group(['namespace' => 'Frontend', 'middleware' => ['locale']], function()
 
     Route::group(['middleware' => ['auth', 'access']], function() {
 
+        Route::get('userAddressForm', 'UserController@getUserAddressForm');
+
         Route::get('logout', 'UserController@logout');
 
         Route::match(['get', 'post'], 'account', 'UserController@editAccount');

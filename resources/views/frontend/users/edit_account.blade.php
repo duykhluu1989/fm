@@ -15,10 +15,10 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <h2 class="title_sub">CẬP NHẬT THÔNG TIN TÀI KHOẢN</h2>
-                        <h4 class="title_user line-on-right">Thông tin cơ bản</h4>
-                        <div class="row">
-                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                                <form action="" method="POST" role="form">
+                        <form action="{{ action('Frontend\UserController@editAccount') }}" method="POST" role="form">
+                            <h4 class="title_user line-on-right">Thông tin cơ bản</h4>
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                                     <div class="form-group">
                                         <label>Tên (*)</label>
                                         <input type="text" class="form-control" name="register_name" value="{{ old('register_name', $user->name) }}" required="required" />
@@ -96,108 +96,270 @@
                                         @endif
                                     </div>
                                     <button type="submit" class="btn btnLuuTT"><i class="fa fa-floppy-o fa-lg" aria-hidden="true"></i> LƯU THÔNG TIN</button>
-                                </form>
+                                    {{ csrf_field() }}
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12"></div>
                             </div>
-                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12"></div>
-                        </div>
 
-                        <h4 class="title_user line-on-right">Địa chỉ lấy hàng - kho hàng 1 - mã kho 137707</h4>
-                        <div class="row">
-                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                                <form action="" method="POST" role="form">
-                                    <div class="form-group">
-                                        <label for="">Tên người liên hệ:</label>
-                                        <input type="text" class="form-control" id="" placeholder="Ninishop">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="">Số điện thoại:</label>
-                                        <input type="text" class="form-control" id="" placeholder="0908911493">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="">Thành phố:</label>
-                                        <select name="" id="" class="form-control">
-                                            <option value="">TP. Hồ Chí Minh</option>
-                                            <option value="">...</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="">Địa chỉ lấy hàng:</label>
-                                        <select name="" id="" class="form-control">
-                                            <option value="">51D phú mỹ </option>
-                                            <option value="">51D phú mỹ </option>
-                                            <option value="">51D phú mỹ </option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="">Quận huyện:</label>
-                                        <select name="" id="" class="form-control">
-                                            <option value="">Quận 1</option>
-                                            <option value="">Quận 2</option>
-                                            <option value="">Quận ...</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="">Phường/xã:</label>
-                                        <select name="" id="" class="form-control">
-                                            <option value="">Phường 1</option>
-                                            <option value="">Phường 2</option>
-                                            <option value="">Phường ...</option>
-                                        </select>
-                                    </div>
-                                </form>
-                            </div>
-                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12"></div>
-                        </div>
+                            <div id="ListUserAddress">
 
-                        <h4 class="title_user line-on-right">Địa chỉ lấy hàng - kho hàng 2 - mã kho 137708</h4>
-                        <div class="row">
-                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                                <form action="" method="POST" role="form">
-                                    <div class="form-group">
-                                        <label for="">Tên người liên hệ:</label>
-                                        <input type="text" class="form-control" id="" placeholder="Betty">
+                                <?php
+                                $i = 0;
+                                ?>
+                                @foreach($user->userAddresses as $userAddress)
+                                    <div class="UserAddressDiv">
+                                        <h4 class="title_user line-on-right">Địa chỉ lấy hàng - {{ old('user_address_address.' . $userAddress->id, $userAddress->address) }}</h4>
+                                        <div class="row">
+                                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+
+                                                @if($i > 0)
+                                                    <div class="form-group">
+                                                        <button type="button" class="btn btnThem pull-right RemoveUserAddressButton">Xóa</button>
+                                                    </div>
+                                                @endif
+
+                                                <div class="form-group">
+                                                    <label>Tên người liên hệ (*)</label>
+                                                    <input type="text" class="form-control" name="user_address_name[{{ $userAddress->id }}]" value="{{ old('user_address_name.' . $userAddress->id, $userAddress->name) }}" required="required" />
+                                                    @if($errors->has('user_address_name.' . $userAddress->id))
+                                                        <span class="has-error">
+                                                            <span class="help-block">* {{ $errors->first('user_address_name.' . $userAddress->id) }}</span>
+                                                        </span>
+                                                    @endif
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Số điện thoại (*)</label>
+                                                    <input type="text" class="form-control" name="user_address_phone[{{ $userAddress->id }}]" value="{{ old('user_address_phone.' . $userAddress->id, $userAddress->phone) }}" required="required" />
+                                                    @if($errors->has('user_address_phone.' . $userAddress->id))
+                                                        <span class="has-error">
+                                                            <span class="help-block">* {{ $errors->first('user_address_phone.' . $userAddress->id) }}</span>
+                                                        </span>
+                                                    @endif
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Địa chỉ lấy hàng (*)</label>
+                                                    <input type="text" class="form-control" name="user_address_address[{{ $userAddress->id }}]" value="{{ old('user_address_address.' . $userAddress->id, $userAddress->address) }}" required="required" />
+                                                    @if($errors->has('user_address_address.' . $userAddress->id))
+                                                        <span class="has-error">
+                                                            <span class="help-block">* {{ $errors->first('user_address_address.' . $userAddress->id) }}</span>
+                                                        </span>
+                                                    @endif
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Thành phố (*)</label>
+                                                    <select name="user_address_province[{{ $userAddress->id }}]" class="form-control UserAddressProvince" required="required">
+                                                        <?php
+                                                        $province = old('user_address_province.' . $userAddress->id, $userAddress->province_id);
+                                                        ?>
+
+                                                        <option value=""></option>
+
+                                                        @foreach(\App\Models\Area::getProvinces() as $area)
+                                                            @if($province == $area->id)
+                                                                <option selected="selected" value="{{ $area->id }}">{{ $area->name }}</option>
+                                                            @else
+                                                                <option value="{{ $area->id }}">{{ $area->name }}</option>
+                                                            @endif
+                                                        @endforeach
+                                                    </select>
+                                                    @if($errors->has('user_address_province.' . $userAddress->id))
+                                                        <span class="has-error">
+                                                            <span class="help-block">* {{ $errors->first('user_address_province.' . $userAddress->id) }}</span>
+                                                        </span>
+                                                    @endif
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Quận huyện (*)</label>
+                                                    <select name="user_address_district[{{ $userAddress->id }}]" class="form-control UserAddressDistrict" required="required">
+                                                        <?php
+                                                        $district = old('user_address_district.' . $userAddress->id, $userAddress->district_id);
+                                                        ?>
+
+                                                        <option value=""></option>
+
+                                                        @if($province)
+                                                            @foreach(\App\Models\Area::getDistricts($province) as $area)
+                                                                @if($district && $district == $area->id)
+                                                                    <option selected="selected" value="{{ $area->id }}">{{ $area->name }}</option>
+                                                                @else
+                                                                    <option value="{{ $area->id }}">{{ $area->name }}</option>
+                                                                @endif
+                                                            @endforeach
+                                                        @endif
+                                                    </select>
+                                                    @if($errors->has('user_address_district.' . $userAddress->id))
+                                                        <span class="has-error">
+                                                            <span class="help-block">* {{ $errors->first('user_address_district.' . $userAddress->id) }}</span>
+                                                        </span>
+                                                    @endif
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Phường / xã (*)</label>
+                                                    <select name="user_address_ward[{{ $userAddress->id }}]" class="form-control UserAddressWard" required="required">
+                                                        <?php
+                                                        $ward = old('user_address_ward.' . $userAddress->id, $userAddress->ward_id);
+                                                        ?>
+
+                                                        <option value=""></option>
+
+                                                        @if($district)
+                                                            @foreach(\App\Models\Area::getWards($district) as $area)
+                                                                @if($ward && $ward == $area->id)
+                                                                    <option selected="selected" value="{{ $area->id }}">{{ $area->name }}</option>
+                                                                @else
+                                                                    <option value="{{ $area->id }}">{{ $area->name }}</option>
+                                                                @endif
+                                                            @endforeach
+                                                        @endif
+                                                    </select>
+                                                    @if($errors->has('user_address_ward.' . $userAddress->id))
+                                                        <span class="has-error">
+                                                            <span class="help-block">* {{ $errors->first('user_address_ward.' . $userAddress->id) }}</span>
+                                                        </span>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12"></div>
+                                        </div>
                                     </div>
-                                    <div class="form-group">
-                                        <label for="">Số điện thoại:</label>
-                                        <input type="text" class="form-control" id="" placeholder="0908911493">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="">Thành phố:</label>
-                                        <select name="" id="" class="form-control">
-                                            <option value="">TP. Hồ Chí Minh</option>
-                                            <option value="">...</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="">Địa chỉ lấy hàng:</label>
-                                        <select name="" id="" class="form-control">
-                                            <option value="">248A Nơ trang long</option>
-                                            <option value="">248A Nơ trang long</option>
-                                            <option value="">248A Nơ trang long</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="">Quận huyện:</label>
-                                        <select name="" id="" class="form-control">
-                                            <option value="">Quận 1</option>
-                                            <option value="">Quận 2</option>
-                                            <option value="">Quận ...</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="">Phường/xã:</label>
-                                        <select name="" id="" class="form-control">
-                                            <option value="">Phường 1</option>
-                                            <option value="">Phường 2</option>
-                                            <option value="">Phường ...</option>
-                                        </select>
-                                    </div>
-                                    <a href="#" class="btn btnThemDD"><i class="fa fa-plus" aria-hidden="true"></i> THÊM ĐỊA ĐIỂM LẤY HÀNG - KHO HÀNG</a>
-                                    <a href="#" class="btn btnLuuTT"><i class="fa fa-floppy-o" aria-hidden="true"></i> LƯU ĐỊA CHỈ</a>
-                                </form>
+
+                                    <?php
+                                    $i ++;
+                                    ?>
+                                @endforeach
+
+                                <?php
+                                $newUserAddressName = old('new_user_address_name');
+                                ?>
+                                @if(is_array($newUserAddressName) && !empty($newUserAddressName))
+                                    @foreach($newUserAddressName as $k => $v)
+                                        <div class="UserAddressDiv">
+                                            <h4 class="title_user line-on-right">Địa chỉ lấy hàng - {{ old('new_user_address_address.' . $k) }}</h4>
+                                            <div class="row">
+                                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+
+                                                    @if($i > 0)
+                                                        <div class="form-group">
+                                                            <button type="button" class="btn btnThem pull-right RemoveUserAddressButton">Xóa</button>
+                                                        </div>
+                                                    @endif
+
+                                                    <div class="form-group">
+                                                        <label>Tên người liên hệ (*)</label>
+                                                        <input type="text" class="form-control" name="new_user_address_name[{{ $k }}]" value="{{ old('new_user_address_name.' . $k) }}" required="required" />
+                                                        @if($errors->has('new_user_address_name.' . $k))
+                                                            <span class="has-error">
+                                                                <span class="help-block">* {{ $errors->first('new_user_address_name.' . $k) }}</span>
+                                                            </span>
+                                                        @endif
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>Số điện thoại (*)</label>
+                                                        <input type="text" class="form-control" name="new_user_address_phone[{{ $k }}]" value="{{ old('new_user_address_phone.' . $k) }}" required="required" />
+                                                        @if($errors->has('new_user_address_phone.' . $k))
+                                                            <span class="has-error">
+                                                                <span class="help-block">* {{ $errors->first('new_user_address_phone.' . $k) }}</span>
+                                                            </span>
+                                                        @endif
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>Địa chỉ lấy hàng (*)</label>
+                                                        <input type="text" class="form-control" name="new_user_address_address[{{ $k }}]" value="{{ old('new_user_address_address.' . $k) }}" required="required" />
+                                                        @if($errors->has('new_user_address_address.' . $k))
+                                                            <span class="has-error">
+                                                                <span class="help-block">* {{ $errors->first('new_user_address_address.' . $k) }}</span>
+                                                            </span>
+                                                        @endif
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>Thành phố (*)</label>
+                                                        <select name="new_user_address_province[{{ $k }}]" class="form-control UserAddressProvince" required="required">
+                                                            <?php
+                                                            $province = old('new_user_address_province.' . $k);
+                                                            ?>
+
+                                                            <option value=""></option>
+
+                                                            @foreach(\App\Models\Area::getProvinces() as $area)
+                                                                @if($province == $area->id)
+                                                                    <option selected="selected" value="{{ $area->id }}">{{ $area->name }}</option>
+                                                                @else
+                                                                    <option value="{{ $area->id }}">{{ $area->name }}</option>
+                                                                @endif
+                                                            @endforeach
+                                                        </select>
+                                                        @if($errors->has('new_user_address_province.' . $k))
+                                                            <span class="has-error">
+                                                                <span class="help-block">* {{ $errors->first('new_user_address_province.' . $k) }}</span>
+                                                            </span>
+                                                        @endif
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>Quận huyện (*)</label>
+                                                        <select name="new_user_address_district[{{ $k }}]" class="form-control UserAddressDistrict" required="required">
+                                                            <?php
+                                                            $district = old('new_user_address_district.' . $k);
+                                                            ?>
+
+                                                            <option value=""></option>
+
+                                                            @if($province)
+                                                                @foreach(\App\Models\Area::getDistricts($province) as $area)
+                                                                    @if($district && $district == $area->id)
+                                                                        <option selected="selected" value="{{ $area->id }}">{{ $area->name }}</option>
+                                                                    @else
+                                                                        <option value="{{ $area->id }}">{{ $area->name }}</option>
+                                                                    @endif
+                                                                @endforeach
+                                                            @endif
+                                                        </select>
+                                                        @if($errors->has('new_user_address_district.' . $k))
+                                                            <span class="has-error">
+                                                                <span class="help-block">* {{ $errors->first('new_user_address_district.' . $k) }}</span>
+                                                            </span>
+                                                        @endif
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>Phường / xã (*)</label>
+                                                        <select name="new_user_address_ward[{{ $k }}]" class="form-control UserAddressWard" required="required">
+                                                            <?php
+                                                            $ward = old('new_user_address_ward.' . $k);
+                                                            ?>
+
+                                                            <option value=""></option>
+
+                                                            @if($district)
+                                                                @foreach(\App\Models\Area::getWards($district) as $area)
+                                                                    @if($ward && $ward == $area->id)
+                                                                        <option selected="selected" value="{{ $area->id }}">{{ $area->name }}</option>
+                                                                    @else
+                                                                        <option value="{{ $area->id }}">{{ $area->name }}</option>
+                                                                    @endif
+                                                                @endforeach
+                                                            @endif
+                                                        </select>
+                                                        @if($errors->has('new_user_address_ward.' . $k))
+                                                            <span class="has-error">
+                                                                <span class="help-block">* {{ $errors->first('new_user_address_ward.' . $k) }}</span>
+                                                            </span>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12"></div>
+                                            </div>
+                                        </div>
+
+                                        <?php
+                                        $i ++;
+                                        ?>
+                                    @endforeach
+                                @endif
+
                             </div>
-                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12"></div>
-                        </div>
+
+                            <a href="javascript:void(0)" id="AddMoreUserAddressButton" class="btn btnThemDD"><i class="fa fa-plus" aria-hidden="true"></i> THÊM ĐỊA ĐIỂM LẤY HÀNG - KHO HÀNG</a>
+                            <button type="submit" class="btn btnLuuTT"><i class="fa fa-floppy-o" aria-hidden="true"></i> LƯU ĐỊA CHỈ</button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -208,3 +370,78 @@
     </main>
 
 @stop
+
+
+@push('scripts')
+    <script type="text/javascript">
+        var countUserAddress = 1;
+
+        $('#AddMoreUserAddressButton').click(function() {
+            $.ajax({
+                url: '{{ action('Frontend\UserController@getUserAddressForm') }}',
+                type: 'get',
+                data: 'count_user_address=' + countUserAddress,
+                success: function(result) {
+                    if(result)
+                    {
+                        $('#ListUserAddress').append(result);
+
+                        countUserAddress ++;
+                    }
+                }
+            });
+        });
+
+        $('#ListUserAddress').on('click', 'button', function() {
+            if($(this).hasClass('RemoveUserAddressButton'))
+                $(this).closest('.UserAddressDiv').remove();
+        }).on('change', 'select', function() {
+            var containerElem;
+
+            if($(this).hasClass('UserAddressProvince'))
+            {
+                containerElem = $(this).closest('.UserAddressDiv');
+
+                changeArea($(this), containerElem.find('.UserAddressDistrict').first(), '{{ \App\Models\Area::TYPE_DISTRICT_DB }}');
+                containerElem.find('.UserAddressWard').first().html('<option value=""></option>');
+            }
+            else if($(this).hasClass('UserAddressDistrict'))
+            {
+                containerElem = $(this).closest('.UserAddressDiv');
+
+                changeArea($(this), containerElem.find('.UserAddressWard').first(), '{{ \App\Models\Area::TYPE_WARD_DB }}');
+            }
+        });
+
+        function changeArea(elem, updateElem, type)
+        {
+            updateElem.html('' +
+                '<option value=""></option>' +
+            '');
+
+            if(elem != '')
+            {
+                $.ajax({
+                    url: '{{ action('Frontend\OrderController@getListArea') }}',
+                    type: 'get',
+                    data: 'parent_id=' + elem.val() + '&type=' + type,
+                    success: function(result) {
+                        if(result)
+                        {
+                            result = JSON.parse(result);
+
+                            var i;
+
+                            for(i = 0;i < result.length;i ++)
+                            {
+                                updateElem.append('' +
+                                    '<option value="' + result[i].id + '">' + result[i].name + '</option>' +
+                                '');
+                            }
+                        }
+                    }
+                });
+            }
+        }
+    </script>
+@endpush
