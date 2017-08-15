@@ -88,24 +88,28 @@
             <div class="container">
                 <h2 class="title">DỊCH VỤ</h2>
                 <div class="row text-center">
-                    <?php
-                    $sliderItems = array();
+                    <div class="col-lg-12 col-md-12 col-sm-12-col-xs-12">
+                        <div class="owl_dichvu owl-carousel owl-theme">
+                            <?php
+                            $sliderItems = array();
 
-                    if(isset($widgets[\App\Models\Widget::HOME_BANNER_SERVICE]))
-                    {
-                        if(!empty($widgets[\App\Models\Widget::HOME_BANNER_SERVICE]->detail))
-                            $sliderItems = json_decode($widgets[\App\Models\Widget::HOME_BANNER_SERVICE]->detail, true);
-                    }
-                    ?>
+                            if(isset($widgets[\App\Models\Widget::HOME_BANNER_SERVICE]))
+                            {
+                                if(!empty($widgets[\App\Models\Widget::HOME_BANNER_SERVICE]->detail))
+                                    $sliderItems = json_decode($widgets[\App\Models\Widget::HOME_BANNER_SERVICE]->detail, true);
+                            }
+                            ?>
 
-                    @foreach($sliderItems as $sliderItem)
-                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
-                            <a href="{{ isset($sliderItem['url']) ? $sliderItem['url'] : 'javascript:void(0)' }}">
-                                <img src="{{ isset($sliderItem['image']) ? $sliderItem['image'] : '' }}" alt="{{ \App\Libraries\Helpers\Utility::getValueByLocale($sliderItem, 'title') }}" class="img-reponsive">
-                                <h3>{{ \App\Libraries\Helpers\Utility::getValueByLocale($sliderItem, 'title') }}</h3>
-                            </a>
+                            @foreach($sliderItems as $sliderItem)
+                                <div class="item">
+                                    <a href="{{ isset($sliderItem['url']) ? $sliderItem['url'] : 'javascript:void(0)' }}">
+                                        <img src="{{ isset($sliderItem['image']) ? $sliderItem['image'] : '' }}" alt="{{ \App\Libraries\Helpers\Utility::getValueByLocale($sliderItem, 'title') }}" class="img-reponsive">
+                                        <h3>{{ \App\Libraries\Helpers\Utility::getValueByLocale($sliderItem, 'title') }}</h3>
+                                    </a>
+                                </div>
+                            @endforeach
                         </div>
-                    @endforeach
+                    </div>
                 </div>
             </div>
         </section>
