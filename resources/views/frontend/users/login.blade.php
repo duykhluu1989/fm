@@ -94,11 +94,11 @@
 
                                     <option value=""></option>
 
-                                    @foreach(\App\Libraries\Helpers\Area::$provinces as $code => $data)
-                                        @if($province == $code)
-                                            <option selected="selected" value="{{ $code }}">{{ $data['name'] }}</option>
+                                    @foreach(\App\Models\Area::getProvinces() as $area)
+                                        @if($province == $area->id)
+                                            <option selected="selected" value="{{ $area->id }}">{{ $area->name }}</option>
                                         @else
-                                            <option value="{{ $code }}">{{ $data['name'] }}</option>
+                                            <option value="{{ $area->id }}">{{ $area->name }}</option>
                                         @endif
                                     @endforeach
                                 </select>
@@ -117,12 +117,12 @@
 
                                     <option value=""></option>
 
-                                    @if($district && isset(\App\Libraries\Helpers\Area::$provinces[$province]['cities']))
-                                        @foreach(\App\Libraries\Helpers\Area::$provinces[$province]['cities'] as $code => $data)
-                                            @if($district == $code)
-                                                <option selected="selected" value="{{ $code }}">{{ (is_array($data) ? $data['name'] : $data) }}</option>
+                                    @if($province)
+                                        @foreach(\App\Models\Area::getDistricts($province) as $area)
+                                            @if($district && $district == $area->id)
+                                                <option selected="selected" value="{{ $area->id }}">{{ $area->name }}</option>
                                             @else
-                                                <option value="{{ $code }}">{{ (is_array($data) ? $data['name'] : $data) }}</option>
+                                                <option value="{{ $area->id }}">{{ $area->name }}</option>
                                             @endif
                                         @endforeach
                                     @endif
@@ -135,7 +135,23 @@
                             </div>
                             <div class="form-group">
                                 <label>Phường / xã (*)</label>
-                                <input type="text" class="form-control" name="register_ward" value="{{ old('register_ward') }}" required="required" />
+                                <select id="RegisterWard" name="register_ward" class="form-control" required="required">
+                                    <?php
+                                    $ward = old('register_ward');
+                                    ?>
+
+                                    <option value=""></option>
+
+                                    @if($district)
+                                        @foreach(\App\Models\Area::getWards($district) as $area)
+                                            @if($ward && $ward == $area->id)
+                                                <option selected="selected" value="{{ $area->id }}">{{ $area->name }}</option>
+                                            @else
+                                                <option value="{{ $area->id }}">{{ $area->name }}</option>
+                                            @endif
+                                        @endforeach
+                                    @endif
+                                </select>
                                 @if($errors->has('register_ward'))
                                     <span class="has-error">
                                         <span class="help-block">* {{ $errors->first('register_ward') }}</span>
@@ -146,7 +162,7 @@
                             <p>Thông tin Ngân hàng sử dụng cho mục đích chuyển trả tiền thu hộ</p>
                             <h2 class="title_sub">THÔNG TIN NGÂN HÀNG</h2>
                             <div class="form-group">
-                                <label>Chủ tài khoản ngân hàng:</label>
+                                <label>Chủ tài khoản ngân hàng</label>
                                 <input type="text" class="form-control" name="register_bank_holder" value="{{ old('register_bank_holder') }}" />
                                 @if($errors->has('register_bank_holder'))
                                     <span class="has-error">
@@ -155,7 +171,7 @@
                                 @endif
                             </div>
                             <div class="form-group">
-                                <label>Số tài khoản ngân hàng:</label>
+                                <label>Số tài khoản ngân hàng</label>
                                 <input type="text" class="form-control" name="register_bank_number" value="{{ old('register_bank_number') }}"  />
                                 @if($errors->has('register_bank_number'))
                                     <span class="has-error">
@@ -164,7 +180,7 @@
                                 @endif
                             </div>
                             <div class="form-group">
-                                <label>Tên ngân hàng:</label>
+                                <label>Tên ngân hàng</label>
                                 <input type="text" class="form-control" name="register_bank" value="{{ old('register_bank') }}" />
                                 @if($errors->has('register_bank'))
                                     <span class="has-error">
@@ -173,7 +189,7 @@
                                 @endif
                             </div>
                             <div class="form-group">
-                                <label>Chi nhánh ngân hàng:</label>
+                                <label>Chi nhánh ngân hàng</label>
                                 <input type="text" class="form-control" name="register_bank_branch" value="{{ old('register_bank_branch') }}" />
                                 @if($errors->has('register_bank_branch'))
                                     <span class="has-error">
@@ -184,8 +200,16 @@
                             <div class="form-group">
                                 <div class="checkbox">
                                     <label>
-                                        <input type="checkbox" name="register_accept_policy" checked="checked" required="required" />
+                                        <input type="checkbox" name="register_accept_policy"<?php echo (old('register_accept_policy') ? ' checked="checked"' : ''); ?> required="required" />
                                         Tôi đồng ý với <a href="{{ action('Frontend\PageController@chinhsach') }}"><span class="red">chính sách dịch vụ</span></a> của ParcelPost
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="register_prepay_service"<?php echo (old('register_prepay_service') ? ' checked="checked"' : ''); ?> />
+                                        Dịch Vụ Ứng Trước Tiền Thu Hộ Bằng Chuyển Khoản
                                     </label>
                                 </div>
                             </div>
@@ -207,36 +231,46 @@
 @push('scripts')
     <script type="text/javascript">
         $('#RegisterProvince').change(function() {
-            var districtElem = $('#RegisterDistrict');
 
-            districtElem.html('' +
+            changeArea($(this), $('#RegisterDistrict'), '{{ \App\Models\Area::TYPE_DISTRICT_DB }}');
+
+        });
+
+        $('#RegisterDistrict').change(function() {
+
+            changeArea($(this), $('#RegisterWard'), '{{ \App\Models\Area::TYPE_WARD_DB }}');
+
+        });
+
+        function changeArea(elem, updateElem, type)
+        {
+            updateElem.html('' +
                 '<option value=""></option>' +
             '');
 
-            if($(this).val() != '')
+            if(elem != '')
             {
                 $.ajax({
-                    url: '{{ action('Frontend\OrderController@getListDistrict') }}',
+                    url: '{{ action('Frontend\OrderController@getListArea') }}',
                     type: 'get',
-                    data: 'province_code=' + $(this).val(),
+                    data: 'parent_id=' + elem.val() + '&type=' + type,
                     success: function(result) {
                         if(result)
                         {
                             result = JSON.parse(result);
 
-                            for(var code in result)
+                            var i;
+
+                            for(i = 0;i < result.length;i ++)
                             {
-                                if(result.hasOwnProperty(code))
-                                {
-                                    districtElem.append('' +
-                                        '<option value="' + code + '">' + ((typeof result[code]) == 'string' ? result[code] : result[code].name) + '</option>' +
-                                    '');
-                                }
+                                updateElem.append('' +
+                                    '<option value="' + result[i].id + '">' + result[i].name + '</option>' +
+                                '');
                             }
                         }
                     }
                 });
             }
-        });
+        }
     </script>
 @endpush

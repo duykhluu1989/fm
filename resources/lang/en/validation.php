@@ -137,11 +137,7 @@ return [
         'receiver_province' => 'province',
         'receiver_district' => 'district',
         'receiver_ward' => 'ward',
-        'item.name' => 'product name',
-        'item.quantity' => 'quantity',
         'cod_price' => 'COD price',
-        'province_code' => 'province',
-        'district_code' => 'district',
     ],
 
 ];

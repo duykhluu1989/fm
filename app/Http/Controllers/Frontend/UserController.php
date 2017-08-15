@@ -13,6 +13,7 @@ use App\Models\User;
 use App\Models\UserAddress;
 use App\Models\Setting;
 use App\Models\Order;
+use App\Models\Area;
 
 class UserController extends Controller
 {
@@ -79,9 +80,9 @@ class UserController extends Controller
             'register_email' => 'required|email|max:255|unique:user,email',
             'register_password' => 'required|alpha_dash|min:6|max:32',
             'register_address' => 'required|max:255',
-            'register_province' => 'required',
-            'register_district' => 'required',
-            'register_ward' => 'required|max:255',
+            'register_province' => 'required|integer|min:1',
+            'register_district' => 'required|integer|min:1',
+            'register_ward' => 'required|integer|min:1',
             'register_bank_holder' => 'nullable|max:255',
             'register_bank_number' => 'nullable|numeric',
             'register_bank' => 'nullable|max:255',
@@ -107,6 +108,10 @@ class UserController extends Controller
                 $user->bank_branch = $inputs['register_bank_branch'];
                 $user->bank_holder = $inputs['register_bank_holder'];
                 $user->bank_number = $inputs['register_bank_number'];
+
+                if(!empty($inputs['register_prepay_service']))
+                    $user->prepay = Utility::ACTIVE_DB;
+
                 $user->save();
 
                 $userAddress = new UserAddress();
@@ -114,9 +119,12 @@ class UserController extends Controller
                 $userAddress->name = $inputs['register_name'];
                 $userAddress->phone = $inputs['register_phone'];
                 $userAddress->address = $inputs['register_address'];
-                $userAddress->province = Area::$provinces[$inputs['register_province']]['name'];
-                $userAddress->district = is_array(Area::$provinces[$inputs['register_province']]['cities'][$inputs['register_district']]) ? Area::$provinces[$inputs['register_province']]['cities'][$inputs['register_district']]['name'] : Area::$provinces[$inputs['register_province']]['cities'][$inputs['register_district']];
-                $userAddress->ward = $inputs['register_ward'];
+                $userAddress->province = Area::find($inputs['register_province'])->name;
+                $userAddress->district = Area::find($inputs['register_district'])->name;
+                $userAddress->ward = Area::find($inputs['register_ward'])->name;
+                $userAddress->province_id = $inputs['register_province'];
+                $userAddress->district_id = $inputs['register_district'];
+                $userAddress->ward_id = $inputs['register_ward'];
                 $userAddress->default = Utility::ACTIVE_DB;
                 $userAddress->save();
 

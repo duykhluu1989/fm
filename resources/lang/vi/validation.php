@@ -138,13 +138,9 @@ return [
         'receiver_district' => 'quận / huyện',
         'receiver_ward' => 'phường / xã',
         'note' => 'ghi chú',
-        'item.name' => 'tên sản phẩm',
-        'item.quantity' => 'số lượng',
         'weight' => 'trọng lượng',
         'dimension' => 'kích thước',
         'cod_price' => 'tiền thu hộ',
-        'province_code' => 'tỉnh / thành phố',
-        'district_code' => 'quận / huyện',
     ],
 
 ];

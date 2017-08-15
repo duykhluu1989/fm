@@ -33,36 +33,31 @@ class Order extends Model
         return $this->belongsTo('App\Models\User', 'user_id');
     }
 
-    public function orderAddresses()
+    public function senderAddress()
     {
-        return $this->hasMany('App\Models\OrderAddress', 'order_id');
+        return $this->hasOne('App\Models\OrderAddress', 'order_id')->where('type', OrderAddress::TYPE_SENDER_DB);
+    }
+
+    public function receiverAddress()
+    {
+        return $this->hasOne('App\Models\OrderAddress', 'order_id')->where('type', OrderAddress::TYPE_RECEIVER_DB);
     }
 
     protected function generateDo()
     {
-        $this->do = 'FM';
-
-        foreach($this->orderAddresses as $orderAddress)
-        {
-            if($orderAddress->type == OrderAddress::TYPE_RECEIVER_DB)
-                $this->do .= str_slug($orderAddress->province, '');
-        }
-
-        $this->do .= date('m') . date('y');
+        $this->do = 'FM' . str_slug($this->receiverAddress->province, '') . date('m') . date('y');
 
         $count = Order::where('do', 'like', $this->do . '%')->count('id');
 
         $this->do .= (100000 + $count + 1);
     }
 
-    public static function calculateShippingPrice($provinceId, $districtId, $weight, $dimension)
+    public static function calculateShippingPrice($districtId, $weight, $dimension)
     {
         $shippingPrice = 0;
 
         if(!empty($weight))
         {
-            $weight = $weight / 1000;
-
             if($weight - (int)$weight > 0)
                 $weight = (int)$weight + 1;
         }
@@ -84,7 +79,7 @@ class Order extends Model
                     $volume = $volume * $d;
             }
 
-            $weightFromDimension = $volume / 5000000;
+            $weightFromDimension = $volume / 5000;
 
             if($weightFromDimension - (int)$weightFromDimension > 0)
                 $weightFromDimension = (int)$weightFromDimension + 1;
@@ -97,11 +92,11 @@ class Order extends Model
         else
             $netWeight = $weightFromDimension;
 
-        $district = Area::getDistricts($provinceId, $districtId);
+        $district = Area::find($districtId);
 
         if(!empty($district))
         {
-            $shippingPrice += $district['shipping_price'];
+            $shippingPrice += $district->shipping_price;
             $netWeight -= 3;
         }
 

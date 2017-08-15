@@ -23,6 +23,7 @@ class CreateOrderTable extends Migration
             $table->unsignedTinyInteger('shipping_payment')->default(0);
             $table->string('note', 255)->nullable();
             $table->string('do', 255)->nullable();
+            $table->string('user_do', 255)->nullable();
             $table->string('shipper', 255)->nullable();
             $table->string('status', 255)->nullable();
             $table->double('weight')->unsigned()->nullable();

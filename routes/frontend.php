@@ -34,7 +34,7 @@ Route::group(['namespace' => 'Frontend', 'middleware' => ['locale']], function()
 
     Route::match(['get', 'post'], 'order', 'OrderController@placeOrder');
 
-    Route::get('district', 'OrderController@getListDistrict');
+    Route::get('area', 'OrderController@getListArea');
 
     Route::get('shippingPrice', 'OrderController@calculateShippingPrice');
 

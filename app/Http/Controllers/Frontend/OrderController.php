@@ -7,12 +7,10 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Libraries\Helpers\Area as LibraryArea;
 use App\Libraries\Helpers\Utility;
 use App\Models\User;
 use App\Models\UserAddress;
 use App\Models\Order;
-use App\Models\OrderItem;
 use App\Models\OrderAddress;
 use App\Models\Customer;
 use App\Models\Area;
@@ -21,8 +19,6 @@ class OrderController extends Controller
 {
     public function placeOrder(Request $request)
     {
-        $receiverAreas = Area::getProvinces();
-
         $user = auth()->user();
 
         if($user)
@@ -143,8 +139,8 @@ class OrderController extends Controller
                         $userAddress->name = $inputs['register_name'];
                         $userAddress->phone = $inputs['register_phone'];
                         $userAddress->address = $inputs['register_address'];
-                        $userAddress->province = LibraryArea::$provinces[$inputs['register_province']]['name'];
-                        $userAddress->district = is_array(LibraryArea::$provinces[$inputs['register_province']]['cities'][$inputs['register_district']]) ? LibraryArea::$provinces[$inputs['register_province']]['cities'][$inputs['register_district']]['name'] : LibraryArea::$provinces[$inputs['register_province']]['cities'][$inputs['register_district']];
+                        $userAddress->province = '';
+                        $userAddress->district = '';
                         $userAddress->ward = $inputs['register_ward'];
                         $userAddress->default = Utility::ACTIVE_DB;
                         $userAddress->save();
@@ -158,8 +154,8 @@ class OrderController extends Controller
                         $userAddress->name = $inputs['register_name'];
                         $userAddress->phone = $inputs['register_phone'];
                         $userAddress->address = $inputs['register_address'];
-                        $userAddress->province = LibraryArea::$provinces[$inputs['register_province']]['name'];
-                        $userAddress->district = is_array(LibraryArea::$provinces[$inputs['register_province']]['cities'][$inputs['register_district']]) ? LibraryArea::$provinces[$inputs['register_province']]['cities'][$inputs['register_district']]['name'] : LibraryArea::$provinces[$inputs['register_province']]['cities'][$inputs['register_district']];
+                        $userAddress->province = '';
+                        $userAddress->district = '';
                         $userAddress->ward = $inputs['register_ward'];
                         $userAddress->default = Utility::ACTIVE_DB;
                         $userAddress->save();
@@ -169,7 +165,7 @@ class OrderController extends Controller
                     $order->user_id = $user->id;
                     $order->created_at = date('Y-m-d H:i:s');
                     $order->cod_price = !empty($inputs['cod_price']) ? $inputs['cod_price'] : 0;
-                    $order->shipping_price = Order::calculateShippingPrice($inputs['receiver_province'], $inputs['receiver_district'], $inputs['weight'], $inputs['dimension']);
+                    $order->shipping_price = Order::calculateShippingPrice($inputs['receiver_district'], $inputs['weight'], $inputs['dimension']);
                     $order->shipping_payment = $inputs['shipping_payment'];
                     if($order->shipping_payment == Order::SHIPPING_PAYMENT_RECEIVER_DB)
                         $order->total_cod_price = $order->cod_price + $order->shipping_price;
@@ -200,8 +196,8 @@ class OrderController extends Controller
                         $senderAddress->name = $inputs['register_name'];
                         $senderAddress->phone = $inputs['register_phone'];
                         $senderAddress->address = $inputs['register_address'];
-                        $senderAddress->province = LibraryArea::$provinces[$inputs['register_province']]['name'];
-                        $senderAddress->district = is_array(LibraryArea::$provinces[$inputs['register_province']]['cities'][$inputs['register_district']]) ? LibraryArea::$provinces[$inputs['register_province']]['cities'][$inputs['register_district']]['name'] : LibraryArea::$provinces[$inputs['register_province']]['cities'][$inputs['register_district']];
+                        $senderAddress->province = '';
+                        $senderAddress->district = '';
                         $senderAddress->ward = $inputs['register_ward'];
                         $senderAddress->type = OrderAddress::TYPE_SENDER_DB;
                         $senderAddress->save();
@@ -231,20 +227,11 @@ class OrderController extends Controller
                     $receiverAddress->name = $inputs['receiver_name'];
                     $receiverAddress->phone = $inputs['receiver_phone'];
                     $receiverAddress->address = $inputs['receiver_address'];
-                    $receiverAddress->province = $receiverAreas[$inputs['receiver_province']]['name'];
-                    $receiverAddress->district = Area::getDistricts($inputs['receiver_province'], $inputs['receiver_district'])['name'];
+                    $receiverAddress->province = '';
+                    $receiverAddress->district = '';
                     $receiverAddress->ward = $inputs['receiver_ward'];
                     $receiverAddress->type = OrderAddress::TYPE_RECEIVER_DB;
                     $receiverAddress->save();
-
-                    foreach($inputs['item']['name'] as $key => $name)
-                    {
-                        $orderItem = new OrderItem();
-                        $orderItem->order_id = $order->id;
-                        $orderItem->name = $name;
-                        $orderItem->quantity = $inputs['item']['quantity'][$key];
-                        $orderItem->save();
-                    }
 
                     DB::commit();
 
@@ -263,11 +250,10 @@ class OrderController extends Controller
 
         return view('frontend.orders.place_order', [
             'userAddresses' => $userAddresses,
-            'receiverAreas' => $receiverAreas,
         ]);
     }
 
-    public function getListDistrict(Request $request)
+    public function getListArea(Request $request)
     {
         if($request->ajax() == false)
             return view('frontend.errors.404');
@@ -275,30 +261,23 @@ class OrderController extends Controller
         $inputs = $request->all();
 
         $validator = Validator::make($inputs, [
-            'province_code' => 'required',
-            'receiver' => 'nullable',
+            'parent_id' => 'required|integer|min:1',
+            'type' => 'required|integer',
         ]);
 
         if($validator->passes())
         {
-            if(empty($inputs['receiver']))
-            {
-                $provinces = LibraryArea::$provinces;
-
-                if(isset($provinces[$inputs['province_code']]))
-                    return json_encode($provinces[$inputs['province_code']]['cities']);
-                else
-                    return '';
-            }
+            if($inputs['type'] == Area::TYPE_DISTRICT_DB)
+                $areas = Area::getDistricts($inputs['parent_id']);
+            else if($inputs['type'] == Area::TYPE_WARD_DB)
+                $areas = Area::getWards($inputs['parent_id']);
             else
-            {
-                $districts = Area::getDistricts($inputs['province_code']);
+                $areas = Area::getProvinces();
 
-                if(!empty($districts))
-                    return json_encode($districts);
-                else
-                    return '';
-            }
+            if(count($areas) > 0)
+                return json_encode($areas->toArray());
+            else
+                return '';
         }
         else
             return '';
@@ -315,8 +294,7 @@ class OrderController extends Controller
             $inputs['dimension'] = Utility::removeWhitespace($inputs['dimension']);
 
         $validator = Validator::make($inputs, [
-            'province_code' => 'required',
-            'district_code' => 'required',
+            'register_district' => 'required',
             'weight' => 'nullable|integer|min:1',
         ]);
 
@@ -338,7 +316,7 @@ class OrderController extends Controller
         });
 
         if($validator->passes())
-            return Order::calculateShippingPrice($inputs['province_code'], $inputs['district_code'], $inputs['weight'], $inputs['dimension']);
+            return Order::calculateShippingPrice($inputs['register_district'], $inputs['weight'], $inputs['dimension']);
         else
             return json_encode($validator->errors()->all());
     }
