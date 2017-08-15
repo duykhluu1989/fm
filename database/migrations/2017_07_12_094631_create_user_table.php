@@ -23,6 +23,7 @@ class CreateUserTable extends Migration
             $table->string('bank_branch', 255)->nullable();
             $table->string('bank_holder', 255)->nullable();
             $table->string('bank_number', 20)->nullable();
+            $table->unsignedTinyInteger('prepay')->default(0);
         });
     }
 

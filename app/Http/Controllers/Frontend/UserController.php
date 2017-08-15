@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Libraries\Helpers\Utility;
-use App\Libraries\Helpers\Area;
 use App\Models\User;
 use App\Models\UserAddress;
 use App\Models\Setting;

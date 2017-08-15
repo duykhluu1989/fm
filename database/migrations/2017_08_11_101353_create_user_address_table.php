@@ -17,6 +17,9 @@ class CreateUserAddressTable extends Migration
             $table->string('province', 255);
             $table->string('district', 255);
             $table->string('ward', 255);
+            $table->unsignedInteger('province_id');
+            $table->unsignedInteger('district_id');
+            $table->unsignedInteger('ward_id');
             $table->unsignedTinyInteger('default')->default(0);
         });
     }

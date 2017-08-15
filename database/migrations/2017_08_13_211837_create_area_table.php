@@ -15,6 +15,7 @@ class CreateAreaTable extends Migration
             $table->unsignedTinyInteger('type')->default(0);
             $table->unsignedTinyInteger('status')->default(0);
             $table->double('shipping_price')->unsigned()->default(0);
+            $table->string('code', 20);
         });
     }
 

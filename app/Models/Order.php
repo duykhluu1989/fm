@@ -33,11 +33,6 @@ class Order extends Model
         return $this->belongsTo('App\Models\User', 'user_id');
     }
 
-    public function orderItems()
-    {
-        return $this->hasMany('App\Models\OrderItem', 'order_id');
-    }
-
     public function orderAddresses()
     {
         return $this->hasMany('App\Models\OrderAddress', 'order_id');

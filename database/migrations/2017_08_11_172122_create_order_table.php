@@ -13,6 +13,7 @@ class CreateOrderTable extends Migration
             $table->unsignedInteger('user_id');
             $table->string('number', 255)->nullable();
             $table->dateTime('created_at');
+            $table->dateTime('approved_at')->nullable();
             $table->dateTime('cancelled_at')->nullable();
             $table->dateTime('shipped_at')->nullable();
             $table->dateTime('failed_at')->nullable();
@@ -26,6 +27,8 @@ class CreateOrderTable extends Migration
             $table->string('status', 255)->nullable();
             $table->double('weight')->unsigned()->nullable();
             $table->string('dimension', 255)->nullable();
+            $table->unsignedTinyInteger('prepay')->default(0);
+            $table->unsignedTinyInteger('payment')->default(0);
         });
     }
 
