@@ -100,6 +100,7 @@ class UserController extends Controller
                 $user->username = explode('@', $inputs['register_email'])[0] . time();
                 $user->password = Hash::make($inputs['register_password']);
                 $user->name = $inputs['register_name'];
+                $user->phone = $inputs['register_phone'];
                 $user->status = Utility::ACTIVE_DB;
                 $user->email = $inputs['register_email'];
                 $user->admin = Utility::INACTIVE_DB;

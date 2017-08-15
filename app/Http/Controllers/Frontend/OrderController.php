@@ -143,6 +143,7 @@ class OrderController extends Controller
                         $user->username = explode('@', $inputs['register_email'])[$firstKey] . time();
                         $user->password = Hash::make($password);
                         $user->name = $inputs['register_name'][$firstKey];
+                        $user->phone = $inputs['register_phone'][$firstKey];
                         $user->status = Utility::ACTIVE_DB;
                         $user->email = $inputs['register_email'];
                         $user->admin = Utility::INACTIVE_DB;

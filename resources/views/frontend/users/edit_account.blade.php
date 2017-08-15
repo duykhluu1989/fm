@@ -20,12 +20,17 @@
                             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                                 <form action="" method="POST" role="form">
                                     <div class="form-group">
-                                        <label for="">Tên:</label>
-                                        <input type="text" class="form-control" id="" placeholder="Ninishop">
+                                        <label>Tên (*)</label>
+                                        <input type="text" class="form-control" name="register_name" value="{{ old('register_name', $user->name) }}" required="required" />
+                                        @if($errors->has('register_name'))
+                                            <span class="has-error">
+                                                <span class="help-block">* {{ $errors->first('register_name') }}</span>
+                                            </span>
+                                        @endif
                                     </div>
                                     <div class="form-group">
-                                        <label for="">Điện thoại:</label>
-                                        <input type="text" class="form-control" id="" placeholder="0908911493">
+                                        <label>Điện thoại</label>
+                                        <input type="text" class="form-control" name="register_phone" placeholder="0908911493">
                                     </div>
                                     <div class="form-group">
                                         <label for="">Email:</label>

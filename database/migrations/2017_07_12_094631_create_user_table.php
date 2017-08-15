@@ -15,6 +15,7 @@ class CreateUserTable extends Migration
             $table->string('name', 255);
             $table->unsignedTinyInteger('status')->default(1);
             $table->string('email', 255);
+            $table->string('phone', 20)->nullable();
             $table->unsignedTinyInteger('admin')->default(0);
             $table->string('api_key', 255)->nullable();
             $table->string('remember_token', 255)->nullable();
