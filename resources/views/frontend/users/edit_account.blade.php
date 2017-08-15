@@ -29,44 +29,71 @@
                                         @endif
                                     </div>
                                     <div class="form-group">
-                                        <label>Điện thoại</label>
-                                        <input type="text" class="form-control" name="register_phone" placeholder="0908911493">
+                                        <label>Điện thoại (*)</label>
+                                        <input type="text" class="form-control" name="register_phone" value="{{ old('register_phone', $user->phone) }}" required="required" />
+                                        @if($errors->has('register_phone'))
+                                            <span class="has-error">
+                                                <span class="help-block">* {{ $errors->first('register_phone') }}</span>
+                                            </span>
+                                        @endif
                                     </div>
                                     <div class="form-group">
-                                        <label for="">Email:</label>
-                                        <input type="text" class="form-control" id="" placeholder="trieu@info.vn">
+                                        <label>Email (*)</label>
+                                        <input type="text" class="form-control" name="register_email" value="{{ old('register_email', $user->email) }}" required="required" />
+                                        @if($errors->has('register_email'))
+                                            <span class="has-error">
+                                                <span class="help-block">* {{ $errors->first('register_email') }}</span>
+                                            </span>
+                                        @endif
                                     </div>
                                     <div class="form-group">
-                                        <label for="">Mật khẩu mới:</label>
-                                        <input type="password" class="form-control" id="" placeholder="Ninishop">
+                                        <label>Mật khẩu mới</label>
+                                        <input type="password" class="form-control" name="register_password" />
+                                        @if($errors->has('register_password'))
+                                            <span class="has-error">
+                                                <span class="help-block">* {{ $errors->first('register_password') }}</span>
+                                            </span>
+                                        @endif
                                     </div>
                                     <div class="form-group">
-                                        <label for="">Xác nhận mật khẩu mới:</label>
-                                        <input type="password" class="form-control" id="" placeholder="Ninishop">
+                                        <label>Xác nhận mật khẩu mới</label>
+                                        <input type="password" class="form-control" name="confirm_password" />
                                     </div>
                                     <div class="form-group">
-                                        <label for="">Chủ tài khoản ngân hàng:</label>
-                                        <input type="text" class="form-control" id="" placeholder="NGUYỄN HOÀNG TRIỆU">
+                                        <label>Chủ tài khoản ngân hàng</label>
+                                        <input type="text" class="form-control" name="register_bank_holder" value="{{ old('register_bank_holder', $user->bank_holder) }}" />
+                                        @if($errors->has('register_bank_holder'))
+                                            <span class="has-error">
+                                                <span class="help-block">* {{ $errors->first('register_bank_holder') }}</span>
+                                            </span>
+                                        @endif
                                     </div>
                                     <div class="form-group">
-                                        <label for="">Số tài khoản ngân hàng:</label>
-                                        <input type="text" class="form-control" id="" placeholder="123456789">
+                                        <label>Số tài khoản ngân hàng</label>
+                                        <input type="text" class="form-control" name="register_bank_number" value="{{ old('register_bank_number', $user->bank_number) }}" />
+                                        @if($errors->has('register_bank_number'))
+                                            <span class="has-error">
+                                                <span class="help-block">* {{ $errors->first('register_bank_number') }}</span>
+                                            </span>
+                                        @endif
                                     </div>
                                     <div class="form-group">
-                                        <label for="">Tên ngân hàng:</label>
-                                        <select name="" id="" class="form-control">
-                                            <option value="">DONGA - NGAN HANG TMCP DONG A</option>
-                                            <option value="">DONGA - NGAN HANG TMCP DONG A</option>
-                                            <option value="">DONGA - NGAN HANG TMCP DONG A</option>
-                                        </select>
+                                        <label>Tên ngân hàng</label>
+                                        <input type="text" class="form-control" name="register_bank" value="{{ old('register_bank', $user->bank) }}" />
+                                        @if($errors->has('register_bank'))
+                                            <span class="has-error">
+                                                <span class="help-block">* {{ $errors->first('register_bank') }}</span>
+                                            </span>
+                                        @endif
                                     </div>
                                     <div class="form-group">
-                                        <label for="">Chi nhánh ngân hàng:</label>
-                                        <select name="" id="" class="form-control">
-                                            <option value="">DONGA BANK HO CHI MINH (HCM)</option>
-                                            <option value="">DONGA BANK HO CHI MINH (HCM)</option>
-                                            <option value="">DONGA BANK HO CHI MINH (HCM)</option>
-                                        </select>
+                                        <label>Chi nhánh ngân hàng</label>
+                                        <input type="text" class="form-control" name="register_bank_branch" value="{{ old('register_bank_branch', $user->bank_branch) }}" />
+                                        @if($errors->has('register_bank_branch'))
+                                            <span class="has-error">
+                                                <span class="help-block">* {{ $errors->first('register_bank_branch') }}</span>
+                                            </span>
+                                        @endif
                                     </div>
                                     <button type="submit" class="btn btnLuuTT"><i class="fa fa-floppy-o fa-lg" aria-hidden="true"></i> LƯU THÔNG TIN</button>
                                 </form>
