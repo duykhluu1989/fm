@@ -233,6 +233,7 @@
         $('#RegisterProvince').change(function() {
 
             changeArea($(this), $('#RegisterDistrict'), '{{ \App\Models\Area::TYPE_DISTRICT_DB }}');
+            $('#RegisterWard').html('<option value=""></option>');
 
         });
 

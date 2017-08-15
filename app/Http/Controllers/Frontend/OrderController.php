@@ -283,6 +283,23 @@ class OrderController extends Controller
             return '';
     }
 
+    public function getOrderForm(Request $request)
+    {
+        if($request->ajax() == false)
+            return view('frontend.errors.404');
+
+        $user = auth()->user();
+
+        if($user)
+            $userAddresses = $user->userAddresses;
+        else
+            $userAddresses = array();
+
+        return view('frontend.orders.partials.order_form', [
+            'userAddresses' => $userAddresses,
+        ]);
+    }
+
     public function calculateShippingPrice(Request $request)
     {
         if($request->ajax() == false)
@@ -318,6 +335,6 @@ class OrderController extends Controller
         if($validator->passes())
             return Order::calculateShippingPrice($inputs['register_district'], $inputs['weight'], $inputs['dimension']);
         else
-            return json_encode($validator->errors()->all());
+            return '';
     }
 }

@@ -30,7 +30,7 @@ class Area extends Model
 
     public static function initCoreAreas()
     {
-        $sql = require(base_path() . '/resources/sqls/area.php');
+        $sql = include(base_path() . '/resources/sqls/area.php');
 
         DB::statement($sql);
     }
