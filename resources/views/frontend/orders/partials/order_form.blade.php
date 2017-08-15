@@ -8,7 +8,7 @@
 
         <div class="form-group">
             <label>Địa chỉ (*)</label>
-            <select name="user_address[]" class="form-control" required="required">
+            <select name="user_address[{{ $countOrder }}]" class="form-control" required="required">
                 @foreach($userAddresses as $userAddress)
                     @if($userAddress->default == \App\Libraries\Helpers\Utility::ACTIVE_DB)
                         <option selected="selected" value="{{ $userAddress->id }}">{{ $userAddress->name . ', ' . $userAddress->phone . ', ' . $userAddress->address . ', ' . $userAddress->ward . ', ' . $userAddress->district . ', ' . $userAddress->province }}</option>
@@ -23,19 +23,19 @@
 
         <div class="form-group">
             <label>Họ tên (*)</label>
-            <input type="text" class="form-control" name="register_name[]" required="required" />
+            <input type="text" class="form-control" name="register_name[{{ $countOrder }}]" required="required" />
         </div>
         <div class="form-group">
             <label>Số điện thoại (*)</label>
-            <input type="text" class="form-control" name="register_phone[]" required="required" />
+            <input type="text" class="form-control" name="register_phone[{{ $countOrder }}]" required="required" />
         </div>
         <div class="form-group">
             <label>Địa chỉ lấy hàng (*)</label>
-            <input type="text" class="form-control" name="register_address[]" required="required" />
+            <input type="text" class="form-control" name="register_address[{{ $countOrder }}]" required="required" />
         </div>
         <div class="form-group">
             <label>Tỉnh / thành phố (*)</label>
-            <select name="register_province[]" class="form-control RegisterProvince" required="required">
+            <select name="register_province[{{ $countOrder }}]" class="form-control RegisterProvince" required="required">
                 <option value=""></option>
 
                 @foreach(\App\Models\Area::getProvinces() as $area)
@@ -45,13 +45,13 @@
         </div>
         <div class="form-group">
             <label>Quận / huyện (*)</label>
-            <select name="register_district[]" class="form-control RegisterDistrict" required="required">
+            <select name="register_district[{{ $countOrder }}]" class="form-control RegisterDistrict" required="required">
                 <option value=""></option>
             </select>
         </div>
         <div class="form-group">
             <label>Phường / xã (*)</label>
-            <select name="register_ward[]" class="form-control RegisterWard" required="required">
+            <select name="register_ward[{{ $countOrder }}]" class="form-control RegisterWard" required="required">
                 <option value=""></option>
             </select>
         </div>
@@ -62,19 +62,19 @@
     <p><b>Thông tin người nhận hàng</b></p>
     <div class="form-group">
         <label>Tên người nhận (*)</label>
-        <input type="text" class="form-control" name="receiver_name[]" required="required" />
+        <input type="text" class="form-control" name="receiver_name[{{ $countOrder }}]" required="required" />
     </div>
     <div class="form-group">
         <label>Số điện thoại (*)</label>
-        <input type="text" class="form-control" name="receiver_phone[]" required="required" />
+        <input type="text" class="form-control" name="receiver_phone[{{ $countOrder }}]" required="required" />
     </div>
     <div class="form-group">
         <label>Địa chỉ giao hàng (*)</label>
-        <input type="text" class="form-control" name="receiver_address[]" required="required" />
+        <input type="text" class="form-control" name="receiver_address[{{ $countOrder }}]" required="required" />
     </div>
     <div class="form-group">
         <label>Thành phố (*)</label>
-        <select name="receiver_province[]" class="form-control ReceiverProvince" required="required">
+        <select name="receiver_province[{{ $countOrder }}]" class="form-control ReceiverProvince" required="required">
             <option value=""></option>
 
             @foreach(\App\Models\Area::getProvinces() as $area)
@@ -84,53 +84,65 @@
     </div>
     <div class="form-group">
         <label>Quận / huyện (*)</label>
-        <select name="receiver_district[]" class="form-control ReceiverDistrict" required="required">
+        <select name="receiver_district[{{ $countOrder }}]" class="form-control ReceiverDistrict" required="required">
             <option value=""></option>
         </select>
     </div>
     <div class="form-group">
         <label>Phường / xã (*)</label>
-        <select name="receiver_ward[]" class="form-control ReceiverWard" required="required">
+        <select name="receiver_ward[{{ $countOrder }}]" class="form-control ReceiverWard" required="required">
             <option value=""></option>
         </select>
     </div>
     <div class="form-group">
         <label>Trọng lượng gói hàng (kg)</label>
-        <input type="text" class="form-control OrderWeightInput" name="weight[]" />
+        <input type="text" class="form-control OrderWeightInput" name="weight[{{ $countOrder }}]" />
     </div>
     <div class="form-group">
         <label>Kích thước gói hàng (cm)</label>
-        <input type="text" class="form-control OrderDimensionInput" name="dimension[]" placeholder="Dài x Rộng x Cao" />
+        <input type="text" class="form-control OrderDimensionInput" name="dimension[{{ $countOrder }}]" placeholder="Dài x Rộng x Cao" />
     </div>
     <div class="form-group">
         <label>Tiền thu hộ</label>
-        <input type="text" class="form-control InputForNumber OrderCodPriceInput" name="cod_price[]" />
+        <input type="text" class="form-control InputForNumber OrderCodPriceInput" name="cod_price[{{ $countOrder }}]" />
     </div>
     <div class="form-group">
         <label>Phí ship (tạm tính)</label>
-        <input type="text" class="form-control OrderShippingPriceInput" name="shipping_price[]" readonly="readonly" />
+        <input type="text" class="form-control OrderShippingPriceInput" name="shipping_price[{{ $countOrder }}]" readonly="readonly" />
     </div>
     <div class="form-group">
         <div class="radio">
             <label>
-                <input type="radio" name="shipping_payment[]" value="{{ \App\Models\Order::SHIPPING_PAYMENT_SENDER_DB }}" checked="checked" />
+                <input type="radio" name="shipping_payment[{{ $countOrder }}]" value="{{ \App\Models\Order::SHIPPING_PAYMENT_SENDER_DB }}" checked="checked" />
                 Shop trả
             </label>
         </div>
         <div class="radio">
             <label>
-                <input type="radio" name="shipping_payment[]" value="{{ \App\Models\Order::SHIPPING_PAYMENT_RECEIVER_DB }}" />
+                <input type="radio" name="shipping_payment[{{ $countOrder }}]" value="{{ \App\Models\Order::SHIPPING_PAYMENT_RECEIVER_DB }}" />
                 Khách trả
             </label>
         </div>
     </div>
     <div class="form-group">
         <label>Tổng tiền thu hộ</label>
-        <input type="text" class="form-control OrderTotalCodPriceInput" name="total_cod_price[]" readonly="readonly" />
+        <input type="text" class="form-control OrderTotalCodPriceInput" name="total_cod_price[{{ $countOrder }}]" readonly="readonly" />
     </div>
+
+    @if(auth()->user() && auth()->user()->prepay == \App\Libraries\Helpers\Utility::ACTIVE_DB)
+        <div class="form-group">
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" name="prepay[{{ $countOrder }}]" />
+                    Ứng Trước Tiền Thu Hộ Bằng Chuyển Khoản
+                </label>
+            </div>
+        </div>
+    @endif
+
     <div class="form-group">
         <label>Ghi chú</label>
-        <textarea name="note[]" class="form-control"></textarea>
+        <textarea name="note[{{ $countOrder }}]" class="form-control"></textarea>
     </div>
     <hr />
 </div>

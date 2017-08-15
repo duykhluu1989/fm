@@ -23,7 +23,6 @@ class Order extends Model
 
         self::created(function(Order $order) {
             $order->number = self::ORDER_NUMBER_PREFIX + $order->id;
-            $order->generateDo();
             $order->save();
         });
     }
@@ -43,9 +42,9 @@ class Order extends Model
         return $this->hasOne('App\Models\OrderAddress', 'order_id')->where('type', OrderAddress::TYPE_RECEIVER_DB);
     }
 
-    protected function generateDo()
+    public function generateDo($province)
     {
-        $this->do = 'FM' . str_slug($this->receiverAddress->province, '') . date('m') . date('y');
+        $this->do = 'FM' . str_slug($province->name) . date('m') . date('y');
 
         $count = Order::where('do', 'like', $this->do . '%')->count('id');
 

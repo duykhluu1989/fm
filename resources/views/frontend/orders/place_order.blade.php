@@ -25,13 +25,13 @@
                                         <?php
                                         $oldReceiverName = old('receiver_name');
 
-                                        if(!empty($oldReceiverName))
-                                            $countOrder = count($oldReceiverName);
-                                        else
-                                            $countOrder = 1;
+                                        if(!is_array($oldReceiverName) || empty($oldReceiverName))
+                                            $oldReceiverName = [0 => ''];
+
+                                        $i = 0;
                                         ?>
 
-                                        @for($i = 0;$i < $countOrder;$i ++)
+                                        @foreach($oldReceiverName as $k => $v)
                                             <div class="OrderFormDiv">
                                                 <p>
                                                     <b>Thông tin lấy hàng</b>
@@ -44,9 +44,9 @@
 
                                                     <div class="form-group">
                                                         <label>Địa chỉ (*)</label>
-                                                        <select name="user_address[]" class="form-control" required="required">
+                                                        <select name="user_address[{{ $k }}]" class="form-control" required="required">
                                                             <?php
-                                                            $userAddressId = old('user_address.' . $i);
+                                                            $userAddressId = old('user_address.' . $k);
                                                             ?>
 
                                                             @foreach($userAddresses as $userAddress)
@@ -63,19 +63,19 @@
 
                                                     <div class="form-group">
                                                         <label>Họ tên (*)</label>
-                                                        <input type="text" class="form-control" name="register_name[]" value="{{ old('register_name.' . $i) }}" required="required" />
-                                                        @if($errors->has('register_name.' . $i))
+                                                        <input type="text" class="form-control" name="register_name[{{ $k }}]" value="{{ old('register_name.' . $k) }}" required="required" />
+                                                        @if($errors->has('register_name.' . $k))
                                                             <span class="has-error">
-                                                                <span class="help-block">* {{ $errors->first('register_name.' . $i) }}</span>
+                                                                <span class="help-block">* {{ $errors->first('register_name.' . $k) }}</span>
                                                             </span>
                                                         @endif
                                                     </div>
                                                     <div class="form-group">
                                                         <label>Số điện thoại (*)</label>
-                                                        <input type="text" class="form-control" name="register_phone[]" value="{{ old('register_phone.' . $i) }}" required="required" />
-                                                        @if($errors->has('register_phone.' . $i))
+                                                        <input type="text" class="form-control" name="register_phone[{{ $k }}]" value="{{ old('register_phone.' . $k) }}" required="required" />
+                                                        @if($errors->has('register_phone.' . $k))
                                                             <span class="has-error">
-                                                                <span class="help-block">* {{ $errors->first('register_phone.' . $i) }}</span>
+                                                                <span class="help-block">* {{ $errors->first('register_phone.' . $k) }}</span>
                                                             </span>
                                                         @endif
                                                     </div>
@@ -94,18 +94,18 @@
 
                                                     <div class="form-group">
                                                         <label>Địa chỉ lấy hàng (*)</label>
-                                                        <input type="text" class="form-control" name="register_address[]" value="{{ old('register_address.' . $i) }}" required="required" />
-                                                        @if($errors->has('register_address.' . $i))
+                                                        <input type="text" class="form-control" name="register_address[{{ $k }}]" value="{{ old('register_address.' . $k) }}" required="required" />
+                                                        @if($errors->has('register_address.' . $k))
                                                             <span class="has-error">
-                                                                <span class="help-block">* {{ $errors->first('register_address.' . $i) }}</span>
+                                                                <span class="help-block">* {{ $errors->first('register_address.' . $k) }}</span>
                                                             </span>
                                                         @endif
                                                     </div>
                                                     <div class="form-group">
                                                         <label>Tỉnh / thành phố (*)</label>
-                                                        <select name="register_province[]" class="form-control RegisterProvince" required="required">
+                                                        <select name="register_province[{{ $k }}]" class="form-control RegisterProvince" required="required">
                                                             <?php
-                                                            $province = old('register_province.' . $i);
+                                                            $province = old('register_province.' . $k);
                                                             ?>
 
                                                             <option value=""></option>
@@ -118,17 +118,17 @@
                                                                 @endif
                                                             @endforeach
                                                         </select>
-                                                        @if($errors->has('register_province.' . $i))
+                                                        @if($errors->has('register_province.' . $k))
                                                             <span class="has-error">
-                                                                <span class="help-block">* {{ $errors->first('register_province.' . $i) }}</span>
+                                                                <span class="help-block">* {{ $errors->first('register_province.' . $k) }}</span>
                                                             </span>
                                                         @endif
                                                     </div>
                                                     <div class="form-group">
                                                         <label>Quận / huyện (*)</label>
-                                                        <select name="register_district[]" class="form-control RegisterDistrict" required="required">
+                                                        <select name="register_district[{{ $k }}]" class="form-control RegisterDistrict" required="required">
                                                             <?php
-                                                            $district = old('register_district.' . $i);
+                                                            $district = old('register_district.' . $k);
                                                             ?>
 
                                                             <option value=""></option>
@@ -143,17 +143,17 @@
                                                                 @endforeach
                                                             @endif
                                                         </select>
-                                                        @if($errors->has('register_district.' . $i))
+                                                        @if($errors->has('register_district.' . $k))
                                                             <span class="has-error">
-                                                                <span class="help-block">* {{ $errors->first('register_district.' . $i) }}</span>
+                                                                <span class="help-block">* {{ $errors->first('register_district.' . $k) }}</span>
                                                             </span>
                                                         @endif
                                                     </div>
                                                     <div class="form-group">
                                                         <label>Phường / xã (*)</label>
-                                                        <select name="register_ward[]" class="form-control RegisterWard" required="required">
+                                                        <select name="register_ward[{{ $k }}]" class="form-control RegisterWard" required="required">
                                                             <?php
-                                                            $ward = old('register_ward.' . $i);
+                                                            $ward = old('register_ward.' . $k);
                                                             ?>
 
                                                             <option value=""></option>
@@ -168,9 +168,9 @@
                                                                 @endforeach
                                                             @endif
                                                         </select>
-                                                        @if($errors->has('register_ward.' . $i))
+                                                        @if($errors->has('register_ward.' . $k))
                                                             <span class="has-error">
-                                                                <span class="help-block">* {{ $errors->first('register_ward.' . $i) }}</span>
+                                                                <span class="help-block">* {{ $errors->first('register_ward.' . $k) }}</span>
                                                             </span>
                                                         @endif
                                                     </div>
@@ -223,36 +223,36 @@
                                                 <p><b>Thông tin người nhận hàng</b></p>
                                                 <div class="form-group">
                                                     <label>Tên người nhận (*)</label>
-                                                    <input type="text" class="form-control" name="receiver_name[]" value="{{ old('receiver_name.' . $i) }}" required="required" />
-                                                    @if($errors->has('receiver_name.' . $i))
+                                                    <input type="text" class="form-control" name="receiver_name[{{ $k }}]" value="{{ old('receiver_name.' . $k) }}" required="required" />
+                                                    @if($errors->has('receiver_name.' . $k))
                                                         <span class="has-error">
-                                                            <span class="help-block">* {{ $errors->first('receiver_name.' . $i) }}</span>
+                                                            <span class="help-block">* {{ $errors->first('receiver_name.' . $k) }}</span>
                                                         </span>
                                                     @endif
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Số điện thoại (*)</label>
-                                                    <input type="text" class="form-control" name="receiver_phone[]" value="{{ old('receiver_phone.' . $i) }}" required="required" />
-                                                    @if($errors->has('receiver_phone.' . $i))
+                                                    <input type="text" class="form-control" name="receiver_phone[{{ $k }}]" value="{{ old('receiver_phone.' . $k) }}" required="required" />
+                                                    @if($errors->has('receiver_phone.' . $k))
                                                         <span class="has-error">
-                                                            <span class="help-block">* {{ $errors->first('receiver_phone.' . $i) }}</span>
+                                                            <span class="help-block">* {{ $errors->first('receiver_phone.' . $k) }}</span>
                                                         </span>
                                                     @endif
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Địa chỉ giao hàng (*)</label>
-                                                    <input type="text" class="form-control" name="receiver_address[]" value="{{ old('receiver_address.' . $i) }}" required="required" />
-                                                    @if($errors->has('receiver_address.' . $i))
+                                                    <input type="text" class="form-control" name="receiver_address[{{ $k }}]" value="{{ old('receiver_address.' . $k) }}" required="required" />
+                                                    @if($errors->has('receiver_address.' . $k))
                                                         <span class="has-error">
-                                                            <span class="help-block">* {{ $errors->first('receiver_address.' . $i) }}</span>
+                                                            <span class="help-block">* {{ $errors->first('receiver_address.' . $k) }}</span>
                                                         </span>
                                                     @endif
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Thành phố (*)</label>
-                                                    <select name="receiver_province[]" class="form-control ReceiverProvince" required="required">
+                                                    <select name="receiver_province[{{ $k }}]" class="form-control ReceiverProvince" required="required">
                                                         <?php
-                                                        $province = old('receiver_province.' . $i);
+                                                        $province = old('receiver_province.' . $k);
                                                         ?>
 
                                                         <option value=""></option>
@@ -265,17 +265,17 @@
                                                             @endif
                                                         @endforeach
                                                     </select>
-                                                    @if($errors->has('receiver_province.' . $i))
+                                                    @if($errors->has('receiver_province.' . $k))
                                                         <span class="has-error">
-                                                            <span class="help-block">* {{ $errors->first('receiver_province.' . $i) }}</span>
+                                                            <span class="help-block">* {{ $errors->first('receiver_province.' . $k) }}</span>
                                                         </span>
                                                     @endif
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Quận / huyện (*)</label>
-                                                    <select name="receiver_district[]" class="form-control ReceiverDistrict" required="required">
+                                                    <select name="receiver_district[{{ $k }}]" class="form-control ReceiverDistrict" required="required">
                                                         <?php
-                                                        $district = old('receiver_district.' . $i);
+                                                        $district = old('receiver_district.' . $k);
                                                         ?>
 
                                                         <option value=""></option>
@@ -290,17 +290,17 @@
                                                             @endforeach
                                                         @endif
                                                     </select>
-                                                    @if($errors->has('receiver_district.' . $i))
+                                                    @if($errors->has('receiver_district.' . $k))
                                                         <span class="has-error">
-                                                            <span class="help-block">* {{ $errors->first('receiver_district.' . $i) }}</span>
+                                                            <span class="help-block">* {{ $errors->first('receiver_district.' . $k) }}</span>
                                                         </span>
                                                     @endif
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Phường / xã (*)</label>
-                                                    <select name="receiver_ward[]" class="form-control ReceiverWard" required="required">
+                                                    <select name="receiver_ward[{{ $k }}]" class="form-control ReceiverWard" required="required">
                                                         <?php
-                                                        $ward = old('receiver_ward.' . $i);
+                                                        $ward = old('receiver_ward.' . $k);
                                                         ?>
 
                                                         <option value=""></option>
@@ -315,71 +315,83 @@
                                                             @endforeach
                                                         @endif
                                                     </select>
-                                                    @if($errors->has('receiver_ward.' . $i))
+                                                    @if($errors->has('receiver_ward.' . $k))
                                                         <span class="has-error">
-                                                            <span class="help-block">* {{ $errors->first('receiver_ward.' . $i) }}</span>
+                                                            <span class="help-block">* {{ $errors->first('receiver_ward.' . $k) }}</span>
                                                         </span>
                                                     @endif
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Trọng lượng gói hàng (kg)</label>
-                                                    <input type="text" class="form-control OrderWeightInput" name="weight[]" value="{{ old('weight.' . $i) }}" />
-                                                    @if($errors->has('weight.' . $i))
+                                                    <input type="text" class="form-control OrderWeightInput" name="weight[{{ $k }}]" value="{{ old('weight.' . $k) }}" />
+                                                    @if($errors->has('weight.' . $k))
                                                         <span class="has-error">
-                                                            <span class="help-block">* {{ $errors->first('weight.' . $i) }}</span>
+                                                            <span class="help-block">* {{ $errors->first('weight.' . $k) }}</span>
                                                         </span>
                                                     @endif
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Kích thước gói hàng (cm)</label>
-                                                    <input type="text" class="form-control OrderDimensionInput" name="dimension[]" value="{{ old('dimension.' . $i) }}" placeholder="Dài x Rộng x Cao" />
-                                                    @if($errors->has('dimension.' . $i))
+                                                    <input type="text" class="form-control OrderDimensionInput" name="dimension[{{ $k }}]" value="{{ old('dimension.' . $k) }}" placeholder="Dài x Rộng x Cao" />
+                                                    @if($errors->has('dimension.' . $k))
                                                         <span class="has-error">
-                                                            <span class="help-block">* {{ $errors->first('dimension.' . $i) }}</span>
+                                                            <span class="help-block">* {{ $errors->first('dimension.' . $k) }}</span>
                                                         </span>
                                                     @endif
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Tiền thu hộ</label>
-                                                    <input type="text" class="form-control InputForNumber OrderCodPriceInput" name="cod_price[]" value="{{ old('cod_price.' . $i) }}" />
-                                                    @if($errors->has('cod_price.' . $i))
+                                                    <input type="text" class="form-control InputForNumber OrderCodPriceInput" name="cod_price[{{ $k }}]" value="{{ old('cod_price.' . $k) }}" />
+                                                    @if($errors->has('cod_price.' . $k))
                                                         <span class="has-error">
-                                                            <span class="help-block">* {{ $errors->first('cod_price.' . $i) }}</span>
+                                                            <span class="help-block">* {{ $errors->first('cod_price.' . $k) }}</span>
                                                         </span>
                                                     @endif
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Phí ship (tạm tính)</label>
-                                                    <input type="text" class="form-control OrderShippingPriceInput" name="shipping_price[]" value="{{ old('shipping_price.' . $i) }}" readonly="readonly" />
+                                                    <input type="text" class="form-control OrderShippingPriceInput" name="shipping_price[{{ $k }}]" value="{{ old('shipping_price.' . $k) }}" readonly="readonly" />
                                                 </div>
                                                 <div class="form-group">
                                                     <?php
-                                                    $shippingPayment = old('shipping_payment.' . $i);
+                                                    $shippingPayment = old('shipping_payment.' . $k);
                                                     ?>
 
                                                     <div class="radio">
                                                         <label>
-                                                            <input type="radio" name="shipping_payment[]" value="{{ \App\Models\Order::SHIPPING_PAYMENT_SENDER_DB }}"<?php echo ($shippingPayment == \App\Models\Order::SHIPPING_PAYMENT_SENDER_DB ? ' checked="checked"' : ''); ?> />
+                                                            <input type="radio" name="shipping_payment[{{ $k }}]" value="{{ \App\Models\Order::SHIPPING_PAYMENT_SENDER_DB }}"<?php echo ($shippingPayment == \App\Models\Order::SHIPPING_PAYMENT_SENDER_DB ? ' checked="checked"' : ''); ?> />
                                                             Shop trả
                                                         </label>
                                                     </div>
                                                     <div class="radio">
                                                         <label>
-                                                            <input type="radio" name="shipping_payment[]" value="{{ \App\Models\Order::SHIPPING_PAYMENT_RECEIVER_DB }}"<?php echo ($shippingPayment == \App\Models\Order::SHIPPING_PAYMENT_RECEIVER_DB ? ' checked="checked"' : ''); ?> />
+                                                            <input type="radio" name="shipping_payment[{{ $k }}]" value="{{ \App\Models\Order::SHIPPING_PAYMENT_RECEIVER_DB }}"<?php echo ($shippingPayment == \App\Models\Order::SHIPPING_PAYMENT_RECEIVER_DB ? ' checked="checked"' : ''); ?> />
                                                             Khách trả
                                                         </label>
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Tổng tiền thu hộ</label>
-                                                    <input type="text" class="form-control OrderTotalCodPriceInput" name="total_cod_price[]" value="{{ old('total_cod_price.' . $i) }}" readonly="readonly" />
+                                                    <input type="text" class="form-control OrderTotalCodPriceInput" name="total_cod_price[{{ $k }}]" value="{{ old('total_cod_price.' . $k) }}" readonly="readonly" />
                                                 </div>
+
+                                                @if(auth()->user() && auth()->user()->prepay == \App\Libraries\Helpers\Utility::ACTIVE_DB)
+                                                    <div class="form-group">
+                                                        <div class="checkbox">
+                                                            <label>
+                                                                <input type="checkbox" name="prepay[{{ $k }}]" <?php echo (old('prepay.' . $k) ? ' checked="checked"' : ''); ?> />
+                                                                Ứng Trước Tiền Thu Hộ Bằng Chuyển Khoản
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                @endif
+
                                                 <div class="form-group">
                                                     <label>Ghi chú</label>
-                                                    <textarea name="note[]" class="form-control">{{ old('note.' . $i) }}</textarea>
-                                                    @if($errors->has('note.' . $i))
+                                                    <textarea name="note[{{ $k }}]" class="form-control">{{ old('note.' . $k) }}</textarea>
+                                                    @if($errors->has('note.' . $k))
                                                         <span class="has-error">
-                                                            <span class="help-block">* {{ $errors->first('note.' . $i) }}</span>
+                                                            <span class="help-block">* {{ $errors->first('note.' . $k) }}</span>
                                                         </span>
                                                     @endif
                                                 </div>
@@ -389,7 +401,7 @@
                                             <?php
                                             $i ++;
                                             ?>
-                                        @endfor
+                                        @endforeach
                                     </div>
 
                                     <button type="submit" class="btn btnDangDH"><i class="fa fa-upload fa-lg" aria-hidden="true"></i> ĐĂNG ĐƠN HÀNG</button>
@@ -439,13 +451,20 @@
             }
         });
 
+        var countOrder = {{ $k + 1 }};
+
         $('#AddMoreOrderButton').click(function() {
             $.ajax({
                 url: '{{ action('Frontend\OrderController@getOrderForm') }}',
                 type: 'get',
+                data: 'count_order=' + countOrder,
                 success: function(result) {
                     if(result)
+                    {
                         $('#ListOrder').append(result);
+
+                        countOrder ++;
+                    }
                 }
             });
         });
@@ -506,13 +525,13 @@
             {
                 containerElem = $(this).closest('.OrderFormDiv');
 
-                calculateTotalCodPrice(containerElem.find('.OrderCodPriceInput').first(), containerElem.find('.OrderTotalCodPriceInput').first(), containerElem.find('.OrderShippingPriceInput').first(), containerElem.find('input[type="radio"][name="shipping_payment[]"]:checked').first().val());
+                calculateTotalCodPrice(containerElem.find('.OrderCodPriceInput').first(), containerElem.find('.OrderTotalCodPriceInput').first(), containerElem.find('.OrderShippingPriceInput').first(), containerElem.find('input[type="radio"]:checked').first().val());
             }
             else if($(this).prop('type') == 'radio')
             {
                 containerElem = $(this).closest('.OrderFormDiv');
 
-                calculateTotalCodPrice(containerElem.find('.OrderCodPriceInput').first(), containerElem.find('.OrderTotalCodPriceInput').first(), containerElem.find('.OrderShippingPriceInput').first(), containerElem.find('input[type="radio"][name="shipping_payment[]"]:checked').first().val());
+                calculateTotalCodPrice(containerElem.find('.OrderCodPriceInput').first(), containerElem.find('.OrderTotalCodPriceInput').first(), containerElem.find('.OrderShippingPriceInput').first(), containerElem.find('input[type="radio"]:checked').first().val());
             }
         });
 
@@ -561,7 +580,7 @@
                         else
                             shippingPriceElem.val('');
 
-                        calculateTotalCodPrice(containerElem.find('.OrderCodPriceInput').first(), containerElem.find('.OrderTotalCodPriceInput').first(), containerElem.find('.OrderShippingPriceInput').first(), containerElem.find('input[type="radio"][name="shipping_payment[]"]:checked').first().val());
+                        calculateTotalCodPrice(containerElem.find('.OrderCodPriceInput').first(), containerElem.find('.OrderTotalCodPriceInput').first(), containerElem.find('.OrderShippingPriceInput').first(), containerElem.find('input[type="radio"]:checked').first().val());
                     }
                 });
             }
