@@ -6,7 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
-    const STATUS_PENDING_APPROVE_DB = 'Pending Approve';
+    const STATUS_PENDING_APPROVE_DB = 'pending-approve';
+    const STATUS_INFO_RECEIVED_DB = 'info-received';
+    const STATUS_SCHEDULED_DB = 'scheduled';
+    const STATUS_PRE_JOB_DB = 'pre-job';
+    const STATUS_HEADING_TO_DB = 'heading-to';
+    const STATUS_CANCEL_HEADING_TO_DB = 'cancel-heading-to';
+    const STATUS_ARRIVED_DB = 'arrived';
+    const STATUS_COMPLETED_DB = 'completed';
+    const STATUS_PARTIALLY_COMPLETED_DB = 'partially-completed';
+    const STATUS_FAILED_DB = 'failed';
 
     const SHIPPING_PAYMENT_SENDER_DB = 0;
     const SHIPPING_PAYMENT_RECEIVER_DB = 1;

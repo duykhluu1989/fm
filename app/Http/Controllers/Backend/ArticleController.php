@@ -38,7 +38,7 @@ class ArticleController extends Controller
                 'title' => 'Tên',
                 'data' => function($row) {
                     echo Html::a($row->name, [
-                        'href' => action('Backend\ArticleController@editArticleStatic', ['id' => $row->id]),
+                        'href' => action('Backend\ArticleController@editArticle', ['id' => $row->id]),
                     ]);
                 },
             ],
