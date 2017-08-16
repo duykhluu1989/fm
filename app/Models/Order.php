@@ -102,7 +102,7 @@ class Order extends Model
 
         $district = Area::find($districtId);
 
-        if(!empty($district))
+        if(!empty($district) && !empty($district->shipping_price))
         {
             $shippingPrice += $district->shipping_price;
             $netWeight -= 3;
