@@ -387,8 +387,11 @@ class UserController extends Controller
     {
         $user = auth()->user();
 
-        $orders = Order::where('user_id', $user->id)
-            ->orderBy('id', 'desc')
+        $orders = Order::with(['receiverAddress' => function($query) {
+            $query->select('order_id', 'name');
+        }])->select('order.id', 'order.number', 'order.status', 'order.shipper', 'order.created_at', 'order.cancelled_at', 'order.cod_price', 'order.shipping_price')
+            ->where('order.user_id', $user->id)
+            ->orderBy('order.id', 'desc')
             ->paginate(Utility::FRONTEND_ROWS_PER_PAGE);
 
         return view('frontend.users.admin_order', [

@@ -76,7 +76,7 @@
                                         </div>
                                         <div class="radio">
                                             <label>
-                                                <input type="radio" name="1" id="" value=""">
+                                                <input type="radio" name="1" id="" value="">
                                                 Shop trả
                                             </label>
                                         </div>
@@ -113,11 +113,11 @@
                             <tr>
                                 <th>Mã đơn hàng</th>
                                 <th>Khách hàng</th>
-                                <th>Hàng hoá</th>
-                                <th>Ghi chú</th>
                                 <th>Tiền thu hộ</th>
                                 <th>Phí ship</th>
+                                <th>Shipper</th>
                                 <th>Trạng thái</th>
+                                <th>Đặt đơn hàng lúc</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -127,28 +127,12 @@
                                     <td>
                                         <a class="label label-danger" href="{{ action('Frontend\UserController@detailOrder', ['id' => $order->id]) }}">{{ $order->number }}</a>
                                     </td>
-                                    <td>
-                                        <?php
-                                        foreach($order->orderAddresses as $orderAddress)
-                                        {
-                                            if($orderAddress->type == \App\Models\OrderAddress::TYPE_RECEIVER_DB)
-                                            {
-                                                echo $orderAddress->name;
-                                                break;
-                                            }
-                                        }
-                                        ?>
-                                    </td>
-                                    <td>
-                                        <?php
-                                        foreach($order->orderItems as $orderItem)
-                                            echo $orderItem->quantity . ' x ' . $orderItem->name . '<br />';
-                                        ?>
-                                    </td>
-                                    <td>{{ $order->note }}</td>
+                                    <td>{{ $order->receiverAddress->name }}</td>
                                     <td>{{ $order->cod_price }}</td>
                                     <td>{{ $order->shipping_price }}</td>
+                                    <td>{{ $order->shipper }}</td>
                                     <td>{{ $order->status }}</td>
+                                    <td>{{ $order->created_at }}</td>
                                 </tr>
                             @endforeach
 
