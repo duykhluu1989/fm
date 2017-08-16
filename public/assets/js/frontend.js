@@ -45,3 +45,9 @@ function formatNumber(number, delimiter)
 
     return '';
 }
+
+$('.DatePicker').datepicker({
+    changeYear: true,
+    changeMonth: true,
+    dateFormat: 'yy-mm-dd'
+});

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Frontend;
 
+use App\Models\OrderAddress;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
@@ -383,16 +384,68 @@ class UserController extends Controller
         return view('frontend.users.quanlydongtien');
     }
 
-    public function adminOrder()
+    public function adminOrder(Request $request)
     {
         $user = auth()->user();
 
-        $orders = Order::with(['receiverAddress' => function($query) {
+        $builder = Order::with(['receiverAddress' => function($query) {
             $query->select('order_id', 'name');
         }])->select('order.id', 'order.number', 'order.status', 'order.shipper', 'order.created_at', 'order.cancelled_at', 'order.cod_price', 'order.shipping_price')
             ->where('order.user_id', $user->id)
-            ->orderBy('order.id', 'desc')
-            ->paginate(Utility::FRONTEND_ROWS_PER_PAGE);
+            ->orderBy('order.id', 'desc');
+
+        $inputs = $request->all();
+
+        if(count($inputs) > 0)
+        {
+            if(!empty($inputs['status']))
+                $builder->where('order.status', $inputs['status']);
+
+            if(!empty($inputs['number']))
+            {
+                $numbers = explode(',', $inputs['number']);
+                $builder->whereIn('order.number', $numbers);
+            }
+
+            if(!empty($inputs['phone']))
+            {
+                $phones = explode(',', $inputs['phone']);
+                $sql = $builder->toSql();
+                if(strpos($sql, 'inner join `order_address` on') === false)
+                {
+                    $builder->join('order_address', function($join) {
+                        $join->on('order.id', '=', 'order_address.order_id')->where('order_address.type', '=', OrderAddress::TYPE_RECEIVER_DB);
+                    });
+                }
+                $builder->whereIn('order_address.phone', $phones);
+            }
+
+            if(!empty($inputs['name']))
+            {
+                $names = explode(',', $inputs['name']);
+                $sql = $builder->toSql();
+                if(strpos($sql, 'inner join `order_address` on') === false)
+                {
+                    $builder->join('order_address', function($join) {
+                        $join->on('order.id', '=', 'order_address.order_id')->where('order_address.type', '=', OrderAddress::TYPE_RECEIVER_DB);
+                    });
+                }
+                $builder->where(function($query) use($names) {
+                    $query->where('order_address.name', 'like', '%' . array_shift($names) . '%');
+
+                    foreach($names as $name)
+                        $query->orWhere('order_address.name', 'like', '%' . $name . '%');
+                });
+            }
+
+            if(!empty($inputs['created_at_from']))
+                $builder->where('order.created_at', '>=', $inputs['created_at_from']);
+
+            if(!empty($inputs['created_at_to']))
+                $builder->where('order.created_at', '<=', '23:59:59 ' . $inputs['created_at_to']);
+        }
+
+        $orders = $builder->paginate(Utility::FRONTEND_ROWS_PER_PAGE);
 
         return view('frontend.users.admin_order', [
             'orders' => $orders,

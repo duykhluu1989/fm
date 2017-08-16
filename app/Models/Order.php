@@ -51,6 +51,27 @@ class Order extends Model
         return $this->hasOne('App\Models\OrderAddress', 'order_id')->where('type', OrderAddress::TYPE_RECEIVER_DB);
     }
 
+    public static function getOrderStatus($value = null)
+    {
+        $status = [
+            self::STATUS_PENDING_APPROVE_DB => self::STATUS_PENDING_APPROVE_DB,
+            self::STATUS_INFO_RECEIVED_DB => self::STATUS_INFO_RECEIVED_DB,
+            self::STATUS_SCHEDULED_DB => self::STATUS_SCHEDULED_DB,
+            self::STATUS_PRE_JOB_DB => self::STATUS_PRE_JOB_DB,
+            self::STATUS_HEADING_TO_DB => self::STATUS_HEADING_TO_DB,
+            self::STATUS_CANCEL_HEADING_TO_DB => self::STATUS_CANCEL_HEADING_TO_DB,
+            self::STATUS_ARRIVED_DB => self::STATUS_ARRIVED_DB,
+            self::STATUS_COMPLETED_DB => self::STATUS_COMPLETED_DB,
+            self::STATUS_PARTIALLY_COMPLETED_DB => self::STATUS_PARTIALLY_COMPLETED_DB,
+            self::STATUS_FAILED_DB => self::STATUS_FAILED_DB,
+        ];
+
+        if($value !== null && isset($status[$value]))
+            return $status[$value];
+
+        return $status;
+    }
+
     public function generateDo($province)
     {
         $this->do = 'FM' . str_slug($province->name) . date('m') . date('y');
