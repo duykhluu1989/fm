@@ -20,6 +20,8 @@ Route::group(['namespace' => 'Backend'], function() {
 
         Route::post('refreshCsrfToken', 'HomeController@refreshCsrfToken');
 
+        Route::post('article/autoComplete', 'ArticleController@autoCompleteArticle');
+
         Route::get('user/generateApiKey', 'UserController@generateApiKey');
 
     });
@@ -67,6 +69,14 @@ Route::group(['namespace' => 'Backend'], function() {
         Route::get('role/{id}/delete', 'RoleController@deleteRole');
 
         Route::get('role/controlDelete', 'RoleController@controlDeleteRole');
+
+        Route::match(['get', 'post'], 'theme/menu', 'ThemeController@adminMenu');
+
+        Route::post('theme/menu/create', 'ThemeController@createMenu');
+
+        Route::match(['get', 'post'], 'theme/menu/{id}/edit', 'ThemeController@editMenu');
+
+        Route::get('theme/menu/{id}/delete', 'ThemeController@deleteMenu');
 
         Route::match(['get', 'post'], 'setting', 'SettingController@adminSetting');
 
