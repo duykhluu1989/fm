@@ -9,9 +9,11 @@ class Article extends Model
     const ARTICLE_GROUP_POLICY_DB = 0;
     const ARTICLE_GROUP_SERVICE_DB = 1;
     const ARTICLE_GROUP_RECRUITMENT_DB = 2;
+    const ARTICLE_GROUP_PREPAY_DB = 3;
     const ARTICLE_GROUP_POLICY_LABEL = 'Chính Sách';
     const ARTICLE_GROUP_SERVICE_LABEL = 'Dịch Vụ';
     const ARTICLE_GROUP_RECRUITMENT_LABEL = 'Tuyển Dụng';
+    const ARTICLE_GROUP_PREPAY_LABEL = 'Ứng Tiền Trước';
 
     const STATUS_PUBLISH_DB = 2;
     const STATUS_FINISH_DB = 1;
@@ -30,6 +32,7 @@ class Article extends Model
             self::ARTICLE_GROUP_POLICY_DB => self::ARTICLE_GROUP_POLICY_LABEL,
             self::ARTICLE_GROUP_SERVICE_DB => self::ARTICLE_GROUP_SERVICE_LABEL,
             self::ARTICLE_GROUP_RECRUITMENT_DB => self::ARTICLE_GROUP_RECRUITMENT_LABEL,
+            self::ARTICLE_GROUP_PREPAY_DB => self::ARTICLE_GROUP_PREPAY_LABEL,
         ];
 
         if($value !== null && isset($group[$value]))

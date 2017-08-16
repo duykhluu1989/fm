@@ -46,6 +46,8 @@ Route::group(['namespace' => 'Frontend', 'middleware' => ['locale']], function()
 
     Route::post('refreshCsrfToken', 'HomeController@refreshCsrfToken');
 
+    Route::get('page/{id}/{slug}', 'PageController@detailPage');
+
     Route::get('gioithieu', 'PageController@gioithieu');
 
     Route::get('gioithieu', 'PageController@gioithieu');

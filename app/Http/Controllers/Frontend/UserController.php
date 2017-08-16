@@ -14,6 +14,7 @@ use App\Models\UserAddress;
 use App\Models\Setting;
 use App\Models\Order;
 use App\Models\Area;
+use App\Models\Article;
 
 class UserController extends Controller
 {
@@ -56,7 +57,20 @@ class UserController extends Controller
                 return redirect()->action('Frontend\UserController@login')->withErrors($validator)->withInput($request->except('login_password'));
         }
 
-        return view('frontend.users.login');
+        $policyPage = Article::select('id', 'slug')
+            ->where('group', Article::ARTICLE_GROUP_POLICY_DB)
+            ->where('status', Article::STATUS_PUBLISH_DB)
+            ->first();
+
+        $prepayPage = Article::select('id', 'slug')
+            ->where('group', Article::ARTICLE_GROUP_PREPAY_DB)
+            ->where('status', Article::STATUS_PUBLISH_DB)
+            ->first();
+
+        return view('frontend.users.login', [
+            'policyPage' => $policyPage,
+            'prepayPage' => $prepayPage,
+        ]);
     }
 
     public function logout()

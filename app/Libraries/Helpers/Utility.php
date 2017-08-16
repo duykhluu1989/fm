@@ -18,8 +18,11 @@ class Utility
 
     const LANGUAGE_COOKIE_NAME = 'language';
     const BACK_URL_COOKIE_NAME = 'back_url';
+    const VIEW_ARTICLE_COOKIE_NAME = 'view_article';
 
     const MINUTE_ONE_MONTH = 43200;
+
+    const SECOND_ONE_HOUR = 3600;
 
     const FRONTEND_ROWS_PER_PAGE = 20;
 
@@ -159,6 +162,39 @@ class Utility
         }
 
         return '';
+    }
+
+    public static function viewCount($obj, $attributeName, $cookieName)
+    {
+        $time = time();
+
+        if(request()->hasCookie($cookieName))
+        {
+            $viewIds = request()->cookie($cookieName);
+            $viewIds = json_decode($viewIds, true);
+
+            if(!is_array($viewIds))
+                $viewIds = array();
+
+            if(!isset($viewIds[$obj->id]) || $viewIds[$obj->id] < $time)
+            {
+                $obj->increment($attributeName, 1);
+
+                $viewIds[$obj->id] = $time + (self::SECOND_ONE_HOUR * 24);
+                $viewIds = json_encode($viewIds);
+
+                Cookie::queue($cookieName, $viewIds, self::MINUTE_ONE_MONTH);
+            }
+        }
+        else
+        {
+            $obj->increment($attributeName, 1);
+
+            $viewIds[$obj->id] = $time + (self::SECOND_ONE_HOUR * 24);
+            $viewIds = json_encode($viewIds);
+
+            Cookie::queue($cookieName, $viewIds, self::MINUTE_ONE_MONTH);
+        }
     }
 
     public static function removeWhitespace($string)

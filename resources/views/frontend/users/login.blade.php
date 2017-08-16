@@ -201,7 +201,7 @@
                                 <div class="checkbox">
                                     <label>
                                         <input type="checkbox" name="register_accept_policy"<?php echo (old('register_accept_policy') ? ' checked="checked"' : ''); ?> required="required" />
-                                        Tôi đồng ý với <a href="{{ action('Frontend\PageController@chinhsach') }}"><span class="red">chính sách dịch vụ</span></a> của ParcelPost
+                                        Tôi đồng ý với <a href="{{ !empty($policyPage) ? action('Frontend\PageController@detailPage', ['id' => $policyPage->id, 'slug' => $policyPage->slug]) : 'javascript:void:(0)' }}" target="_blank"><span class="red">chính sách dịch vụ</span></a> của ParcelPost
                                     </label>
                                 </div>
                             </div>
