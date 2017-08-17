@@ -16,6 +16,7 @@ use App\Models\Setting;
 use App\Models\Order;
 use App\Models\Area;
 use App\Models\Article;
+use Firebase\JWT\JWT;
 
 class UserController extends Controller
 {
@@ -203,9 +204,104 @@ class UserController extends Controller
         return '';
     }
 
-    public function quenmatkhau()
+    public function forgetPassword(Request $request)
     {
-        return view('frontend.users.quenmatkhau');
+        if($request->isMethod('post'))
+        {
+            $inputs = $request->all();
+
+            $validator = Validator::make($inputs, [
+                'email' => 'required|email',
+            ]);
+
+            $validator->after(function($validator) use(&$inputs) {
+                $user = User::where('email', $inputs['email'])->first();
+
+                if(empty($user) || $user->status == Utility::INACTIVE_DB)
+                    $validator->errors()->add('email', trans('validation.email', ['attribute' => 'email']));
+                else
+                    $inputs['user'] = $user;
+            });
+
+            if($validator->passes())
+            {
+                $time = time();
+
+                $claims = [
+                    'sub' => $inputs['user']->id,
+                    'iat' => $time,
+                    'exp' => $time + Utility::SECOND_ONE_HOUR,
+                    'iss' => request()->getUri(),
+                    'jti' => md5($inputs['user']->id . $time),
+                ];
+
+                $token = JWT::encode($claims, env('APP_KEY'));
+
+                try
+                {
+                    DB::beginTransaction();
+
+                    $inputs['user']->password = $token;
+                    $inputs['user']->save();
+
+                    $loginLink = action('Frontend\UserController@loginWithToken', ['token' => $token]);
+
+                    $user = $inputs['user'];
+
+                    Mail::send('frontend.emails.forget_password', ['loginLink' => $loginLink], function($message) use($user, $request) {
+
+                        $message->from(Setting::getSettings(Setting::CATEGORY_GENERAL_DB, Setting::CONTACT_EMAIL), Setting::getSettings(Setting::CATEGORY_GENERAL_DB, Setting::WEB_TITLE));
+                        $message->to($user->email, $user->name);
+                        $message->subject(Setting::getSettings(Setting::CATEGORY_GENERAL_DB, Setting::WEB_TITLE) . ' | Quên mật khẩu');
+
+                    });
+
+                    DB::commit();
+
+                    return redirect()->action('Frontend\UserController@forgetPassword')->with('messageSuccess', 'Vui lòng kiểm tra email để khôi phục mật khẩu');
+                }
+                catch(\Exception $e)
+                {
+                    DB::rollBack();
+
+                    return redirect()->action('Frontend\UserController@forgetPassword')->withErrors(['email' => $e->getMessage()])->withInput();
+                }
+            }
+            else
+                return redirect()->action('Frontend\UserController@forgetPassword')->withErrors($validator)->withInput();
+        }
+
+        return view('frontend.users.forget_password');
+    }
+
+    public function loginWithToken($token)
+    {
+        try
+        {
+            $decoded = JWT::decode($token, env('APP_KEY'), ['HS256']);
+
+            $user = User::where('id', $decoded->sub)->where('status', Utility::ACTIVE_DB)->first();
+
+            if(!empty($user) && $user->password == $token)
+            {
+                DB::beginTransaction();
+
+                $user->password = null;
+                $user->save();
+
+                auth()->login($user);
+
+                DB::commit();
+            }
+
+            return redirect()->action('Frontend\UserController@editAccount')->with('messageSuccess', 'Vui lòng thiết lập mật khẩu mới');
+        }
+        catch(\Exception $e)
+        {
+            DB::rollBack();
+
+            return view('frontend.errors.404');
+        }
     }
 
     public function searchOrder(Request $request)
