@@ -338,7 +338,7 @@
 
                                                             <option value=""></option>
 
-                                                            @foreach(\App\Models\Area::getProvinces() as $area)
+                                                            @foreach(\App\Models\Area::getProvinces(true) as $area)
                                                                 @if($province == $area->id)
                                                                     <option selected="selected" value="{{ $area->id }}">{{ $area->name }}</option>
                                                                 @else
@@ -362,7 +362,7 @@
                                                             <option value=""></option>
 
                                                             @if($province)
-                                                                @foreach(\App\Models\Area::getDistricts($province) as $area)
+                                                                @foreach(\App\Models\Area::getDistricts($province, true) as $area)
                                                                     @if($district && $district == $area->id)
                                                                         <option selected="selected" value="{{ $area->id }}">{{ $area->name }}</option>
                                                                     @else
@@ -387,7 +387,7 @@
                                                             <option value=""></option>
 
                                                             @if($district)
-                                                                @foreach(\App\Models\Area::getDistricts($province) as $area)
+                                                                @foreach(\App\Models\Area::getDistricts($province, true) as $area)
                                                                     @if($ward && $ward == $area->id)
                                                                         <option selected="selected" value="{{ $area->id }}">{{ $area->name }}</option>
                                                                     @else
@@ -486,20 +486,20 @@
             {
                 containerElem = $(this).closest('.OrderFormDiv');
 
-                changeArea($(this), containerElem.find('.RegisterDistrict').first(), '{{ \App\Models\Area::TYPE_DISTRICT_DB }}');
+                changeArea($(this), containerElem.find('.RegisterDistrict').first(), '{{ \App\Models\Area::TYPE_DISTRICT_DB }}', false);
                 containerElem.find('.RegisterWard').first().html('<option value=""></option>');
             }
             else if($(this).hasClass('RegisterDistrict'))
             {
                 containerElem = $(this).closest('.OrderFormDiv');
 
-                changeArea($(this), containerElem.find('.RegisterWard').first(), '{{ \App\Models\Area::TYPE_WARD_DB }}');
+                changeArea($(this), containerElem.find('.RegisterWard').first(), '{{ \App\Models\Area::TYPE_WARD_DB }}', false);
             }
             else if($(this).hasClass('ReceiverProvince'))
             {
                 containerElem = $(this).closest('.OrderFormDiv');
 
-                changeArea($(this), containerElem.find('.ReceiverDistrict').first(), '{{ \App\Models\Area::TYPE_DISTRICT_DB }}');
+                changeArea($(this), containerElem.find('.ReceiverDistrict').first(), '{{ \App\Models\Area::TYPE_DISTRICT_DB }}', true);
                 containerElem.find('.ReceiverWard').first().html('<option value=""></option>');
                 containerElem.find('.OrderShippingPriceInput').first();
 
@@ -509,7 +509,7 @@
             {
                 containerElem = $(this).closest('.OrderFormDiv');
 
-                changeArea($(this), containerElem.find('.ReceiverWard').first(), '{{ \App\Models\Area::TYPE_WARD_DB }}');
+                changeArea($(this), containerElem.find('.ReceiverWard').first(), '{{ \App\Models\Area::TYPE_WARD_DB }}', true);
 
                 calculateShippingPrice(containerElem.find('.ReceiverDistrict').first(), containerElem.find('.OrderWeightInput').first(), containerElem.find('.OrderDimensionInput').first(), containerElem.find('.OrderShippingPriceInput').first(), containerElem);
             }
@@ -542,7 +542,7 @@
             }
         });
 
-        function changeArea(elem, updateElem, type)
+        function changeArea(elem, updateElem, type, receiver)
         {
             updateElem.html('' +
                 '<option value=""></option>' +
@@ -553,7 +553,7 @@
                 $.ajax({
                     url: '{{ action('Frontend\OrderController@getListArea') }}',
                     type: 'get',
-                    data: 'parent_id=' + elem.val() + '&type=' + type,
+                    data: 'parent_id=' + elem.val() + '&type=' + type + (receiver ? '&receiver=1' : ''),
                     success: function(result) {
                         if(result)
                         {

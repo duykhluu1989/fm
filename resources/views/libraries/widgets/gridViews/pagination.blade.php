@@ -15,7 +15,7 @@
         @for($i = 2;$i >= 1;$i --)
             @if($dataProvider->currentPage() - $i > 1)
                 @if($dataProvider->currentPage() - $i > 2 && $i == 2)
-                    <li>...</li>
+                    <li><span style="border-top: none;border-bottom: none">...</span></li>
                     <li><a href="{{ $dataProvider->url($dataProvider->currentPage() - $i) }}">{{ $dataProvider->currentPage() - $i }}</a></li>
                 @else
                     <li><a href="{{ $dataProvider->url($dataProvider->currentPage() - $i) }}">{{ $dataProvider->currentPage() - $i }}</a></li>
@@ -29,7 +29,7 @@
             @if($dataProvider->currentPage() + $i < $dataProvider->lastPage())
                 @if($dataProvider->currentPage() + $i < $dataProvider->lastPage() - 1 && $i == 2)
                     <li><a href="{{ $dataProvider->url($dataProvider->currentPage() + $i) }}">{{ $dataProvider->currentPage() + $i }}</a></li>
-                    <li>...</li>
+                    <li><span style="border-top: none;border-bottom: none">...</span></li>
                 @else
                     <li><a href="{{ $dataProvider->url($dataProvider->currentPage() + $i) }}">{{ $dataProvider->currentPage() + $i }}</a></li>
                 @endif

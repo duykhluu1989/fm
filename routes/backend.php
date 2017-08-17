@@ -30,6 +30,10 @@ Route::group(['namespace' => 'Backend'], function() {
 
         Route::get('order', 'OrderController@adminOrder');
 
+        Route::get('area', 'AreaController@adminArea');
+
+        Route::match(['get', 'post'], 'area/{id}/edit', 'AreaController@editArea');
+
         Route::match(['get', 'post'], 'order/{id}/detail', 'OrderController@detailOrder');
 
         Route::get('widget', 'WidgetController@adminWidget');

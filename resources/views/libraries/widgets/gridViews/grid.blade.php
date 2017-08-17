@@ -45,7 +45,7 @@
 @endif
 
 <div class="box box-primary">
-    <div class="box-header with-border">
+    <div class="box-header with-border" style="min-height: 54px">
         @if(!empty($tools))
             @foreach($tools as $tool)
                 @if(is_callable($tool))

@@ -172,12 +172,12 @@
             });
             Tu.t_scroll({
                 't_element': '.zoomOut'
-            })
+            });
             Tu.t_scroll({
                 't_element': '.news .slideDown',
                 't_duration': 0.1,
                 't_delay': 0.8
-            })
+            });
         });
     </script>
 @endpush

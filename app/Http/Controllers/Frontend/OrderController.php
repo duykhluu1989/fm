@@ -326,11 +326,11 @@ class OrderController extends Controller
         if($validator->passes())
         {
             if($inputs['type'] == Area::TYPE_DISTRICT_DB)
-                $areas = Area::getDistricts($inputs['parent_id']);
+                $areas = Area::getDistricts($inputs['parent_id'], (isset($inputs['receiver']) ? true : false));
             else if($inputs['type'] == Area::TYPE_WARD_DB)
-                $areas = Area::getWards($inputs['parent_id']);
+                $areas = Area::getWards($inputs['parent_id'], (isset($inputs['receiver']) ? true : false));
             else
-                $areas = Area::getProvinces();
+                $areas = Area::getProvinces(isset($inputs['receiver']) ? true : false);
 
             if(count($areas) > 0)
                 return json_encode($areas->toArray());

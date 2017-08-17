@@ -4,7 +4,7 @@
             <div class="row">
                 <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 display_table boxmH text-center">
                     <div class="table_content">
-                        <a href="{{ action('Frontend\HomeController@home') }}"><img src="{{ asset('themes/images/logo_white.png') }}" alt="" class="img-reponsive"></a>
+                        <a href="{{ action('Frontend\HomeController@home') }}"><img src="{{ \App\Models\Setting::getSettings(\App\Models\Setting::CATEGORY_GENERAL_DB, \App\Models\Setting::WEB_LOGO) ? \App\Models\Setting::getSettings(\App\Models\Setting::CATEGORY_GENERAL_DB, \App\Models\Setting::WEB_LOGO) : asset('themes/images/logo_white.png') }}" alt="Logo" class="img-reponsive"></a>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 display_table boxmH">

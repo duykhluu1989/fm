@@ -9,6 +9,9 @@
                     </li>
                 </ul>
             </li>
+            <li class="{{ (request()->is('admin/area*') ? 'active' : '') }}">
+                <a href="{{ action('Backend\AreaController@adminArea') }}"><i class="fa fa-truck"></i><span>Khu Vực Giao Hàng</span></a>
+            </li>
             <li class="{{ (request()->is('admin/widget*') ? 'active' : '') }}">
                 <a href="{{ action('Backend\WidgetController@adminWidget') }}"><i class="fa fa-th"></i><span>Tiện Ích</span></a>
             </li>

@@ -128,7 +128,7 @@
             <select name="receiver_province[{{ $countOrder }}]" class="form-control ReceiverProvince" required="required">
                 <option value=""></option>
 
-                @foreach(\App\Models\Area::getProvinces() as $area)
+                @foreach(\App\Models\Area::getProvinces(true) as $area)
                     <option value="{{ $area->id }}">{{ $area->name }}</option>
                 @endforeach
             </select>
