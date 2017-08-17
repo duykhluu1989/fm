@@ -459,7 +459,12 @@ class UserController extends Controller
     {
         $user = auth()->user();
 
-        $order = Order::where('user_id', $user->id)
+        $order = Order::with(['senderAddress' => function($query) {
+           $query->select('order_id', 'name', 'phone', 'address', 'province', 'district', 'ward');
+        }, 'receiverAddress' => function($query) {
+            $query->select('order_id', 'name', 'phone', 'address', 'province', 'district', 'ward');
+        }])->select('id', 'number', 'created_at', 'cancelled_at', 'cod_price', 'shipping_price', 'total_cod_price', 'shipping_payment', 'note', 'shipper', 'status', 'weight', 'dimension', 'prepay', 'payment')
+            ->where('user_id', $user->id)
             ->where('id', $id)
             ->first();
 

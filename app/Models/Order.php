@@ -16,6 +16,7 @@ class Order extends Model
     const STATUS_COMPLETED_DB = 'completed';
     const STATUS_PARTIALLY_COMPLETED_DB = 'partially-completed';
     const STATUS_FAILED_DB = 'failed';
+    const STATUS_CANCELLED_DB = 'cancelled';
 
     const SHIPPING_PAYMENT_SENDER_DB = 0;
     const SHIPPING_PAYMENT_RECEIVER_DB = 1;
@@ -64,6 +65,51 @@ class Order extends Model
             self::STATUS_COMPLETED_DB => self::STATUS_COMPLETED_DB,
             self::STATUS_PARTIALLY_COMPLETED_DB => self::STATUS_PARTIALLY_COMPLETED_DB,
             self::STATUS_FAILED_DB => self::STATUS_FAILED_DB,
+            self::STATUS_CANCELLED_DB => self::STATUS_CANCELLED_DB,
+        ];
+
+        if($value !== null && isset($status[$value]))
+            return $status[$value];
+
+        return $status;
+    }
+
+    public static function getOrderStatusOrder($value = null)
+    {
+        $status = [
+            self::STATUS_PENDING_APPROVE_DB => 1,
+            self::STATUS_INFO_RECEIVED_DB => 2,
+            self::STATUS_SCHEDULED_DB => 3,
+            self::STATUS_PRE_JOB_DB => 4,
+            self::STATUS_HEADING_TO_DB => 5,
+            self::STATUS_CANCEL_HEADING_TO_DB => 6,
+            self::STATUS_ARRIVED_DB => 7,
+            self::STATUS_COMPLETED_DB => 8,
+            self::STATUS_PARTIALLY_COMPLETED_DB => 9,
+            self::STATUS_FAILED_DB => 10,
+            self::STATUS_CANCELLED_DB => 11,
+        ];
+
+        if($value !== null && isset($status[$value]))
+            return $status[$value];
+
+        return $status;
+    }
+
+    public static function getOrderStatusLabel($value = null)
+    {
+        $status = [
+            self::STATUS_PENDING_APPROVE_DB => 'warning',
+            self::STATUS_INFO_RECEIVED_DB => 'warning',
+            self::STATUS_SCHEDULED_DB => 'primary',
+            self::STATUS_PRE_JOB_DB => 'primary',
+            self::STATUS_HEADING_TO_DB => 'primary',
+            self::STATUS_CANCEL_HEADING_TO_DB => 'primary',
+            self::STATUS_ARRIVED_DB => 'primary',
+            self::STATUS_COMPLETED_DB => 'success',
+            self::STATUS_PARTIALLY_COMPLETED_DB => 'primary',
+            self::STATUS_FAILED_DB => 'danger',
+            self::STATUS_CANCELLED_DB => 'danger',
         ];
 
         if($value !== null && isset($status[$value]))

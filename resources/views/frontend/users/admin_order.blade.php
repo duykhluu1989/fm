@@ -113,7 +113,7 @@
                                     <td>{{ \App\Libraries\Helpers\Utility::formatNumber($order->cod_price) }}</td>
                                     <td>{{ \App\Libraries\Helpers\Utility::formatNumber($order->shipping_price) }}</td>
                                     <td>{{ $order->shipper }}</td>
-                                    <td>{{ $order->status }}</td>
+                                    <td><span class="label label-{{ \App\Models\Order::getOrderStatusLabel($order->status ) }}">{{ $order->status }}</span></td>
                                     <td>{{ $order->created_at }}</td>
                                 </tr>
                             @endforeach
