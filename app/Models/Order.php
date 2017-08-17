@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Libraries\Helpers\Utility;
 
 class Order extends Model
 {
@@ -167,12 +168,24 @@ class Order extends Model
         else
             $netWeight = $weightFromDimension;
 
-        $district = Area::find($districtId);
+        $district = Area::with(['parentArea' => function($query) {
+            $query->select('id', 'shipping_price');
+        }])->select('parent_id', 'shipping_price')
+            ->where('status', Utility::ACTIVE_DB)
+            ->find($districtId);
 
-        if(!empty($district) && !empty($district->shipping_price))
+        if(!empty($district))
         {
-            $shippingPrice += $district->shipping_price;
-            $netWeight -= 3;
+            if(!empty($district->shipping_price))
+            {
+                $shippingPrice += $district->shipping_price;
+                $netWeight -= 3;
+            }
+            else if(!empty($district->parentArea) && !empty($district->parentArea->shipping_price))
+            {
+                $shippingPrice += $district->parentArea->shipping_price;
+                $netWeight -= 3;
+            }
         }
 
         if($netWeight > 0)
