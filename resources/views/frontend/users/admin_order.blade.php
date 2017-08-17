@@ -59,18 +59,6 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="form-group">
-                                        <div class="row">
-                                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                                                <label for="">Thời gian đối soát:</label>
-                                                <input type="text" name="" id="" class="form-control datetime" value="" title="" placeholder="Từ">
-                                            </div>
-                                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                                                <label for="">&nbsp;</label>
-                                                <input type="text" name="" id="" class="form-control datetime" value="" title="" placeholder="Đến">
-                                            </div>
-                                        </div>
-                                    </div>
                                     <div class="form-group mb0">
                                         <label style="display: block">Trả ship</label>
                                         <?php
@@ -78,34 +66,20 @@
                                         ?>
                                         <div class="radio">
                                             <label>
-                                                <input type="radio" name="shipping_payment" value=""<?php echo $shippingPayment === '' ? ' checked="checked"' : ''; ?> />
+                                                <input type="radio" name="shipping_payment" value=""<?php echo ($shippingPayment === null ? ' checked="checked"' : ''); ?> />
                                                 Tất cả
                                             </label>
                                         </div>
                                         <div class="radio">
                                             <label>
-                                                <input type="radio" name="shipping_payment" value="{{ \App\Models\Order::SHIPPING_PAYMENT_SENDER_DB }}"<?php echo ($shippingPayment !== '' && $shippingPayment == \App\Models\Order::SHIPPING_PAYMENT_SENDER_DB) ? ' checked="checked"' : ''; ?> />
+                                                <input type="radio" name="shipping_payment" value="{{ \App\Models\Order::SHIPPING_PAYMENT_SENDER_DB }}"<?php echo ($shippingPayment !== null && $shippingPayment == \App\Models\Order::SHIPPING_PAYMENT_SENDER_DB) ? ' checked="checked"' : ''; ?> />
                                                 Shop trả
                                             </label>
                                         </div>
                                         <div class="radio">
                                             <label>
-                                                <input type="radio" name="shipping_payment" value="{{ \App\Models\Order::SHIPPING_PAYMENT_RECEIVER_DB }}"<?php echo ($shippingPayment !== '' && $shippingPayment == \App\Models\Order::SHIPPING_PAYMENT_RECEIVER_DB) ? ' checked="checked"' : ''; ?> />
+                                                <input type="radio" name="shipping_payment" value="{{ \App\Models\Order::SHIPPING_PAYMENT_RECEIVER_DB }}"<?php echo ($shippingPayment !== null && $shippingPayment == \App\Models\Order::SHIPPING_PAYMENT_RECEIVER_DB) ? ' checked="checked"' : ''; ?> />
                                                 Khách trả
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="checkbox">
-                                            <label>
-                                                <input type="checkbox" value="">
-                                                Đơn hàng đã huỷ
-                                            </label>
-                                        </div>
-                                        <div class="checkbox">
-                                            <label>
-                                                <input type="checkbox" value="">
-                                                Đã trả hàng
                                             </label>
                                         </div>
                                     </div>
@@ -136,8 +110,8 @@
                                         <a class="label label-danger" href="{{ action('Frontend\UserController@detailOrder', ['id' => $order->id]) }}">{{ $order->number }}</a>
                                     </td>
                                     <td>{{ $order->receiverAddress->name }}</td>
-                                    <td>{{ $order->cod_price }}</td>
-                                    <td>{{ $order->shipping_price }}</td>
+                                    <td>{{ \App\Libraries\Helpers\Utility::formatNumber($order->cod_price) }}</td>
+                                    <td>{{ \App\Libraries\Helpers\Utility::formatNumber($order->shipping_price) }}</td>
                                     <td>{{ $order->shipper }}</td>
                                     <td>{{ $order->status }}</td>
                                     <td>{{ $order->created_at }}</td>
@@ -146,6 +120,47 @@
 
                             </tbody>
                         </table>
+                        <div class="row">
+                            <div class="col-lg-12 text-center">
+                                <ul class="pagination">
+                                    @if($orders->lastPage() > 1)
+                                        @if($orders->currentPage() > 1)
+                                            <li><a href="{{ $orders->previousPageUrl() }}">&laquo;</a></li>
+                                            <li><a href="{{ $orders->url(1) }}">1</a></li>
+                                        @endif
+
+                                        @for($i = 2;$i >= 1;$i --)
+                                            @if($orders->currentPage() - $i > 1)
+                                                @if($orders->currentPage() - $i > 2 && $i == 2)
+                                                    <li>...</li>
+                                                    <li><a href="{{ $orders->url($orders->currentPage() - $i) }}">{{ $orders->currentPage() - $i }}</a></li>
+                                                @else
+                                                    <li><a href="{{ $orders->url($orders->currentPage() - $i) }}">{{ $orders->currentPage() - $i }}</a></li>
+                                                @endif
+                                            @endif
+                                        @endfor
+
+                                        <li class="active"><a href="javascript:void(0)">{{ $orders->currentPage() }}</a></li>
+
+                                        @for($i = 1;$i <= 2;$i ++)
+                                            @if($orders->currentPage() + $i < $orders->lastPage())
+                                                @if($orders->currentPage() + $i < $orders->lastPage() - 1 && $i == 2)
+                                                    <li><a href="{{ $orders->url($orders->currentPage() + $i) }}">{{ $orders->currentPage() + $i }}</a></li>
+                                                    <li>...</li>
+                                                @else
+                                                    <li><a href="{{ $orders->url($orders->currentPage() + $i) }}">{{ $orders->currentPage() + $i }}</a></li>
+                                                @endif
+                                            @endif
+                                        @endfor
+
+                                        @if($orders->currentPage() < $orders->lastPage())
+                                            <li><a href="{{ $orders->url($orders->lastPage()) }}">{{ $orders->lastPage() }}</a></li>
+                                            <li><a href="{{ $orders->nextPageUrl() }}">&raquo;</a></li>
+                                        @endif
+                                    @endif
+                                </ul>
+                            </div>
+                        </div>
                         <a href="javascript:void(0)" class="btn btninDH"><i class="fa fa-print fa-lg" aria-hidden="true"></i> IN ĐƠN HÀNG</a>
                     </div>
                 </div>

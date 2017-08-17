@@ -443,6 +443,9 @@ class UserController extends Controller
 
             if(!empty($inputs['created_at_to']))
                 $builder->where('order.created_at', '<=', '23:59:59 ' . $inputs['created_at_to']);
+
+            if(isset($inputs['shipping_payment']) && $inputs['shipping_payment'] !== '')
+                $builder->where('order.shipping_payment', $inputs['shipping_payment']);
         }
 
         $orders = $builder->paginate(Utility::FRONTEND_ROWS_PER_PAGE);
