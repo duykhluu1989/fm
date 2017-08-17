@@ -117,10 +117,34 @@ class AreaController extends Controller
     {
         Utility::setBackUrlCookie($request, '/admin/area?');
 
-        $area = Area::find($id);
+        $area = Area::with(['parentArea' => function($query) {
+            $query->select('id', 'name');
+        }])->find($id);
 
         if(empty($area))
             return view('backend.errors.404');
+
+        if($request->isMethod('post'))
+        {
+            $inputs = $request->all();
+
+            $inputs['shipping_price'] = implode('', explode('.', $inputs['shipping_price']));
+
+            $validator = Validator::make($inputs, [
+                'shipping_price' => 'required|integer|min:0',
+            ]);
+
+            if($validator->passes())
+            {
+                $area->shipping_price = $inputs['shipping_price'];
+                $area->status = isset($inputs['status']) ? Utility::ACTIVE_DB : Utility::INACTIVE_DB;
+                $area->save();
+
+                return redirect()->action('Backend\AreaController@editArea', ['id' => $area->id])->with('messageSuccess', 'Thành Công');
+            }
+            else
+                return redirect()->action('Backend\AreaController@editArea', ['id' => $area->id])->withErrors($validator)->withInput();
+        }
 
         return view('backend.areas.edit_area', [
             'area' => $area,
