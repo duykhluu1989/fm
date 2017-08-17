@@ -208,6 +208,37 @@ class UserController extends Controller
         return view('frontend.users.quenmatkhau');
     }
 
+    public function searchOrder(Request $request)
+    {
+        $inputs = $request->all();
+
+        $validator = Validator::make($inputs, [
+            'k' => 'required|min:2|max:255',
+        ]);
+
+        if($validator->passes())
+        {
+            $user = auth()->user();
+
+            $keyword = Utility::removeWhitespace($inputs['k']);
+
+            $orders = Order::with(['receiverAddress' => function($query) {
+                $query->select('order_id', 'name');
+            }])->select('id', 'number', 'status', 'shipper', 'created_at', 'cancelled_at', 'cod_price', 'shipping_price')
+                ->where('user_id', $user->id)
+                ->where('number', 'like', $keyword . '%')
+                ->orderBy('id', 'desc')
+                ->paginate(Utility::FRONTEND_ROWS_PER_PAGE);
+        }
+        else
+            $orders = null;
+
+        return view('frontend.users.search_order', [
+            'orders' => $orders,
+            'keyword' => isset($inputs['k']) ? $inputs['k'] : '',
+        ]);
+    }
+
     public function editAccount(Request $request)
     {
         $user = auth()->user();

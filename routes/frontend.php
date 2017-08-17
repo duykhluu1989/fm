@@ -24,6 +24,8 @@ Route::group(['namespace' => 'Frontend', 'middleware' => ['locale']], function()
 
         Route::match(['get', 'post'], 'account', 'UserController@editAccount');
 
+        Route::get('search', 'UserController@searchOrder');
+
         Route::get('account/order', 'UserController@adminOrder');
 
         Route::get('account/order/{id}/detail', 'UserController@detailOrder');
