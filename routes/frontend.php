@@ -30,6 +30,10 @@ Route::group(['namespace' => 'Frontend', 'middleware' => ['locale']], function()
 
         Route::get('account/order/{id}/detail', 'UserController@detailOrder');
 
+        Route::match(['get', 'post'], 'account/order/{id}/edit', 'UserController@editOrder');
+
+        Route::get('account/order/{id}/cancel', 'UserController@cancelOrder');
+
         Route::get('quanlydongtien', 'UserController@quanlydongtien');
 
         Route::get('tongquanchung', 'UserController@tongquanchung');

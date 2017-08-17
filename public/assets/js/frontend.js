@@ -51,3 +51,14 @@ $('.DatePicker').datepicker({
     changeMonth: true,
     dateFormat: 'yy-mm-dd'
 });
+
+$('.Confirmation').click(function(event) {
+    if(confirm('Bạn Chắc Chắn Rồi Chứ ?'))
+        return true;
+    else
+    {
+        event.stopImmediatePropagation();
+        event.preventDefault();
+        return false;
+    }
+});

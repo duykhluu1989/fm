@@ -193,4 +193,21 @@ class Order extends Model
 
         return $shippingPrice;
     }
+
+    public function cancelOrder()
+    {
+        if(Order::getOrderStatusOrder($this->status) <= Order::getOrderStatusOrder(Order::STATUS_INFO_RECEIVED_DB))
+        {
+            $this->status = self::STATUS_CANCELLED_DB;
+            $this->cancelled_at = date('Y-m-d H:i:s');
+            $this->save();
+
+            $this->user->customerInformation->cancel_order_count += 1;
+            $this->user->customerInformation->save();
+
+            return true;
+        }
+
+        return false;
+    }
 }

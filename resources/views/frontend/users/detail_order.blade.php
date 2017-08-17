@@ -15,6 +15,14 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <h4 class="title_user line-on-right">Chi tiết đơn hàng {{ $order->number }}</h4>
+
+                        @if(\App\Models\Order::getOrderStatusOrder($order->status) <= \App\Models\Order::getOrderStatusOrder(\App\Models\Order::STATUS_INFO_RECEIVED_DB))
+
+                            <a href="{{ action('Frontend\UserController@editOrder', ['id' => $order->id]) }}" class="btn btnThemDD"><i class="fa fa-edit" aria-hidden="true"></i> SỬA ĐƠN HÀNG</a>
+                            <a href="{{ action('Frontend\UserController@cancelOrder', ['id' => $order->id]) }}" class="btn btnLuuTT pull-right Confirmation"><i class="fa fa-trash" aria-hidden="true"></i> HỦY ĐƠN HÀNG</a>
+
+                        @endif
+
                         <div class="row">
                             <div class="col-sm-6">
                                 <h3>Địa chỉ lấy hàng</h3>

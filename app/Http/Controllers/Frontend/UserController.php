@@ -169,7 +169,7 @@ class UserController extends Controller
         {
             Mail::send('frontend.emails.register', ['user' => $user, 'password' => $password], function($message) use($user) {
 
-                $message->from(Setting::getSettings(Setting::CATEGORY_GENERAL_DB, Setting::WEB_TITLE), Setting::getSettings(Setting::CATEGORY_GENERAL_DB, Setting::WEB_TITLE));
+                $message->from(Setting::getSettings(Setting::CATEGORY_GENERAL_DB, Setting::CONTACT_EMAIL), Setting::getSettings(Setting::CATEGORY_GENERAL_DB, Setting::WEB_TITLE));
                 $message->to($user->email, $user->name);
                 $message->subject(Setting::getSettings(Setting::CATEGORY_GENERAL_DB, Setting::WEB_TITLE) . ' | Đăng ký tài khoản thành công');
 
@@ -177,7 +177,7 @@ class UserController extends Controller
         }
         catch(\Exception $e)
         {
-
+            \Log::info($e->getMessage());
         }
     }
 
@@ -499,9 +499,56 @@ class UserController extends Controller
             ->where('id', $id)
             ->first();
 
+        if(empty($order))
+            return view('frontend.errors.404');
+
         return view('frontend.users.detail_order', [
             'order' => $order,
         ]);
+    }
+
+    public function editOrder(Request $request, $id)
+    {
+        $user = auth()->user();
+
+        $order = Order::with('senderAddress', 'receiverAddress')
+            ->where('user_id', $user->id)
+            ->where('id', $id)
+            ->first();
+
+        if(empty($order) || Order::getOrderStatusOrder($order->status) > Order::getOrderStatusOrder(Order::STATUS_INFO_RECEIVED_DB))
+            return view('frontend.errors.404');
+
+        return view('frontend.users.edit_order', [
+            'order' => $order,
+        ]);
+    }
+
+    public function cancelOrder($id)
+    {
+        $user = auth()->user();
+
+        $order = Order::where('user_id', $user->id)
+            ->where('id', $id)
+            ->first();
+
+        if(empty($order) || Order::getOrderStatusOrder($order->status) > Order::getOrderStatusOrder(Order::STATUS_INFO_RECEIVED_DB))
+            return view('frontend.errors.404');
+
+        try
+        {
+            DB::beginTransaction();
+
+            $order->cancelOrder();
+
+            DB::commit();
+        }
+        catch(\Exception $e)
+        {
+            DB::rollBack();
+        }
+
+        return redirect()->action('Frontend\UserController@detailOrder', ['id' => $id]);
     }
 
     public function tongquanchung()

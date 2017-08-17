@@ -371,7 +371,6 @@
 
 @stop
 
-
 @push('scripts')
     <script type="text/javascript">
         var countUserAddress = 1;
