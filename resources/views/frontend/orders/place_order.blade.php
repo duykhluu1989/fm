@@ -49,11 +49,13 @@
                                                     @if(count($userAddresses) > 0)
 
                                                         <div class="form-group">
-                                                            <label>Địa chỉ (*)</label>
+                                                            <label>Chọn địa chỉ cũ (*)</label>
                                                             <select name="user_address[{{ $k }}]" class="form-control" required="required">
                                                                 <?php
                                                                 $userAddressId = old('user_address.' . $k);
                                                                 ?>
+
+                                                                <option value="">Địa chỉ mới</option>
 
                                                                 @foreach($userAddresses as $userAddress)
                                                                     @if((!empty($userAddressId) && $userAddressId == $userAddress->id) || (empty($userAddressId) && $userAddress->default == \App\Libraries\Helpers\Utility::ACTIVE_DB))
@@ -387,7 +389,7 @@
                                                             <option value=""></option>
 
                                                             @if($district)
-                                                                @foreach(\App\Models\Area::getDistricts($province, true) as $area)
+                                                                @foreach(\App\Models\Area::getWards($district, true) as $area)
                                                                     @if($ward && $ward == $area->id)
                                                                         <option selected="selected" value="{{ $area->id }}">{{ $area->name }}</option>
                                                                     @else

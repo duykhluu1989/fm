@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Frontend;
 
-use App\Models\OrderAddress;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
@@ -14,6 +13,7 @@ use App\Models\User;
 use App\Models\UserAddress;
 use App\Models\Setting;
 use App\Models\Order;
+use App\Models\OrderAddress;
 use App\Models\Area;
 use App\Models\Article;
 use Firebase\JWT\JWT;
@@ -607,13 +607,19 @@ class UserController extends Controller
     {
         $user = auth()->user();
 
-        $order = Order::with('senderAddress', 'receiverAddress')
-            ->where('user_id', $user->id)
+        $order = Order::with(['senderAddress', 'receiverAddress', 'user' => function($query) {
+            $query->select('id');
+        }, 'user.userAddresses'])->where('user_id', $user->id)
             ->where('id', $id)
             ->first();
 
         if(empty($order) || Order::getOrderStatusOrder($order->status) > Order::getOrderStatusOrder(Order::STATUS_INFO_RECEIVED_DB))
             return view('frontend.errors.404');
+
+        if($request->isMethod('post'))
+        {
+            $inputs = $request->all();
+        }
 
         return view('frontend.users.edit_order', [
             'order' => $order,
