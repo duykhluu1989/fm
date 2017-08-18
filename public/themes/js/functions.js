@@ -43,6 +43,26 @@ jQuery(function($) {
         // navText: ["<i class='fa fa-chevron-left fa-3x'></i>", "<i class='fa fa-chevron-right fa-3x'></i>"]
     });
 
+    $('.owl_dichvu').owlCarousel({
+        loop: true,
+        margin: 15,
+        items: 4,
+        dots: true,
+        responsive:{
+            0:{
+                items:1
+            },
+            600:{
+                items:3,
+                nav:false
+            },
+            1000:{
+                items:4,
+                // loop:false
+            }
+        }
+    });
+
 
     $(".animsition").animsition({
         inClass: 'fade-in',

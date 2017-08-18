@@ -246,6 +246,7 @@ ul.list_menuTop li:hover a {
   -webkit-transition: .3s ease-in-out;
   transition: .3s ease-in-out;
   overflow: hidden;
+  width: 100%;
 }
 .thongtin figure:hover img {
   -webkit-transform: scale(1.3);
