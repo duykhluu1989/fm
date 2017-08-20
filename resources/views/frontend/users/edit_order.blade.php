@@ -24,7 +24,7 @@
                                             <p><b>Thông tin lấy hàng</b></p>
 
                                             <div class="form-group">
-                                                <label>Chọn địa chỉ cũ</label>
+                                                <label>Chọn địa chỉ đã có</label>
                                                 <select name="user_address" class="form-control">
                                                     <?php
                                                     $userAddressId = old('user_address');

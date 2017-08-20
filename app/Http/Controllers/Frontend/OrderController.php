@@ -92,6 +92,28 @@ class OrderController extends Controller
                     }
                 }
             }
+            else
+            {
+                if(isset($inputs['user_address']) && is_array($inputs['user_address']))
+                {
+                    foreach($inputs['user_address'] as $k => $v)
+                    {
+                        $rules = array_merge($rules, [
+                            'register_name.' . $k => 'required_if:user_address.' . $k . ',|nullable|string|max:255',
+                            'register_phone.' . $k => [
+                                'required_if:user_address.' . $k . ',',
+                                'nullable',
+                                'numeric',
+                                'regex:/^(01[2689]|09)[0-9]{8}$/',
+                            ],
+                            'register_address.' . $k => 'required_if:user_address.' . $k . ',|nullable|max:255',
+                            'register_province.' . $k => 'required_if:user_address.' . $k . ',|nullable|integer|min:1',
+                            'register_district.' . $k => 'required_if:user_address.' . $k . ',|nullable|integer|min:1',
+                            'register_ward.' . $k => 'required_if:user_address.' . $k . ',|nullable|integer|min:1',
+                        ]);
+                    }
+                }
+            }
 
             if(empty($user))
             {
@@ -232,7 +254,7 @@ class OrderController extends Controller
                             $user->customerInformation->save();
                         }
 
-                        if(count($userAddresses) == 0)
+                        if(count($userAddresses) == 0 || empty($inputs['user_address'][$k]))
                         {
                             $senderAddress = new OrderAddress();
                             $senderAddress->order_id = $order->id;

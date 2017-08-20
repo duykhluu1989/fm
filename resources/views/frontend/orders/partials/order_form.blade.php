@@ -11,16 +11,51 @@
         @if(count($userAddresses) > 0)
 
             <div class="form-group">
-                <label>Địa chỉ (*)</label>
-                <select name="user_address[{{ $countOrder }}]" class="form-control" required="required">
+                <label>Chọn địa chỉ đã có</label>
+                <select name="user_address[{{ $countOrder }}]" class="form-control RegisterUserAddress">
+                    <option value="">Địa chỉ mới</option>
+
                     @foreach($userAddresses as $userAddress)
-                        @if($userAddress->default == \App\Libraries\Helpers\Utility::ACTIVE_DB)
-                            <option selected="selected" value="{{ $userAddress->id }}">{{ $userAddress->name . ', ' . $userAddress->phone . ', ' . $userAddress->address . ', ' . $userAddress->ward . ', ' . $userAddress->district . ', ' . $userAddress->province }}</option>
-                        @else
-                            <option value="{{ $userAddress->id }}">{{ $userAddress->name . ', ' . $userAddress->phone . ', ' . $userAddress->address . ', ' . $userAddress->ward . ', ' . $userAddress->district . ', ' . $userAddress->province }}</option>
-                        @endif
+                        <option value="{{ $userAddress->id }}">{{ $userAddress->name . ', ' . $userAddress->phone . ', ' . $userAddress->address . ', ' . $userAddress->ward . ', ' . $userAddress->district . ', ' . $userAddress->province }}</option>
                     @endforeach
                 </select>
+            </div>
+
+            <div class="NewUserAddressDiv">
+                <div class="form-group">
+                    <label>Họ tên (*)</label>
+                    <input type="text" class="form-control" name="register_name[{{ $countOrder }}]" required="required" />
+                </div>
+                <div class="form-group">
+                    <label>Số điện thoại (*)</label>
+                    <input type="text" class="form-control" name="register_phone[{{ $countOrder }}]" required="required" />
+                </div>
+                <div class="form-group">
+                    <label>Địa chỉ lấy hàng (*)</label>
+                    <input type="text" class="form-control" name="register_address[{{ $countOrder }}]" required="required" />
+                </div>
+                <div class="form-group">
+                    <label>Tỉnh / thành phố (*)</label>
+                    <select name="register_province[{{ $countOrder }}]" class="form-control RegisterProvince" required="required">
+                        <option value=""></option>
+
+                        @foreach(\App\Models\Area::getProvinces() as $area)
+                            <option value="{{ $area->id }}">{{ $area->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Quận / huyện (*)</label>
+                    <select name="register_district[{{ $countOrder }}]" class="form-control RegisterDistrict" required="required">
+                        <option value=""></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Phường / xã (*)</label>
+                    <select name="register_ward[{{ $countOrder }}]" class="form-control RegisterWard" required="required">
+                        <option value=""></option>
+                    </select>
+                </div>
             </div>
 
         @else

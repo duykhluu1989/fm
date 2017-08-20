@@ -49,8 +49,8 @@
                                                     @if(count($userAddresses) > 0)
 
                                                         <div class="form-group">
-                                                            <label>Chọn địa chỉ cũ (*)</label>
-                                                            <select name="user_address[{{ $k }}]" class="form-control" required="required">
+                                                            <label>Chọn địa chỉ đã có</label>
+                                                            <select name="user_address[{{ $k }}]" class="form-control RegisterUserAddress">
                                                                 <?php
                                                                 $userAddressId = old('user_address.' . $k);
                                                                 ?>
@@ -58,13 +58,117 @@
                                                                 <option value="">Địa chỉ mới</option>
 
                                                                 @foreach($userAddresses as $userAddress)
-                                                                    @if((!empty($userAddressId) && $userAddressId == $userAddress->id) || (empty($userAddressId) && $userAddress->default == \App\Libraries\Helpers\Utility::ACTIVE_DB))
+                                                                    @if($userAddressId == $userAddress->id)
                                                                         <option selected="selected" value="{{ $userAddress->id }}">{{ $userAddress->name . ', ' . $userAddress->phone . ', ' . $userAddress->address . ', ' . $userAddress->ward . ', ' . $userAddress->district . ', ' . $userAddress->province }}</option>
                                                                     @else
                                                                         <option value="{{ $userAddress->id }}">{{ $userAddress->name . ', ' . $userAddress->phone . ', ' . $userAddress->address . ', ' . $userAddress->ward . ', ' . $userAddress->district . ', ' . $userAddress->province }}</option>
                                                                     @endif
                                                                 @endforeach
                                                             </select>
+                                                        </div>
+
+                                                        <div class="NewUserAddressDiv"<?php echo (!empty($userAddressId) ? ' style="display: none"' : ''); ?>>
+                                                            <div class="form-group">
+                                                                <label>Họ tên (*)</label>
+                                                                <input type="text" class="form-control" name="register_name[{{ $k }}]" value="{{ old('register_name.' . $k) }}"<?php echo (empty($userAddressId) ? ' required="required"' : ''); ?> />
+                                                                @if($errors->has('register_name.' . $k))
+                                                                    <span class="has-error">
+                                                                    <span class="help-block">* {{ $errors->first('register_name.' . $k) }}</span>
+                                                                </span>
+                                                                @endif
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label>Số điện thoại (*)</label>
+                                                                <input type="text" class="form-control" name="register_phone[{{ $k }}]" value="{{ old('register_phone.' . $k) }}"<?php echo (empty($userAddressId) ? ' required="required"' : ''); ?> />
+                                                                @if($errors->has('register_phone.' . $k))
+                                                                    <span class="has-error">
+                                                                    <span class="help-block">* {{ $errors->first('register_phone.' . $k) }}</span>
+                                                                </span>
+                                                                @endif
+                                                            </div>
+
+                                                            <div class="form-group">
+                                                                <label>Địa chỉ lấy hàng (*)</label>
+                                                                <input type="text" class="form-control" name="register_address[{{ $k }}]" value="{{ old('register_address.' . $k) }}"<?php echo (empty($userAddressId) ? ' required="required"' : ''); ?> />
+                                                                @if($errors->has('register_address.' . $k))
+                                                                    <span class="has-error">
+                                                                    <span class="help-block">* {{ $errors->first('register_address.' . $k) }}</span>
+                                                                </span>
+                                                                @endif
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label>Tỉnh / thành phố (*)</label>
+                                                                <select name="register_province[{{ $k }}]" class="form-control RegisterProvince"<?php echo (empty($userAddressId) ? ' required="required"' : ''); ?>>
+                                                                    <?php
+                                                                    $province = old('register_province.' . $k);
+                                                                    ?>
+
+                                                                    <option value=""></option>
+
+                                                                    @foreach(\App\Models\Area::getProvinces() as $area)
+                                                                        @if($province == $area->id)
+                                                                            <option selected="selected" value="{{ $area->id }}">{{ $area->name }}</option>
+                                                                        @else
+                                                                            <option value="{{ $area->id }}">{{ $area->name }}</option>
+                                                                        @endif
+                                                                    @endforeach
+                                                                </select>
+                                                                @if($errors->has('register_province.' . $k))
+                                                                    <span class="has-error">
+                                                                    <span class="help-block">* {{ $errors->first('register_province.' . $k) }}</span>
+                                                                </span>
+                                                                @endif
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label>Quận / huyện (*)</label>
+                                                                <select name="register_district[{{ $k }}]" class="form-control RegisterDistrict"<?php echo (empty($userAddressId) ? ' required="required"' : ''); ?>>
+                                                                    <?php
+                                                                    $district = old('register_district.' . $k);
+                                                                    ?>
+
+                                                                    <option value=""></option>
+
+                                                                    @if($province)
+                                                                        @foreach(\App\Models\Area::getDistricts($province) as $area)
+                                                                            @if($district && $district == $area->id)
+                                                                                <option selected="selected" value="{{ $area->id }}">{{ $area->name }}</option>
+                                                                            @else
+                                                                                <option value="{{ $area->id }}">{{ $area->name }}</option>
+                                                                            @endif
+                                                                        @endforeach
+                                                                    @endif
+                                                                </select>
+                                                                @if($errors->has('register_district.' . $k))
+                                                                    <span class="has-error">
+                                                                    <span class="help-block">* {{ $errors->first('register_district.' . $k) }}</span>
+                                                                </span>
+                                                                @endif
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label>Phường / xã (*)</label>
+                                                                <select name="register_ward[{{ $k }}]" class="form-control RegisterWard"<?php echo (empty($userAddressId) ? ' required="required"' : ''); ?>>
+                                                                    <?php
+                                                                    $ward = old('register_ward.' . $k);
+                                                                    ?>
+
+                                                                    <option value=""></option>
+
+                                                                    @if($district)
+                                                                        @foreach(\App\Models\Area::getWards($district) as $area)
+                                                                            @if($ward && $ward == $area->id)
+                                                                                <option selected="selected" value="{{ $area->id }}">{{ $area->name }}</option>
+                                                                            @else
+                                                                                <option value="{{ $area->id }}">{{ $area->name }}</option>
+                                                                            @endif
+                                                                        @endforeach
+                                                                    @endif
+                                                                </select>
+                                                                @if($errors->has('register_ward.' . $k))
+                                                                    <span class="has-error">
+                                                                    <span class="help-block">* {{ $errors->first('register_ward.' . $k) }}</span>
+                                                                </span>
+                                                                @endif
+                                                            </div>
                                                         </div>
 
                                                     @else
@@ -438,27 +542,30 @@
 
 @push('scripts')
     <script type="text/javascript">
-        $('#RegisterEmailInput').change(function() {
-            if($(this).val() != '')
-            {
-                $.ajax({
-                    url: '{{ action('Frontend\UserController@checkRegisterEmail') }}',
-                    type: 'get',
-                    data: 'email=' + $(this).val(),
-                    success: function(result) {
-                        if(result)
-                        {
-                            swal({
-                                title: 'Email này đã đăng ký tài khoản vào ngày ' + result + ', bạn vui lòng đăng nhập tài khoản',
-                                type: 'error',
-                                confirmButtonClass: 'btn-danger',
-                                allowOutsideClick: true
-                            });
+
+        @if(auth()->guest())
+            $('#RegisterEmailInput').change(function() {
+                if($(this).val() != '')
+                {
+                    $.ajax({
+                        url: '{{ action('Frontend\UserController@checkRegisterEmail') }}',
+                        type: 'get',
+                        data: 'email=' + $(this).val(),
+                        success: function(result) {
+                            if(result)
+                            {
+                                swal({
+                                    title: 'Email này đã đăng ký tài khoản vào ngày ' + result + ', bạn vui lòng đăng nhập tài khoản',
+                                    type: 'error',
+                                    confirmButtonClass: 'btn-danger',
+                                    allowOutsideClick: true
+                                });
+                            }
                         }
-                    }
-                });
-            }
-        });
+                    });
+                }
+            });
+        @endif
 
         var countOrder = {{ $k + 1 }};
 
@@ -514,6 +621,31 @@
                 changeArea($(this), containerElem.find('.ReceiverWard').first(), '{{ \App\Models\Area::TYPE_WARD_DB }}', true);
 
                 calculateShippingPrice(containerElem.find('.ReceiverDistrict').first(), containerElem.find('.OrderWeightInput').first(), containerElem.find('.OrderDimensionInput').first(), containerElem.find('.OrderShippingPriceInput').first(), containerElem);
+            }
+            else if($(this).hasClass('RegisterUserAddress'))
+            {
+                containerElem = $(this).closest('.OrderFormDiv');
+
+                if($(this).val() == '')
+                {
+                    containerElem.find('.NewUserAddressDiv').first().css('display', 'block');
+                    containerElem.find('.NewUserAddressDiv').first().find('input').each(function() {
+                        $(this).prop('required', 'required');
+                    });
+                    containerElem.find('.NewUserAddressDiv').first().find('select').each(function() {
+                        $(this).prop('required', 'required');
+                    });
+                }
+                else
+                {
+                    containerElem.find('.NewUserAddressDiv').first().css('display', 'none');
+                    containerElem.find('.NewUserAddressDiv').first().find('input').each(function() {
+                        $(this).removeAttr('required').val('');
+                    });
+                    containerElem.find('.NewUserAddressDiv').first().find('select').each(function() {
+                        $(this).removeAttr('required').val('');
+                    });
+                }
             }
         }).on('change', 'input', function() {
             var containerElem;

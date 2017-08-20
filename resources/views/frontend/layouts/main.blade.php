@@ -72,7 +72,6 @@
         $(document).ready(function() {
             swal({
                 title: '{{ session('messageSuccess') }}',
-                type: 'success',
                 confirmButtonClass: 'btn-success',
                 allowOutsideClick: true
             });
