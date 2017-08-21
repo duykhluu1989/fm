@@ -22,7 +22,11 @@ Route::group(['namespace' => 'Backend'], function() {
 
         Route::post('article/autoComplete', 'ArticleController@autoCompleteArticle');
 
+        Route::post('discount/generateCode', 'DiscountController@generateDiscountCode');
+
         Route::get('user/generateApiKey', 'UserController@generateApiKey');
+
+        Route::post('user/autoComplete', 'UserController@autoCompleteUser');
 
     });
 
@@ -35,6 +39,16 @@ Route::group(['namespace' => 'Backend'], function() {
         Route::match(['get', 'post'], 'area/{id}/edit', 'AreaController@editArea');
 
         Route::match(['get', 'post'], 'order/{id}/detail', 'OrderController@detailOrder');
+
+        Route::get('discount', 'DiscountController@adminDiscount');
+
+        Route::match(['get', 'post'], 'discount/create', 'DiscountController@createDiscount');
+
+        Route::match(['get', 'post'], 'discount/{id}/edit', 'DiscountController@editDiscount');
+
+        Route::get('discount/{id}/delete', 'DiscountController@deleteDiscount');
+
+        Route::get('discount/controlDelete', 'DiscountController@controlDeleteDiscount');
 
         Route::get('widget', 'WidgetController@adminWidget');
 

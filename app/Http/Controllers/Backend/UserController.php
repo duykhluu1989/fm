@@ -468,12 +468,11 @@ class UserController extends Controller
         $term = $request->input('term');
         $except = $request->input('except');
 
-        $builder = User::select('user.id', 'user.username', 'user.email', 'profile.name')
-            ->join('profile', 'user.id', '=', 'profile.user_id')
+        $builder = User::select('id', 'username', 'email', 'name')
             ->where(function($query) use($term) {
-                $query->where('user.username', 'like', '%' . $term . '%')
-                    ->orWhere('user.email', 'like', '%' . $term . '%')
-                    ->orWhere('profile.name', 'like', '%' . $term . '%');
+                $query->where('username', 'like', '%' . $term . '%')
+                    ->orWhere('email', 'like', '%' . $term . '%')
+                    ->orWhere('name', 'like', '%' . $term . '%');
             })
             ->limit(Utility::AUTO_COMPLETE_LIMIT);
 

@@ -53,6 +53,11 @@ class Order extends Model
         return $this->hasOne('App\Models\OrderAddress', 'order_id')->where('type', OrderAddress::TYPE_RECEIVER_DB);
     }
 
+    public function discount()
+    {
+        return $this->belongsTo('App\Models\Discount', 'discount_id');
+    }
+
     public static function getOrderStatus($value = null)
     {
         $status = [

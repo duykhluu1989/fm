@@ -30,6 +30,7 @@ class CreateOrderTable extends Migration
             $table->string('dimension', 255)->nullable();
             $table->unsignedTinyInteger('prepay')->default(0);
             $table->unsignedTinyInteger('payment')->default(0);
+            $table->unsignedInteger('discount_id')->nullable();
         });
     }
 
