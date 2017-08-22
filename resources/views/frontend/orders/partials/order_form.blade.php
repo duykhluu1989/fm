@@ -98,6 +98,10 @@
         @endif
 
         <div class="form-group">
+            <label>Trọng lượng gói hàng (kg)</label>
+            <input type="text" class="form-control OrderWeightInput" name="weight[{{ $countOrder }}]" />
+        </div>
+        <div class="form-group">
             <label>Kích thước gói hàng (cm)</label>
             <input type="text" class="form-control OrderDimensionInput" name="dimension[{{ $countOrder }}]" placeholder="Dài x Rộng x Cao" />
         </div>
@@ -179,10 +183,6 @@
             <select name="receiver_ward[{{ $countOrder }}]" class="form-control ReceiverWard" required="required">
                 <option value=""></option>
             </select>
-        </div>
-        <div class="form-group">
-            <label>Trọng lượng gói hàng (kg)</label>
-            <input type="text" class="form-control OrderWeightInput" name="weight[{{ $countOrder }}]" />
         </div>
     </div>
 </div>

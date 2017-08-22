@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Libraries\Helpers\Utility;
+use App\Libraries\Detrack\Detrack;
 use App\Models\User;
 use App\Models\UserAddress;
 use App\Models\Order;
@@ -212,6 +213,7 @@ class OrderController extends Controller
                     }
 
                     $popupOrderNumber = '';
+                    $placedOrders = array();
 
                     foreach($inputs['receiver_name'] as $k => $v)
                     {
@@ -230,7 +232,7 @@ class OrderController extends Controller
                         $order->weight = $inputs['weight'][$k];
                         $order->dimension = $inputs['dimension'][$k];
                         $order->note = $inputs['note'][$k];
-                        $order->status = Order::STATUS_PENDING_APPROVE_DB;
+                        $order->status = Order::STATUS_INFO_RECEIVED_DB;
 
                         if(isset($inputs['prepay'][$k]))
                             $order->prepay = Utility::ACTIVE_DB;
@@ -238,6 +240,8 @@ class OrderController extends Controller
                         $order->generateDo(Area::find($inputs['receiver_province'][$k]));
 
                         $order->save();
+
+                        $order->setRelation('user', $user);
 
                         if(empty($user->customerInformation))
                         {
@@ -269,6 +273,8 @@ class OrderController extends Controller
                             $senderAddress->ward_id = $inputs['register_ward'][$k];
                             $senderAddress->type = OrderAddress::TYPE_SENDER_DB;
                             $senderAddress->save();
+
+                            $order->setRelation('senderAddress', $senderAddress);
                         }
                         else
                         {
@@ -289,6 +295,10 @@ class OrderController extends Controller
                                     $senderAddress->ward_id = $userAddress->ward_id;
                                     $senderAddress->type = OrderAddress::TYPE_SENDER_DB;
                                     $senderAddress->save();
+
+                                    $order->setRelation('senderAddress', $senderAddress);
+
+                                    break;
                                 }
                             }
                         }
@@ -307,13 +317,20 @@ class OrderController extends Controller
                         $receiverAddress->type = OrderAddress::TYPE_RECEIVER_DB;
                         $receiverAddress->save();
 
+                        $order->setRelation('receiverAddress', $receiverAddress);
+
                         if($popupOrderNumber == '')
                             $popupOrderNumber = $order->number;
                         else
                             $popupOrderNumber .= ', ' . $order->number;
+
+                        $placedOrders[] = $order;
                     }
 
                     DB::commit();
+
+                    $detrack = Detrack::make();
+                    $detrack->addDeliveries($placedOrders);
 
                     return redirect()->action('Frontend\OrderController@placeOrder')->with('messageSuccess', 'Đặt đơn hàng thành công, mã đơn hàng: ' . $popupOrderNumber);
                 }

@@ -18,8 +18,10 @@ class OrderController extends Controller
     {
         $dataProvider = Order::with(['user' => function($query) {
             $query->select('id', 'name', 'email');
-        }, 'orderAddresses' => function($query) {
-            $query->select('id', 'order_id', 'name', 'type');
+        }, 'senderAddress' => function($query) {
+            $query->select('id', 'order_id', 'name');
+        }, 'receiverAddress' => function($query) {
+            $query->select('id', 'order_id', 'name');
         }])->select('order.id', 'order.user_id', 'order.number', 'order.created_at', 'order.cancelled_at', 'order.status', 'order.shipper', 'order.total_cod_price')
             ->orderBy('order.id', 'desc');
 
@@ -87,27 +89,13 @@ class OrderController extends Controller
             [
                 'title' => 'Tên Người Gửi',
                 'data' => function($row) {
-                    foreach($row->orderAddresses as $orderAddress)
-                    {
-                        if($orderAddress->type == OrderAddress::TYPE_SENDER_DB)
-                        {
-                            echo $orderAddress->name;
-                            break;
-                        }
-                    }
+                    echo $row->senderAddress->name;
                 },
             ],
             [
                 'title' => 'Tên Người Nhận',
                 'data' => function($row) {
-                    foreach($row->orderAddresses as $orderAddress)
-                    {
-                        if($orderAddress->type == OrderAddress::TYPE_RECEIVER_DB)
-                        {
-                            echo $orderAddress->name;
-                            break;
-                        }
-                    }
+                    echo $row->receiverAddress->name;
                 },
             ],
             [
@@ -123,10 +111,7 @@ class OrderController extends Controller
             [
                 'title' => 'Trạng Thái',
                 'data' => function($row) {
-                    if($row->status == Order::STATUS_PENDING_APPROVE_DB)
-                        echo Html::span($row->status, ['class' => 'label label-danger']);
-                    else
-                        echo $row->status;
+                    echo Html::span($row->status, ['class' => 'label label-' . Order::getOrderStatusLabel($row->status)]);
                 },
             ],
             [
