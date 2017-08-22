@@ -645,7 +645,7 @@ class UserController extends Controller
             if($order->call_api == Utility::ACTIVE_DB)
             {
                 $detrack = Detrack::make();
-                $successDos = $detrack->deleteDeliveries([$order]);
+                $successDos = $detrack->deleteCollections([$order]);
 
                 if(in_array($order->do, $successDos))
                     $order->cancelOrder();

@@ -15,7 +15,7 @@ class CreateOrderTable extends Migration
             $table->dateTime('created_at');
             $table->dateTime('approved_at')->nullable();
             $table->dateTime('cancelled_at')->nullable();
-            $table->dateTime('shipped_at')->nullable();
+            $table->dateTime('completed_at')->nullable();
             $table->dateTime('failed_at')->nullable();
             $table->double('cod_price')->unsigned()->default(0);
             $table->double('shipping_price')->unsigned()->default(0);
@@ -33,6 +33,11 @@ class CreateOrderTable extends Migration
             $table->unsignedInteger('discount_id')->nullable();
             $table->unsignedTinyInteger('call_api')->default(0);
             $table->text('tracking_detail')->nullable();
+            $table->string('collection_status', 255)->nullable();
+            $table->text('collection_tracking_detail')->nullable();
+            $table->string('collection_shipper', 255)->nullable();
+            $table->unsignedTinyInteger('collection_call_api')->default(0);
+            $table->string('delivery_status', 255)->nullable();
         });
     }
 

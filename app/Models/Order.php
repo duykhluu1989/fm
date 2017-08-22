@@ -8,6 +8,7 @@ use App\Libraries\Helpers\Utility;
 class Order extends Model
 {
     const STATUS_INFO_RECEIVED_DB = 'info-received';
+    const STATUS_PROCESSING_DB = 'processing';
     const STATUS_SCHEDULED_DB = 'scheduled';
     const STATUS_PRE_JOB_DB = 'pre-job';
     const STATUS_HEADING_TO_DB = 'heading-to';
@@ -61,6 +62,7 @@ class Order extends Model
     {
         $status = [
             self::STATUS_INFO_RECEIVED_DB => self::STATUS_INFO_RECEIVED_DB,
+            self::STATUS_PROCESSING_DB => self::STATUS_PROCESSING_DB,
             self::STATUS_SCHEDULED_DB => self::STATUS_SCHEDULED_DB,
             self::STATUS_PRE_JOB_DB => self::STATUS_PRE_JOB_DB,
             self::STATUS_HEADING_TO_DB => self::STATUS_HEADING_TO_DB,
@@ -82,15 +84,16 @@ class Order extends Model
     {
         $status = [
             self::STATUS_INFO_RECEIVED_DB => 1,
-            self::STATUS_SCHEDULED_DB => 2,
-            self::STATUS_PRE_JOB_DB => 3,
-            self::STATUS_HEADING_TO_DB => 4,
-            self::STATUS_CANCEL_HEADING_TO_DB => 5,
-            self::STATUS_ARRIVED_DB => 6,
-            self::STATUS_COMPLETED_DB => 7,
-            self::STATUS_PARTIALLY_COMPLETED_DB => 8,
-            self::STATUS_FAILED_DB => 9,
-            self::STATUS_CANCELLED_DB => 10,
+            self::STATUS_PROCESSING_DB => 2,
+            self::STATUS_SCHEDULED_DB => 3,
+            self::STATUS_PRE_JOB_DB => 4,
+            self::STATUS_HEADING_TO_DB => 5,
+            self::STATUS_CANCEL_HEADING_TO_DB => 6,
+            self::STATUS_ARRIVED_DB => 7,
+            self::STATUS_COMPLETED_DB => 8,
+            self::STATUS_PARTIALLY_COMPLETED_DB => 9,
+            self::STATUS_FAILED_DB => 10,
+            self::STATUS_CANCELLED_DB => 11,
         ];
 
         if($value !== null && isset($status[$value]))
@@ -103,6 +106,7 @@ class Order extends Model
     {
         $status = [
             self::STATUS_INFO_RECEIVED_DB => 'warning',
+            self::STATUS_PROCESSING_DB => 'warning',
             self::STATUS_SCHEDULED_DB => 'primary',
             self::STATUS_PRE_JOB_DB => 'primary',
             self::STATUS_HEADING_TO_DB => 'primary',
@@ -122,7 +126,7 @@ class Order extends Model
 
     public function generateDo($province)
     {
-        $this->do = 'FM' . str_slug($province->name) . date('m') . date('y');
+        $this->do = 'FM' . str_slug($province->name, '') . date('m') . date('y');
 
         $count = Order::where('do', 'like', $this->do . '%')->count('id');
 
