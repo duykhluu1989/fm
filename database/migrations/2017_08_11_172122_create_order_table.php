@@ -32,6 +32,7 @@ class CreateOrderTable extends Migration
             $table->unsignedTinyInteger('payment')->default(0);
             $table->unsignedInteger('discount_id')->nullable();
             $table->unsignedTinyInteger('call_api')->default(0);
+            $table->text('tracking_detail')->nullable();
         });
     }
 

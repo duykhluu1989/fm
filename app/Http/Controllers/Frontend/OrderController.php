@@ -330,7 +330,29 @@ class OrderController extends Controller
                     DB::commit();
 
                     $detrack = Detrack::make();
-                    $detrack->addDeliveries($placedOrders);
+                    $successDos = $detrack->addDeliveries($placedOrders);
+
+                    $countSuccessDo = count($successDos);
+                    if($countSuccessDo > 0)
+                    {
+                        foreach($placedOrders as $placedOrder)
+                        {
+                            $key = array_search($placedOrder->do, $successDos);
+
+                            if($key !== false)
+                            {
+                                $placedOrder->call_api = Utility::ACTIVE_DB;
+                                $placedOrder->save();
+
+                                unset($successDos[$key]);
+
+                                $countSuccessDo -= 1;
+
+                                if($countSuccessDo == 0)
+                                    break;
+                            }
+                        }
+                    }
 
                     return redirect()->action('Frontend\OrderController@placeOrder')->with('messageSuccess', 'Đặt đơn hàng thành công, mã đơn hàng: ' . $popupOrderNumber);
                 }

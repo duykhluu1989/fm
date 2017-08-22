@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Libraries\Helpers\Utility;
+use App\Libraries\Detrack\Detrack;
 use App\Models\User;
 use App\Models\UserAddress;
 use App\Models\Setting;
@@ -641,16 +642,29 @@ class UserController extends Controller
         {
             DB::beginTransaction();
 
-            $order->cancelOrder();
+            if($order->call_api == Utility::ACTIVE_DB)
+            {
+                $detrack = Detrack::make();
+                $successDos = $detrack->deleteDeliveries([$order]);
+
+                if(in_array($order->do, $successDos))
+                    $order->cancelOrder();
+                else
+                    throw new \Exception('Hệ thống xảy ra lỗi, vui lòng thử lại sau');
+            }
+            else
+                $order->cancelOrder();
 
             DB::commit();
+
+            return redirect()->action('Frontend\UserController@detailOrder', ['id' => $id])->with('messageSuccess', 'Hủy đơn hàng thành công');
         }
         catch(\Exception $e)
         {
             DB::rollBack();
-        }
 
-        return redirect()->action('Frontend\UserController@detailOrder', ['id' => $id]);
+            return redirect()->action('Frontend\UserController@detailOrder', ['id' => $id])->with('messageError', $e->getMessage());
+        }
     }
 
     public function tongquanchung()
