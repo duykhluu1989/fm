@@ -15,8 +15,6 @@ class Area extends Model
     const TYPE_DISTRICT_LABEL = 'Quận / Huyện';
     const TYPE_WARD_LABEL = 'Phường / Xã';
 
-    protected static $provinces;
-
     protected $table = 'area';
 
     public $timestamps = false;
