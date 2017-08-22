@@ -674,6 +674,9 @@
 
                 calculateTotalCodPrice(containerElem.find('.OrderCodPriceInput').first(), containerElem.find('.OrderTotalCodPriceInput').first(), containerElem.find('.OrderShippingPriceInput').first(), containerElem.find('input[type="radio"]:checked').first().val());
             }
+        }).on('keyup', 'input', function() {
+            if($(this).hasClass('OrderCodPriceInput'))
+                $(this).val(formatNumber($(this).val(), '.'));
         });
 
         function changeArea(elem, updateElem, type, receiver)

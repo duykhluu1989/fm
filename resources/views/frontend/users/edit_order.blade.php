@@ -22,10 +22,9 @@
                                     <div class="row">
                                         <div class="col-lg-6">
                                             <p><b>Thông tin lấy hàng</b></p>
-
                                             <div class="form-group">
                                                 <label>Chọn địa chỉ đã có</label>
-                                                <select name="user_address" class="form-control">
+                                                <select name="user_address RegisterUserAddress" class="form-control">
                                                     <?php
                                                     $userAddressId = old('user_address');
                                                     ?>
@@ -33,7 +32,7 @@
                                                     <option value=""></option>
 
                                                     @foreach($order->user->userAddresses as $userAddress)
-                                                        @if((!empty($userAddressId) && $userAddressId == $userAddress->id) || (empty($userAddressId) && $userAddress->default == \App\Libraries\Helpers\Utility::ACTIVE_DB))
+                                                        @if($userAddressId == $userAddress->id)
                                                             <option selected="selected" value="{{ $userAddress->id }}">{{ $userAddress->name . ', ' . $userAddress->phone . ', ' . $userAddress->address . ', ' . $userAddress->ward . ', ' . $userAddress->district . ', ' . $userAddress->province }}</option>
                                                         @else
                                                             <option value="{{ $userAddress->id }}">{{ $userAddress->name . ', ' . $userAddress->phone . ', ' . $userAddress->address . ', ' . $userAddress->ward . ', ' . $userAddress->district . ', ' . $userAddress->province }}</option>
@@ -41,7 +40,107 @@
                                                     @endforeach
                                                 </select>
                                             </div>
+                                            <div class="form-group">
+                                                <label>Họ tên (*)</label>
+                                                <input type="text" class="form-control" name="register_name" value="{{ old('register_name', $order->senderAddress->name) }}" required="required" />
+                                                @if($errors->has('register_name'))
+                                                    <span class="has-error">
+                                                        <span class="help-block">* {{ $errors->first('register_name') }}</span>
+                                                    </span>
+                                                @endif
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Số điện thoại (*)</label>
+                                                <input type="text" class="form-control" name="register_phone" value="{{ old('register_phone', $order->senderAddress->phone) }}" required="required" />
+                                                @if($errors->has('register_phone'))
+                                                    <span class="has-error">
+                                                        <span class="help-block">* {{ $errors->first('register_phone') }}</span>
+                                                    </span>
+                                                @endif
+                                            </div>
 
+                                            <div class="form-group">
+                                                <label>Địa chỉ lấy hàng (*)</label>
+                                                <input type="text" class="form-control" name="register_address" value="{{ old('register_address', $order->senderAddress->address) }}" required="required" />
+                                                @if($errors->has('register_address'))
+                                                    <span class="has-error">
+                                                        <span class="help-block">* {{ $errors->first('register_address') }}</span>
+                                                    </span>
+                                                @endif
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Tỉnh / thành phố (*)</label>
+                                                <select name="register_province" class="form-control RegisterProvince" required="required">
+                                                    <?php
+                                                    $province = old('register_province', $order->senderAddress->province_id);
+                                                    ?>
+
+                                                    <option value=""></option>
+
+                                                    @foreach(\App\Models\Area::getProvinces() as $area)
+                                                        @if($province == $area->id)
+                                                            <option selected="selected" value="{{ $area->id }}">{{ $area->name }}</option>
+                                                        @else
+                                                            <option value="{{ $area->id }}">{{ $area->name }}</option>
+                                                        @endif
+                                                    @endforeach
+                                                </select>
+                                                @if($errors->has('register_province'))
+                                                    <span class="has-error">
+                                                        <span class="help-block">* {{ $errors->first('register_province') }}</span>
+                                                    </span>
+                                                @endif
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Quận / huyện (*)</label>
+                                                <select name="register_district" class="form-control RegisterDistrict" required="required">
+                                                    <?php
+                                                    $district = old('register_district', $order->senderAddress->district_id);
+                                                    ?>
+
+                                                    <option value=""></option>
+
+                                                    @if($province)
+                                                        @foreach(\App\Models\Area::getDistricts($province) as $area)
+                                                            @if($district && $district == $area->id)
+                                                                <option selected="selected" value="{{ $area->id }}">{{ $area->name }}</option>
+                                                            @else
+                                                                <option value="{{ $area->id }}">{{ $area->name }}</option>
+                                                            @endif
+                                                        @endforeach
+                                                    @endif
+                                                </select>
+                                                @if($errors->has('register_district'))
+                                                    <span class="has-error">
+                                                        <span class="help-block">* {{ $errors->first('register_district') }}</span>
+                                                    </span>
+                                                @endif
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Phường / xã (*)</label>
+                                                <select name="register_ward" class="form-control RegisterWard" required="required">
+                                                    <?php
+                                                    $ward = old('register_ward', $order->senderAddress->ward_id);
+                                                    ?>
+
+                                                    <option value=""></option>
+
+                                                    @if($district)
+                                                        @foreach(\App\Models\Area::getWards($district) as $area)
+                                                            @if($ward && $ward == $area->id)
+                                                                <option selected="selected" value="{{ $area->id }}">{{ $area->name }}</option>
+                                                            @else
+                                                                <option value="{{ $area->id }}">{{ $area->name }}</option>
+                                                            @endif
+                                                        @endforeach
+                                                    @endif
+                                                </select>
+                                                @if($errors->has('register_ward'))
+                                                    <span class="has-error">
+                                                        <span class="help-block">* {{ $errors->first('register_ward') }}</span>
+                                                    </span>
+                                                @endif
+                                            </div>
                                             <div class="form-group">
                                                 <label>Trọng lượng gói hàng (kg)</label>
                                                 <input type="text" class="form-control OrderWeightInput" name="weight" value="{{ old('weight', $order->weight) }}" />
@@ -93,7 +192,7 @@
                                             </div>
                                             <div class="form-group">
                                                 <label>Tổng tiền thu hộ</label>
-                                                <input type="text" class="form-control OrderTotalCodPriceInput" name="total_cod_price" value="{{ old('total_cod_price', $order->total_cod_price) }}" readonly="readonly" />
+                                                <input type="text" class="form-control OrderTotalCodPriceInput" name="total_cod_price" value="{{ old('total_cod_price', \App\Libraries\Helpers\Utility::formatNumber($order->total_cod_price)) }}" readonly="readonly" />
                                             </div>
 
                                             @if(auth()->user()->prepay == \App\Libraries\Helpers\Utility::ACTIVE_DB)
