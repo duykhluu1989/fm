@@ -35,12 +35,16 @@ class Detrack
                 'do' => $order->do,
                 'address' => $order->receiverAddress->address . ' ' . $order->receiverAddress->ward . ' ' . $order->receiverAddress->district . ' ' . $order->receiverAddress->province,
                 'date' => explode(' ', $order->created_at)[0],
+                'city' => $order->receiverAddress->district,
+                'country' => $order->receiverAddress->province,
+                'wt' => $order->weight,
                 'deliver_to' => $order->receiverAddress->name,
                 'phone' => $order->receiverAddress->phone,
                 'notify_email' => $order->user->email,
-                'notify_url' => '',
+                'notify_url' => action('Api\DeliveryController@handleDeliveryNotification'),
                 'instructions' => !empty($order->note) ? $order->note : '',
                 'pay_amt' => $order->total_cod_price,
+                'order_no' => $order->number,
             ];
         }
 
@@ -141,12 +145,16 @@ class Detrack
                 'do' => $order->do,
                 'address' => $order->receiverAddress->address . ' ' . $order->receiverAddress->ward . ' ' . $order->receiverAddress->district . ' ' . $order->receiverAddress->province,
                 'date' => explode(' ', $order->created_at)[0],
+                'city' => $order->receiverAddress->district,
+                'country' => $order->receiverAddress->province,
+                'wt' => $order->weight,
                 'deliver_to' => $order->receiverAddress->name,
                 'phone' => $order->receiverAddress->phone,
                 'notify_email' => $order->user->email,
-                'notify_url' => '',
+                'notify_url' => action('Api\DeliveryController@handleDeliveryNotification'),
                 'instructions' => !empty($order->note) ? $order->note : '',
                 'pay_amt' => $order->total_cod_price,
+                'order_no' => $order->number,
             ];
         }
 
@@ -234,7 +242,7 @@ class Detrack
         return $successDos;
     }
 
-    public function deliveryPushNotification()
+    public function handleDeliveryNotification()
     {
 
     }
@@ -249,10 +257,14 @@ class Detrack
                 'do' => $order->do,
                 'address' => $order->senderAddress->address . ' ' . $order->senderAddress->ward . ' ' . $order->senderAddress->district . ' ' . $order->senderAddress->province,
                 'date' => explode(' ', $order->created_at)[0],
+                'city' => $order->senderAddress->district,
+                'country' => $order->senderAddress->province,
+                'wt' => $order->weight,
                 'collect_from' => $order->senderAddress->name,
                 'phone' => $order->senderAddress->phone,
-                'notify_url' => '',
+                'notify_url' => action('Api\CollectionController@handleCollectionNotification'),
                 'instructions' => !empty($order->note) ? $order->note : '',
+                'order_no' => $order->number,
             ];
         }
 
@@ -353,10 +365,14 @@ class Detrack
                 'do' => $order->do,
                 'address' => $order->senderAddress->address . ' ' . $order->senderAddress->ward . ' ' . $order->senderAddress->district . ' ' . $order->senderAddress->province,
                 'date' => explode(' ', $order->created_at)[0],
+                'city' => $order->senderAddress->district,
+                'country' => $order->senderAddress->province,
+                'wt' => $order->weight,
                 'collect_from' => $order->senderAddress->name,
                 'phone' => $order->senderAddress->phone,
-                'notify_url' => '',
+                'notify_url' => action('Api\CollectionController@handleCollectionNotification'),
                 'instructions' => !empty($order->note) ? $order->note : '',
+                'order_no' => $order->number,
             ];
         }
 
@@ -444,8 +460,86 @@ class Detrack
         return $successDos;
     }
 
-    public function collectionPushNotification()
+    public function handleCollectionNotification($inputs)
     {
+        
 
+        try
+        {
+            if(!isset($input['json']) || !isset($input['key']))
+                return json_encode(['status' => 'param_invalid']);
+
+            $environment = app()->environment();
+
+            if($environment != 'production' && strtoupper($input['key']) != strtoupper(self::$apiNotifyKeyTest))
+                return json_encode(['status' => 'key_invalid']);
+            else if(strtoupper($input['key']) != strtoupper(self::$apiNotifyKey))
+                return json_encode(['status' => 'key_invalid']);
+
+            $webhookData = json_decode($input['json'], true);
+
+            $shipper = Carrier::where('class_handle', __CLASS__)->first();
+            $fulfillment = OrderFulfillment::with('order.orderStatus', 'order.orderDiscounts')->where('tracking_number', $webhookData['do'])->where('carrier_id', $shipper->id)->first();
+            if(empty($fulfillment))
+                return json_encode(['status' => 'id_invalid']);
+
+            if(empty($fulfillment->weight) && !empty($webhookData['wt']))
+            {
+                $fulfillment->weight = (int)($webhookData['wt'] * 1000);
+                $fulfillment->price = self::calculateShippingPrice($fulfillment->weight, $fulfillment->order->orderBillingAddress->district);
+            }
+
+            $newLog = true;
+
+            if(empty($fulfillment->description))
+                $fulfillment->description = json_encode(self::createLogData($webhookData));
+            else
+            {
+                $descriptions = explode(';', $fulfillment->description);
+                if(count($descriptions) > 0)
+                {
+                    $lastLog = json_decode($descriptions[count($descriptions) - 1], true);
+                    if($lastLog['tracking_status'] == $webhookData['tracking_status'])
+                    {
+                        $newLog = false;
+
+                        $descriptions[count($descriptions) - 1] = json_encode(self::createLogData($webhookData));
+                        $fulfillment->description = implode(';', $descriptions);
+                    }
+                }
+
+                if($newLog)
+                    $fulfillment->description .= ';' . json_encode(self::createLogData($webhookData));
+            }
+
+            $fulfillment->updated_at = new \DateTime();
+            $fulfillment->save();
+
+            if($newLog)
+            {
+                if($webhookData['tracking_status'] == 'completed')
+                {
+                    $fulfillment->status = Order::FULFILLMENT_STATUS_FULFILLED;
+                    $fulfillment->save();
+
+                    if($fulfillment->type == OrderFulfillment::TYPE_FULFILLMENT_VALUE)
+                        self::updateOrderDeliveried($fulfillment->order);
+                }
+                else if($webhookData['tracking_status'] == 'failed')
+                {
+                    $fulfillment->status = Order::FULFILLMENT_STATUS_NOTFULFILLED;
+                    $fulfillment->save();
+
+                    if($fulfillment->type == OrderFulfillment::TYPE_FULFILLMENT_VALUE)
+                        self::updateOrderFailDeliveried($fulfillment->order);
+                }
+            }
+
+            return json_encode(['status' => 'success']);
+        }
+        catch(\Exception $e)
+        {
+            return json_encode(['status' => 'error']);
+        }
     }
 }

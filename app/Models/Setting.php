@@ -14,6 +14,7 @@ class Setting extends Model
     const CONTACT_EMAIL = 'contact_email';
     const WORKING_TIME = 'working_time';
     const ABOUT_US = 'about_us';
+
     const DETRACK_API_KEY = 'detrack_api_key';
 
     const FACEBOOK_APP_ID = 'facebook_app_id';
@@ -27,6 +28,7 @@ class Setting extends Model
     const TYPE_IMAGE_DB = 3;
 
     const CATEGORY_GENERAL_DB = 0;
+    const CATEGORY_API_DB = 1;
     const CATEGORY_SOCIAL_DB = 2;
 
     protected static $settings;
@@ -46,7 +48,8 @@ class Setting extends Model
             [self::CONTACT_EMAIL, 'Email Liên Hệ', self::TYPE_STRING_DB, '', self::CATEGORY_GENERAL_DB],
             [self::WORKING_TIME, 'Thời Gian Làm Việc', self::TYPE_STRING_DB, '', self::CATEGORY_GENERAL_DB],
             [self::ABOUT_US, 'Về Chúng Tôi', self::TYPE_STRING_DB, '', self::CATEGORY_GENERAL_DB],
-            [self::DETRACK_API_KEY, 'Detrack Api Key', self::TYPE_STRING_DB, '', self::CATEGORY_GENERAL_DB],
+
+            [self::DETRACK_API_KEY, 'Detrack Api Key', self::TYPE_STRING_DB, '', self::CATEGORY_API_DB],
 
             [self::FACEBOOK_APP_ID, 'Facebook App Id', self::TYPE_STRING_DB, '', self::CATEGORY_SOCIAL_DB],
             [self::FACEBOOK_APP_SECRET, 'Facebook App Secret', self::TYPE_STRING_DB, '', self::CATEGORY_SOCIAL_DB],

@@ -25,4 +25,9 @@ class DeliveryController extends Controller
     {
 
     }
+
+    public function handleDeliveryNotification()
+    {
+
+    }
 }

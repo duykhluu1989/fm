@@ -12,6 +12,14 @@ Route::group(['namespace' => 'Api'], function() {
 
         Route::post('delete', 'DeliveryController@deleteDelivery');
 
+        Route::post('notification', 'DeliveryController@handleDeliveryNotification');
+
+    });
+
+    Route::group(['prefix' => 'collection'], function() {
+
+        Route::post('notification', 'CollectionController@handleCollectionNotification');
+
     });
 
 });
