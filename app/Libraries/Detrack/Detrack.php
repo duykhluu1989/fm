@@ -462,7 +462,7 @@ class Detrack
 
     public function handleCollectionNotification($inputs)
     {
-        
+
 
         try
         {
