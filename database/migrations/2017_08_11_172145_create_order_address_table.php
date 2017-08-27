@@ -11,15 +11,15 @@ class CreateOrderAddressTable extends Migration
         Schema::create('order_address', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('order_id');
-            $table->string('name', 255);
-            $table->string('phone', 20);
+            $table->string('name', 255)->nullable();
+            $table->string('phone', 20)->nullable();
             $table->string('address', 255);
-            $table->string('province', 255);
-            $table->string('district', 255);
-            $table->string('ward', 255);
-            $table->unsignedInteger('province_id');
-            $table->unsignedInteger('district_id');
-            $table->unsignedInteger('ward_id');
+            $table->string('province', 255)->nullable();
+            $table->string('district', 255)->nullable();
+            $table->string('ward', 255)->nullable();
+            $table->unsignedInteger('province_id')->nullable();
+            $table->unsignedInteger('district_id')->nullable();
+            $table->unsignedInteger('ward_id')->nullable();
             $table->unsignedTinyInteger('type')->default(0);
         });
     }

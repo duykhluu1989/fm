@@ -13,7 +13,6 @@ class CreateOrderTable extends Migration
             $table->unsignedInteger('user_id');
             $table->string('number', 255)->nullable();
             $table->dateTime('created_at');
-            $table->dateTime('approved_at')->nullable();
             $table->dateTime('cancelled_at')->nullable();
             $table->dateTime('completed_at')->nullable();
             $table->dateTime('failed_at')->nullable();

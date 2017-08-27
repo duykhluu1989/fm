@@ -2,6 +2,7 @@
 
 namespace App\Libraries\Detrack;
 
+use Illuminate\Support\Facades\DB;
 use App\Libraries\Helpers\Utility;
 use App\Models\Setting;
 use App\Models\Order;
@@ -252,23 +253,26 @@ class Detrack
             {
                 $deliveryTrackingData = json_decode($inputs['json'], true);
 
-                $order = Order::where('do', $deliveryTrackingData['do'])->first();
+                $order = Order::with('user.customerInformation')->where('do', $deliveryTrackingData['do'])->first();
 
                 if(!empty($order))
                 {
+                    DB::beginTransaction();
+
                     if($order->delivery_status != strtolower($deliveryTrackingData['tracking_status']))
-                    {
                         $order->delivery_status = strtolower($deliveryTrackingData['tracking_status']);
-                        $order->shipper = $deliveryTrackingData['assign_to'];
-                        $order->tracking_detail = $inputs['json'];
-                        $order->save();
-                    }
+
+                    $order->shipper = $deliveryTrackingData['assign_to'];
+                    $order->tracking_detail = $inputs['json'];
+                    $order->save();
+
+                    DB::commit();
                 }
             }
         }
         catch(\Exception $e)
         {
-
+            DB::rollBack();
         }
     }
 
@@ -497,24 +501,27 @@ class Detrack
 
                 if(!empty($order))
                 {
+                    DB::beginTransaction();
+
                     if($order->collection_status != strtolower($collectionTrackingData['tracking_status']))
-                    {
                         $order->collection_status = strtolower($collectionTrackingData['tracking_status']);
-                        $order->collection_shipper = $collectionTrackingData['assign_to'];
-                        $order->collection_tracking_detail = $inputs['json'];
-                        $order->save();
 
-                        if($order->collection_status == Order::STATUS_COMPLETED_DB)
+                    $order->collection_shipper = $collectionTrackingData['assign_to'];
+                    $order->collection_tracking_detail = $inputs['json'];
+                    $order->save();
+
+                    DB::commit();
+
+                    if($order->collection_status == Order::STATUS_COMPLETED_DB)
+                    {
+                        $successDos = $this->addDeliveries([$order]);
+
+                        $countSuccessDo = count($successDos);
+                        if($countSuccessDo > 0)
                         {
-                            $successDos = $this->addDeliveries([$order]);
-
-                            $countSuccessDo = count($successDos);
-                            if($countSuccessDo > 0)
-                            {
-                                $order->delivery_status = Order::STATUS_INFO_RECEIVED_DB;
-                                $order->call_api = Utility::ACTIVE_DB;
-                                $order->save();
-                            }
+                            $order->delivery_status = Order::STATUS_INFO_RECEIVED_DB;
+                            $order->call_api = Utility::ACTIVE_DB;
+                            $order->save();
                         }
                     }
                 }
@@ -522,7 +529,7 @@ class Detrack
         }
         catch(\Exception $e)
         {
-
+            DB::rollBack();
         }
     }
 }

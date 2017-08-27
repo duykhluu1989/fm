@@ -40,8 +40,39 @@ class Order extends Model
         self::updating(function(Order $order) {
             if($order->collection_status != $order->getOriginal('collection_status') && $order->getOriginal('collection_status') == self::STATUS_INFO_RECEIVED_DB)
                 $order->status = self::STATUS_PROCESSING_DB;
-            else if($order->delivery_status != $order->getOriginal('delivery_status') && $order->getOriginal('delivery_status') == self::STATUS_INFO_RECEIVED_DB)
+            else if($order->delivery_status != $order->getOriginal('delivery_status') && $order->delivery_status != self::STATUS_INFO_RECEIVED_DB)
+            {
                 $order->status = $order->delivery_status;
+
+                if($order->status == self::STATUS_COMPLETED_DB)
+                {
+                    if(!empty($order->failed_at))
+                    {
+                        $order->failed_at = null;
+
+                        $order->user->customerInformation->fail_order_count -= 1;
+                    }
+
+                    $order->completed_at = date('Y-m-d H:i:s');
+
+                    $order->user->customerInformation->complete_order_count += 1;
+                    $order->user->customerInformation->save();
+                }
+                else if($order->status == self::STATUS_FAILED_DB)
+                {
+                    if(!empty($order->completed_at))
+                    {
+                        $order->completed_at = null;
+
+                        $order->user->customerInformation->complete_order_count -= 1;
+                    }
+
+                    $order->failed_at = date('Y-m-d H:i:s');
+
+                    $order->user->customerInformation->fail_order_count += 1;
+                    $order->user->customerInformation->save();
+                }
+            }
         });
     }
 
