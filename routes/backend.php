@@ -28,17 +28,25 @@ Route::group(['namespace' => 'Backend'], function() {
 
         Route::post('user/autoComplete', 'UserController@autoCompleteUser');
 
+        Route::get('listArea', 'UserController@getListArea');
+
+        Route::get('shippingPrice', 'OrderController@calculateShippingPrice');
+
     });
 
     Route::group(['middleware' => ['auth', 'access', 'permission']], function() {
 
         Route::get('order', 'OrderController@adminOrder');
 
+        Route::get('order/{id}/detail', 'OrderController@detailOrder');
+
+        Route::match(['get', 'post'], 'order/{id}/edit', 'OrderController@editOrder');
+
+        Route::get('order/{id}/cancel', 'OrderController@cancelOrder');
+
         Route::get('area', 'AreaController@adminArea');
 
         Route::match(['get', 'post'], 'area/{id}/edit', 'AreaController@editArea');
-
-        Route::match(['get', 'post'], 'order/{id}/detail', 'OrderController@detailOrder');
 
         Route::get('discount', 'DiscountController@adminDiscount');
 

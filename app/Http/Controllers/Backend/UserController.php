@@ -65,7 +65,7 @@ class UserController extends Controller
     {
         $dataProvider = User::with(['userRoles.role' => function($query) {
             $query->select('id', 'name');
-        }])->select('id', 'username', 'name', 'email', 'status')
+        }])->select('id', 'username', 'name', 'email', 'status', 'phone')
             ->where('admin', Utility::ACTIVE_DB)
             ->orderBy('id', 'desc');
 
@@ -75,6 +75,12 @@ class UserController extends Controller
         {
             if(!empty($inputs['username']))
                 $dataProvider->where('username', 'like', '%' . $inputs['username'] . '%');
+
+            if(!empty($inputs['name']))
+                $dataProvider->where('name', 'like', '%' . $inputs['name'] . '%');
+
+            if(!empty($inputs['phone']))
+                $dataProvider->where('phone', 'like', '%' . $inputs['phone'] . '%');
 
             if(!empty($inputs['email']))
                 $dataProvider->where('email', 'like', '%' . $inputs['email'] . '%');
@@ -99,9 +105,15 @@ class UserController extends Controller
                 'data' => 'email',
             ],
             [
-                'title' => 'Họ Tên',
+                'title' => 'Tên',
                 'data' => function($row) {
                     echo $row->name;
+                },
+            ],
+            [
+                'title' => 'Số Điện Thoại',
+                'data' => function($row) {
+                    echo $row->phone;
                 },
             ],
             [
@@ -133,6 +145,16 @@ class UserController extends Controller
             [
                 'title' => 'Email',
                 'name' => 'email',
+                'type' => 'input',
+            ],
+            [
+                'title' => 'Tên',
+                'name' => 'name',
+                'type' => 'input',
+            ],
+            [
+                'title' => 'Số Điện Thoại',
+                'name' => 'phone',
                 'type' => 'input',
             ],
             [
@@ -170,6 +192,11 @@ class UserController extends Controller
                 'password' => 'required|alpha_dash|min:6|max:32',
                 're_password' => 'required|alpha_dash|min:6|max:32|same:password',
                 'name' => 'required|max:255',
+                'phone' => [
+                    'nullable',
+                    'numeric',
+                    'regex:/^(01[2689]|09)[0-9]{8}$/',
+                ],
             ]);
 
             if($validator->passes())
@@ -177,6 +204,7 @@ class UserController extends Controller
                 $user->username = $inputs['username'];
                 $user->email = $inputs['email'];
                 $user->name = $inputs['name'];
+                $user->phone = $inputs['phone'];
                 $user->status = isset($inputs['status']) ? Utility::ACTIVE_DB : Utility::INACTIVE_DB;
                 $user->admin = isset($inputs['admin']) ? Utility::ACTIVE_DB : Utility::INACTIVE_DB;
                 $user->created_at = date('Y-m-d H:i:s');
@@ -218,6 +246,11 @@ class UserController extends Controller
                 're_password' => 'nullable|alpha_dash|min:6|max:32|same:password',
                 'bank_number' => 'nullable|numeric',
                 'api_key' => 'nullable|alpha_num|min:48|max:255',
+                'phone' => [
+                    'nullable',
+                    'numeric',
+                    'regex:/^(01[2689]|09)[0-9]{8}$/',
+                ],
             ]);
 
             if($validator->passes())
@@ -229,6 +262,7 @@ class UserController extends Controller
                     $user->username = $inputs['username'];
                     $user->email = $inputs['email'];
                     $user->name = $inputs['name'];
+                    $user->phone = $inputs['phone'];
                     $user->status = isset($inputs['status']) ? Utility::ACTIVE_DB : Utility::INACTIVE_DB;
                     $user->admin = isset($inputs['admin']) ? Utility::ACTIVE_DB : Utility::INACTIVE_DB;
 
@@ -299,7 +333,7 @@ class UserController extends Controller
     public function adminUserCustomer(Request $request)
     {
         $dataProvider = User::with('customerInformation')
-            ->select('id', 'username', 'name', 'email', 'status')
+            ->select('id', 'username', 'name', 'email', 'status', 'phone')
             ->orderBy('id', 'desc');
 
         $inputs = $request->all();
@@ -314,6 +348,9 @@ class UserController extends Controller
 
             if(!empty($inputs['name']))
                 $dataProvider->where('name', 'like', '%' . $inputs['name'] . '%');
+
+            if(!empty($inputs['phone']))
+                $dataProvider->where('phone', 'like', '%' . $inputs['phone'] . '%');
 
             if(isset($inputs['status']) && $inputs['status'] !== '')
                 $dataProvider->where('status', $inputs['status']);
@@ -346,6 +383,12 @@ class UserController extends Controller
                 'title' => 'Tên',
                 'data' => function($row) {
                     echo $row->name;
+                },
+            ],
+            [
+                'title' => 'Số Điện Thoại',
+                'data' => function($row) {
+                    echo $row->phone;
                 },
             ],
             [
@@ -401,6 +444,16 @@ class UserController extends Controller
                 'type' => 'input',
             ],
             [
+                'title' => 'Tên',
+                'name' => 'name',
+                'type' => 'input',
+            ],
+            [
+                'title' => 'Số Điện Thoại',
+                'name' => 'phone',
+                'type' => 'input',
+            ],
+            [
                 'title' => 'Trạng Thái',
                 'name' => 'status',
                 'type' => 'select',
@@ -434,7 +487,11 @@ class UserController extends Controller
                 'password' => 'nullable|alpha_dash|min:6|max:32',
                 're_password' => 'nullable|alpha_dash|min:6|max:32|same:password',
                 'name' => 'required|max:255',
-                'bank_number' => 'nullable|numeric',
+                'phone' => [
+                    'nullable',
+                    'numeric',
+                    'regex:/^(01[2689]|09)[0-9]{8}$/',
+                ],
             ]);
 
             if($validator->passes())
@@ -442,14 +499,11 @@ class UserController extends Controller
                 $user->username = $inputs['username'];
                 $user->name = $inputs['name'];
                 $user->email = $inputs['email'];
+                $user->phone = $inputs['phone'];
 
                 if(!empty($inputs['password']))
                     $user->password = Hash::make($inputs['password']);
 
-                $user->bank = $inputs['bank'];
-                $user->bank_holder = $inputs['bank_holder'];
-                $user->bank_number = $inputs['bank_number'];
-                $user->bank_branch = $inputs['bank_branch'];
                 $user->save();
 
                 return redirect()->action('Backend\UserController@editAccount')->with('messageSuccess', 'Thành Công');
@@ -484,7 +538,7 @@ class UserController extends Controller
         return $users;
     }
 
-    public function getListDistrict(Request $request)
+    public function getListArea(Request $request)
     {
         $inputs = $request->all();
 

@@ -31,6 +31,15 @@
                             @endif
                         </div>
                     </div>
+                    <div class="col-sm-4">
+                        <div class="form-group{{ $errors->has('phone') ? ' has-error': '' }}">
+                            <label>Số Điện Thoại</label>
+                            <input type="text" class="form-control" name="phone" value="{{ old('phone') }}" />
+                            @if($errors->has('phone'))
+                                <span class="help-block">{{ $errors->first('phone') }}</span>
+                            @endif
+                        </div>
+                    </div>
                     <div class="col-sm-12">
                         <div class="form-group{{ $errors->has('email') ? ' has-error': '' }}">
                             <label>Email <i>(bắt buộc)</i></label>

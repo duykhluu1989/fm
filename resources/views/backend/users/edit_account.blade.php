@@ -4,7 +4,7 @@
 
 @section('section')
 
-    <form action="{{ action('Backend\UserController@editAccount') }}" method="post" enctype="multipart/form-data">
+    <form action="{{ action('Backend\UserController@editAccount') }}" method="post">
 
         <div class="box box-primary">
             <div class="box-header with-border">
@@ -30,6 +30,15 @@
                             @endif
                         </div>
                     </div>
+                    <div class="col-sm-4">
+                        <div class="form-group{{ $errors->has('phone') ? ' has-error': '' }}">
+                            <label>Số Điện Thoại</label>
+                            <input type="text" class="form-control" name="phone" value="{{ old('phone', $user->phone) }}" />
+                            @if($errors->has('phone'))
+                                <span class="help-block">{{ $errors->first('phone') }}</span>
+                            @endif
+                        </div>
+                    </div>
                     <div class="col-sm-12">
                         <div class="form-group{{ $errors->has('email') ? ' has-error': '' }}">
                             <label>Email <i>(bắt buộc)</i></label>
@@ -37,33 +46,6 @@
                             @if($errors->has('email'))
                                 <span class="help-block">{{ $errors->first('email') }}</span>
                             @endif
-                        </div>
-                    </div>
-                    <div class="col-sm-4">
-                        <div class="form-group">
-                            <label>Ngân hàng</label>
-                            <input type="text" class="form-control" name="bank" value="{{ old('bank', $user->bank) }}" />
-                        </div>
-                    </div>
-                    <div class="col-sm-4">
-                        <div class="form-group">
-                            <label>Chủ Tài Khoản</label>
-                            <input type="text" class="form-control" name="bank_holder" value="{{ old('bank_holder', $user->bank_holder) }}" />
-                        </div>
-                    </div>
-                    <div class="col-sm-4">
-                        <div class="form-group{{ $errors->has('bank_number') ? ' has-error': '' }}">
-                            <label>Số Tài Khoản</label>
-                            <input type="text" class="form-control" name="bank_number" value="{{ old('bank_number', $user->bank_number) }}" />
-                            @if($errors->has('bank_number'))
-                                <span class="help-block">{{ $errors->first('bank_number') }}</span>
-                            @endif
-                        </div>
-                    </div>
-                    <div class="col-sm-4">
-                        <div class="form-group">
-                            <label>Chi Nhánh</label>
-                            <input type="text" class="form-control" name="bank_branch" value="{{ old('bank_branch', $user->bank_branch) }}" />
                         </div>
                     </div>
                     <div class="col-sm-12">

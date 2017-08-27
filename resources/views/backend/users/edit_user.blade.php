@@ -4,7 +4,7 @@
 
 @section('section')
 
-    <form action="{{ action('Backend\UserController@editUser', ['id' => $user->id]) }}" method="post" enctype="multipart/form-data">
+    <form action="{{ action('Backend\UserController@editUser', ['id' => $user->id]) }}" method="post">
 
         <div class="box box-primary">
             <div class="box-header with-border">
@@ -35,6 +35,15 @@
                                         <input type="text" class="form-control" name="name" required="required" value="{{ old('name', $user->name) }}" />
                                         @if($errors->has('name'))
                                             <span class="help-block">{{ $errors->first('name') }}</span>
+                                        @endif
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group{{ $errors->has('phone') ? ' has-error': '' }}">
+                                        <label>Số Điện Thoại</label>
+                                        <input type="text" class="form-control" name="phone" value="{{ old('phone', $user->phone) }}" />
+                                        @if($errors->has('phone'))
+                                            <span class="help-block">{{ $errors->first('phone') }}</span>
                                         @endif
                                     </div>
                                 </div>

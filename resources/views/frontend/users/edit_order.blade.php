@@ -25,7 +25,7 @@
                                             <div class="form-group">
                                                 <label>Chọn địa chỉ đã có</label>
                                                 <select id="RegisterUserAddress" class="form-control">
-                                                    <option value="">Chọn địa chỉ đã có</option>
+                                                    <option value=""></option>
 
                                                     @foreach($order->user->userAddresses as $userAddress)
                                                         <option data-name="{{ $userAddress->name }}" data-phone="{{ $userAddress->phone }}" data-address="{{ $userAddress->address }}" data-ward-id="{{ $userAddress->ward_id }}" data-district-id="{{ $userAddress->district_id }}" data-province-id="{{ $userAddress->province_id }}"
