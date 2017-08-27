@@ -8,36 +8,6 @@ use App\Models\Article;
 
 class PageController extends Controller
 {
-    public function gioithieu()
-    {
-        return view('frontend.pages.gioithieu');
-    }
-
-    public function banggia()
-    {
-        return view('frontend.pages.banggia');
-    }
-
-    public function chinhsach()
-    {
-        return view('frontend.pages.chinhsach');
-    }
-
-    public function dichvu()
-    {
-        return view('frontend.pages.dichvu');
-    }
-
-    public function tuyendung()
-    {
-        return view('frontend.pages.tuyendung');
-    }
-
-    public function tuyenchungchitiet()
-    {
-        return view('frontend.pages.tuyendungchitiet');
-    }
-
     public function detailPage($id, $slug)
     {
         $page = Article::select('id', 'name', 'content', 'short_description', 'image', 'group', 'view_count')
@@ -51,25 +21,39 @@ class PageController extends Controller
 
         Utility::viewCount($page, 'view_count', Utility::VIEW_ARTICLE_COOKIE_NAME);
 
-        if($page->group !== null)
-        {
-            switch($page->group)
-            {
-                case Article::ARTICLE_GROUP_POLICY_DB:
-
-                    return $this->detailPolicyPage($page);
-
-                    break;
-            }
-        }
-
         return $this->page($page);
     }
 
-    public function detailPolicyPage($page)
+    public function page($page)
     {
-        return view('frontend.pages.detail_policy_page', [
+        return view('frontend.pages.detail_page', [
             'page' => $page,
+        ]);
+    }
+
+    public function adminServicePage()
+    {
+        $pages = Article::select('id', 'name', 'slug', 'image')
+            ->where('status', Article::STATUS_PUBLISH_DB)
+            ->where('group', Article::ARTICLE_GROUP_SERVICE_DB)
+            ->orderBy('order', 'desc')
+            ->get();
+
+        return view('frontend.pages.admin_service_page', [
+            'pages' => $pages
+        ]);
+    }
+
+    public function adminRecruitmentPage()
+    {
+        $pages = Article::select('id', 'name', 'slug', 'short_description', 'image')
+            ->where('status', Article::STATUS_PUBLISH_DB)
+            ->where('group', Article::ARTICLE_GROUP_RECRUITMENT_DB)
+            ->orderBy('order', 'desc')
+            ->paginate(Utility::FRONTEND_ROWS_PER_PAGE);
+
+        return view('frontend.pages.admin_recruitment_page', [
+            'pages' => $pages
         ]);
     }
 }

@@ -30,11 +30,13 @@
 
                 <div id="navbarCollapse" class="collapse navbar-collapse">
                     <ul class="nav navbar-nav navbar-right">
-                        <li class="active"><a href="{{ action('Frontend\HomeController@home') }}">TRANG CHỦ</a></li>
-                        <li><a href="{{ action('Frontend\PageController@gioithieu') }}">GIỚI THIỆU</a></li>
-                        <li><a href="{{ action('Frontend\PageController@dichvu') }}">DỊCH VỤ</a></li>
-                        <li><a href="{{ action('Frontend\PageController@banggia') }}">BẢNG GIÁ</a></li>
-                        <li><a href="{{ action('Frontend\PageController@tuyendung') }}">TUYỂN DỤNG</a></li>
+                        <?php
+                        $menus = \App\Models\Menu::getMenuTree(\App\Models\Menu::THEME_POSITION_MENU_DB);
+                        ?>
+
+                        @foreach($menus as $menu)
+                            <li class="{{ request()->fullUrl() == $menu->getMenuUrl() ? 'active' : '' }}"><a href="{{ $menu->getMenuUrl() }}">{{ $menu->getMenuTitle(false) }}</a></li>
+                        @endforeach
                     </ul>
                 </div>
             </div>

@@ -58,18 +58,8 @@ Route::group(['namespace' => 'Frontend', 'middleware' => ['locale']], function()
 
     Route::get('page/{id}/{slug}', 'PageController@detailPage');
 
-    Route::get('gioithieu', 'PageController@gioithieu');
+    Route::get('service', 'PageController@adminServicePage');
 
-    Route::get('gioithieu', 'PageController@gioithieu');
-
-    Route::get('banggia', 'PageController@banggia');
-
-    Route::get('chinhsach', 'PageController@chinhsach');
-
-    Route::get('dichvu', 'PageController@dichvu');
-
-    Route::get('tuyendung', 'PageController@tuyendung');
-
-    Route::get('tuyendungchitiet', 'PageController@tuyenchungchitiet');
+    Route::get('recruitment', 'PageController@adminRecruitmentPage');
 
 });
