@@ -578,8 +578,30 @@ class UserController extends Controller
 
         $orders = $builder->paginate(Utility::FRONTEND_ROWS_PER_PAGE);
 
+        $countReceiveOrder = Order::where('status', Order::STATUS_INFO_RECEIVED_DB)->count('id');
+        $countShippingOrder = Order::whereIn('status', [
+            Order::STATUS_PROCESSING_DB,
+            Order::STATUS_SCHEDULED_DB,
+            Order::STATUS_PRE_JOB_DB,
+            Order::STATUS_HEADING_TO_DB,
+            Order::STATUS_CANCEL_HEADING_TO_DB,
+            Order::STATUS_ARRIVED_DB,
+            Order::STATUS_PARTIALLY_COMPLETED_DB,
+        ])->count('id');
+        $countCompleteOrFailOrder = Order::whereIn('status', [
+            Order::STATUS_COMPLETED_DB,
+            Order::STATUS_FAILED_DB,
+        ])->count('id');
+        $countHoldOrder = Order::where('status', Order::STATUS_ON_HOLD_DB)->count('id');
+        $countReturnOrder = Order::where('status', Order::STATUS_RETURN_DB)->count('id');
+
         return view('frontend.users.admin_order', [
             'orders' => $orders,
+            'countReceiveOrder' => $countReceiveOrder,
+            'countShippingOrder' => $countShippingOrder,
+            'countCompleteOrFailOrder' => $countCompleteOrFailOrder,
+            'countHoldOrder' => $countHoldOrder,
+            'countReturnOrder' => $countReturnOrder,
         ]);
     }
 

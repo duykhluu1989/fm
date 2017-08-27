@@ -17,6 +17,8 @@ class Order extends Model
     const STATUS_COMPLETED_DB = 'completed';
     const STATUS_PARTIALLY_COMPLETED_DB = 'partially-completed';
     const STATUS_FAILED_DB = 'failed';
+    const STATUS_RETURN_DB = 'return';
+    const STATUS_ON_HOLD_DB = 'on-hold';
     const STATUS_CANCELLED_DB = 'cancelled';
 
     const SHIPPING_PAYMENT_SENDER_DB = 0;
@@ -109,6 +111,8 @@ class Order extends Model
             self::STATUS_COMPLETED_DB => self::STATUS_COMPLETED_DB,
             self::STATUS_PARTIALLY_COMPLETED_DB => self::STATUS_PARTIALLY_COMPLETED_DB,
             self::STATUS_FAILED_DB => self::STATUS_FAILED_DB,
+            self::STATUS_RETURN_DB => self::STATUS_RETURN_DB,
+            self::STATUS_ON_HOLD_DB => self::STATUS_ON_HOLD_DB,
             self::STATUS_CANCELLED_DB => self::STATUS_CANCELLED_DB,
         ];
 
@@ -131,7 +135,9 @@ class Order extends Model
             self::STATUS_COMPLETED_DB => 8,
             self::STATUS_PARTIALLY_COMPLETED_DB => 9,
             self::STATUS_FAILED_DB => 10,
-            self::STATUS_CANCELLED_DB => 11,
+            self::STATUS_RETURN_DB => 11,
+            self::STATUS_ON_HOLD_DB => 12,
+            self::STATUS_CANCELLED_DB => 13,
         ];
 
         if($value !== null && isset($status[$value]))
@@ -153,6 +159,8 @@ class Order extends Model
             self::STATUS_COMPLETED_DB => 'success',
             self::STATUS_PARTIALLY_COMPLETED_DB => 'primary',
             self::STATUS_FAILED_DB => 'danger',
+            self::STATUS_RETURN_DB => 'warning',
+            self::STATUS_ON_HOLD_DB => 'warning',
             self::STATUS_CANCELLED_DB => 'danger',
         ];
 
@@ -177,8 +185,14 @@ class Order extends Model
 
         if(!empty($weight))
         {
-            if($weight - (int)$weight > 0)
-                $weight = (int)$weight + 1;
+            $temp = $weight - (int)$weight;
+            if($temp > 0)
+            {
+                if($temp <= 0.5)
+                    $weight = (int)$weight + 0.5;
+                else
+                    $weight = (int)$weight + 1;
+            }
         }
         else
             $weight = 0;
@@ -200,8 +214,14 @@ class Order extends Model
 
             $weightFromDimension = $volume / 5000;
 
-            if($weightFromDimension - (int)$weightFromDimension > 0)
-                $weightFromDimension = (int)$weightFromDimension + 1;
+            $temp = $weightFromDimension - (int)$weightFromDimension;
+            if($temp > 0)
+            {
+                if($temp <= 0.5)
+                    $weightFromDimension = (int)$weightFromDimension + 0.5;
+                else
+                    $weightFromDimension = (int)$weightFromDimension + 1;
+            }
         }
         else
             $weightFromDimension = 0;

@@ -15,7 +15,7 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <h4 class="title_user line-on-right">Danh sách đơn hàng</h4>
-                        <p class="quitrinh">Tiếp nhận đơn hàng<span>(0)</span> → Shipper đang giao <span>(0)</span> → Đơn hàng thành công hoặc đơn hàng thất bại <span>(0)</span> → Đơn hàng đang giữ tại kho <span>(0)</span> → Đơn hàng hoàn trả <span>(0)</span> </p>
+                        <p class="quitrinh">Tiếp nhận đơn hàng <span>({{ \App\Libraries\Helpers\Utility::formatNumber($countReceiveOrder) }})</span> → Shipper đang giao <span>({{ \App\Libraries\Helpers\Utility::formatNumber($countShippingOrder) }})</span> → Đơn hàng thành công hoặc đơn hàng thất bại <span>({{ \App\Libraries\Helpers\Utility::formatNumber($countCompleteOrFailOrder) }})</span> → Đơn hàng đang giữ tại kho <span>({{ \App\Libraries\Helpers\Utility::formatNumber($countHoldOrder) }})</span> → Đơn hàng hoàn trả <span>({{ \App\Libraries\Helpers\Utility::formatNumber($countReturnOrder) }})</span> </p>
                         <h4 class="title_user line-on-right">Tìm kiếm đơn hàng</h4>
                         <form class="frm_timkiemdonhang" action="{{ action('Frontend\UserController@adminOrder') }}" method="GET" role="form">
                             <div class="row">
@@ -93,6 +93,7 @@
                         <table class="table table-bordered table-hover table_QLDH">
                             <thead>
                             <tr>
+                                <th><input type="checkbox" class="GridViewCheckBoxAll" /></th>
                                 <th>Mã đơn hàng</th>
                                 <th>Khách hàng</th>
                                 <th>Tiền thu hộ</th>
@@ -100,14 +101,16 @@
                                 <th>Shipper</th>
                                 <th>Trạng thái</th>
                                 <th>Đặt đơn hàng lúc</th>
+                                <th>Hủy đơn hàng lúc</th>
                             </tr>
                             </thead>
                             <tbody>
 
                             @foreach($orders as $order)
                                 <tr>
+                                    <td><input type="checkbox" class="GridViewCheckBox" value="{{ $order->id }}" /></td>
                                     <td>
-                                        <a class="label label-danger" href="{{ action('Frontend\UserController@detailOrder', ['id' => $order->id]) }}">{{ $order->number }}</a>
+                                        <a class="label label-{{ !empty($order->cancelled_at) ? 'danger' : 'success' }}" href="{{ action('Frontend\UserController@detailOrder', ['id' => $order->id]) }}">{{ $order->number }}</a>
                                     </td>
                                     <td>{{ $order->receiverAddress->name }}</td>
                                     <td>{{ \App\Libraries\Helpers\Utility::formatNumber($order->cod_price) }}</td>
@@ -115,6 +118,7 @@
                                     <td>{{ $order->shipper }}</td>
                                     <td><span class="label label-{{ \App\Models\Order::getOrderStatusLabel($order->status ) }}">{{ $order->status }}</span></td>
                                     <td>{{ $order->created_at }}</td>
+                                    <td>{{ $order->cancelled_at }}</td>
                                 </tr>
                             @endforeach
 
@@ -172,3 +176,43 @@
     </main>
 
 @stop
+
+@push('scripts')
+    <script type="text/javascript">
+        $('.GridViewCheckBoxAll').click(function() {
+            $('.GridViewCheckBox').prop('checked', $(this).prop('checked'));
+        });
+
+        $('.GridViewCheckBox').click(function() {
+            if($(this).prop('checked'))
+            {
+                var allChecked = true;
+
+                $('.GridViewCheckBox').each(function() {
+                    if(!$(this).prop('checked'))
+                    {
+                        allChecked = false;
+                        return false;
+                    }
+                });
+
+                if(allChecked)
+                    $('.GridViewCheckBoxAll').first().prop('checked', $(this).prop('checked'));
+            }
+            else
+            {
+                var noneChecked = true;
+
+                $('.GridViewCheckBox').each(function() {
+                    if($(this).prop('checked'))
+                    {
+                        noneChecked = false;
+                        return false;
+                    }
+                });
+
+                $('.GridViewCheckBoxAll').first().prop('checked', $(this).prop('checked'));
+            }
+        });
+    </script>
+@endpush

@@ -283,7 +283,7 @@ class Detrack
         foreach($orders as $order)
         {
             $params[] = [
-                'do' => 'TEST' . $order->do,
+                'do' => $order->do,
                 'address' => $order->senderAddress->address . ' ' . $order->senderAddress->ward . ' ' . $order->senderAddress->district . ' ' . $order->senderAddress->province,
                 'date' => explode(' ', $order->created_at)[0],
                 'city' => $order->senderAddress->district,
