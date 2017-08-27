@@ -685,7 +685,7 @@
                 '<option value=""></option>' +
             '');
 
-            if(elem != '')
+            if(elem.val() != '')
             {
                 $.ajax({
                     url: '{{ action('Frontend\OrderController@getListArea') }}',

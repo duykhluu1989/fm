@@ -24,25 +24,18 @@
                                             <p><b>Thông tin lấy hàng</b></p>
                                             <div class="form-group">
                                                 <label>Chọn địa chỉ đã có</label>
-                                                <select name="user_address RegisterUserAddress" class="form-control">
-                                                    <?php
-                                                    $userAddressId = old('user_address');
-                                                    ?>
-
-                                                    <option value=""></option>
+                                                <select id="RegisterUserAddress" class="form-control">
+                                                    <option value="">Chọn địa chỉ đã có</option>
 
                                                     @foreach($order->user->userAddresses as $userAddress)
-                                                        @if($userAddressId == $userAddress->id)
-                                                            <option selected="selected" value="{{ $userAddress->id }}">{{ $userAddress->name . ', ' . $userAddress->phone . ', ' . $userAddress->address . ', ' . $userAddress->ward . ', ' . $userAddress->district . ', ' . $userAddress->province }}</option>
-                                                        @else
-                                                            <option value="{{ $userAddress->id }}">{{ $userAddress->name . ', ' . $userAddress->phone . ', ' . $userAddress->address . ', ' . $userAddress->ward . ', ' . $userAddress->district . ', ' . $userAddress->province }}</option>
-                                                        @endif
+                                                        <option data-name="{{ $userAddress->name }}" data-phone="{{ $userAddress->phone }}" data-address="{{ $userAddress->address }}" data-ward-id="{{ $userAddress->ward_id }}" data-district-id="{{ $userAddress->district_id }}" data-province-id="{{ $userAddress->province_id }}"
+                                                                value="{{ $userAddress->id }}">{{ $userAddress->name . ', ' . $userAddress->phone . ', ' . $userAddress->address . ', ' . $userAddress->ward . ', ' . $userAddress->district . ', ' . $userAddress->province }}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
                                             <div class="form-group">
                                                 <label>Họ tên (*)</label>
-                                                <input type="text" class="form-control" name="register_name" value="{{ old('register_name', $order->senderAddress->name) }}" required="required" />
+                                                <input type="text" class="form-control" name="register_name" id="RegisterName" value="{{ old('register_name', $order->senderAddress->name) }}" required="required" />
                                                 @if($errors->has('register_name'))
                                                     <span class="has-error">
                                                         <span class="help-block">* {{ $errors->first('register_name') }}</span>
@@ -51,7 +44,7 @@
                                             </div>
                                             <div class="form-group">
                                                 <label>Số điện thoại (*)</label>
-                                                <input type="text" class="form-control" name="register_phone" value="{{ old('register_phone', $order->senderAddress->phone) }}" required="required" />
+                                                <input type="text" class="form-control" name="register_phone" id="RegisterPhone" value="{{ old('register_phone', $order->senderAddress->phone) }}" required="required" />
                                                 @if($errors->has('register_phone'))
                                                     <span class="has-error">
                                                         <span class="help-block">* {{ $errors->first('register_phone') }}</span>
@@ -61,7 +54,7 @@
 
                                             <div class="form-group">
                                                 <label>Địa chỉ lấy hàng (*)</label>
-                                                <input type="text" class="form-control" name="register_address" value="{{ old('register_address', $order->senderAddress->address) }}" required="required" />
+                                                <input type="text" class="form-control" name="register_address" id="RegisterAddress" value="{{ old('register_address', $order->senderAddress->address) }}" required="required" />
                                                 @if($errors->has('register_address'))
                                                     <span class="has-error">
                                                         <span class="help-block">* {{ $errors->first('register_address') }}</span>
@@ -70,7 +63,7 @@
                                             </div>
                                             <div class="form-group">
                                                 <label>Tỉnh / thành phố (*)</label>
-                                                <select name="register_province" class="form-control RegisterProvince" required="required">
+                                                <select name="register_province" class="form-control" id="RegisterProvince" required="required">
                                                     <?php
                                                     $province = old('register_province', $order->senderAddress->province_id);
                                                     ?>
@@ -93,7 +86,7 @@
                                             </div>
                                             <div class="form-group">
                                                 <label>Quận / huyện (*)</label>
-                                                <select name="register_district" class="form-control RegisterDistrict" required="required">
+                                                <select name="register_district" class="form-control" id="RegisterDistrict" required="required">
                                                     <?php
                                                     $district = old('register_district', $order->senderAddress->district_id);
                                                     ?>
@@ -118,7 +111,7 @@
                                             </div>
                                             <div class="form-group">
                                                 <label>Phường / xã (*)</label>
-                                                <select name="register_ward" class="form-control RegisterWard" required="required">
+                                                <select name="register_ward" class="form-control" id="RegisterWard" required="required">
                                                     <?php
                                                     $ward = old('register_ward', $order->senderAddress->ward_id);
                                                     ?>
@@ -143,7 +136,7 @@
                                             </div>
                                             <div class="form-group">
                                                 <label>Trọng lượng gói hàng (kg)</label>
-                                                <input type="text" class="form-control OrderWeightInput" name="weight" value="{{ old('weight', $order->weight) }}" />
+                                                <input type="text" class="form-control" id="OrderWeightInput" name="weight" value="{{ old('weight', $order->weight) }}" />
                                                 @if($errors->has('weight'))
                                                     <span class="has-error">
                                                         <span class="help-block">* {{ $errors->first('weight') }}</span>
@@ -152,7 +145,7 @@
                                             </div>
                                             <div class="form-group">
                                                 <label>Kích thước gói hàng (cm)</label>
-                                                <input type="text" class="form-control OrderDimensionInput" name="dimension" value="{{ old('dimension', $order->dimension) }}" placeholder="Dài x Rộng x Cao" />
+                                                <input type="text" class="form-control" id="OrderDimensionInput" name="dimension" value="{{ old('dimension', $order->dimension) }}" placeholder="Dài x Rộng x Cao" />
                                                 @if($errors->has('dimension'))
                                                     <span class="has-error">
                                                         <span class="help-block">* {{ $errors->first('dimension') }}</span>
@@ -161,7 +154,7 @@
                                             </div>
                                             <div class="form-group">
                                                 <label>Tiền thu hộ</label>
-                                                <input type="text" class="form-control InputForNumber OrderCodPriceInput" name="cod_price" value="{{ old('cod_price', \App\Libraries\Helpers\Utility::formatNumber($order->cod_price)) }}" />
+                                                <input type="text" class="form-control InputForNumber" id="OrderCodPriceInput" name="cod_price" value="{{ old('cod_price', \App\Libraries\Helpers\Utility::formatNumber($order->cod_price)) }}" />
                                                 @if($errors->has('cod_price'))
                                                     <span class="has-error">
                                                         <span class="help-block">* {{ $errors->first('cod_price') }}</span>
@@ -170,7 +163,7 @@
                                             </div>
                                             <div class="form-group">
                                                 <label>Phí ship (tạm tính)</label>
-                                                <input type="text" class="form-control OrderShippingPriceInput" name="shipping_price" value="{{ old('shipping_price', \App\Libraries\Helpers\Utility::formatNumber($order->shipping_price)) }}" readonly="readonly" />
+                                                <input type="text" class="form-control" id="OrderShippingPriceInput" name="shipping_price" value="{{ old('shipping_price', \App\Libraries\Helpers\Utility::formatNumber($order->shipping_price)) }}" readonly="readonly" />
                                             </div>
                                             <div class="form-group">
                                                 <?php
@@ -192,7 +185,7 @@
                                             </div>
                                             <div class="form-group">
                                                 <label>Tổng tiền thu hộ</label>
-                                                <input type="text" class="form-control OrderTotalCodPriceInput" name="total_cod_price" value="{{ old('total_cod_price', \App\Libraries\Helpers\Utility::formatNumber($order->total_cod_price)) }}" readonly="readonly" />
+                                                <input type="text" class="form-control" id="OrderTotalCodPriceInput" name="total_cod_price" value="{{ old('total_cod_price', \App\Libraries\Helpers\Utility::formatNumber($order->total_cod_price)) }}" readonly="readonly" />
                                             </div>
 
                                             @if(auth()->user()->prepay == \App\Libraries\Helpers\Utility::ACTIVE_DB)
@@ -247,7 +240,7 @@
                                             </div>
                                             <div class="form-group">
                                                 <label>Thành phố (*)</label>
-                                                <select name="receiver_province" class="form-control ReceiverProvince" required="required">
+                                                <select name="receiver_province" class="form-control" id="ReceiverProvince" required="required">
                                                     <?php
                                                     $province = old('receiver_province', $order->receiverAddress->province_id);
                                                     ?>
@@ -270,7 +263,7 @@
                                             </div>
                                             <div class="form-group">
                                                 <label>Quận / huyện (*)</label>
-                                                <select name="receiver_district" class="form-control ReceiverDistrict" required="required">
+                                                <select name="receiver_district" class="form-control" id="ReceiverDistrict" required="required">
                                                     <?php
                                                     $district = old('receiver_district', $order->receiverAddress->district_id);
                                                     ?>
@@ -295,7 +288,7 @@
                                             </div>
                                             <div class="form-group">
                                                 <label>Phường / xã (*)</label>
-                                                <select name="receiver_ward" class="form-control ReceiverWard" required="required">
+                                                <select name="receiver_ward" class="form-control" id="ReceiverWard" required="required">
                                                     <?php
                                                     $ward = old('receiver_ward', $order->receiverAddress->ward_id);
                                                     ?>
@@ -336,3 +329,192 @@
     </main>
 
 @stop
+
+@push('scripts')
+    <script type="text/javascript">
+        $('#RegisterUserAddress').change(function() {
+            var optElem = $(this).find(':selected');
+
+            $('#RegisterName').val(optElem.data('name'));
+            $('#RegisterPhone').val(optElem.data('phone'));
+            $('#RegisterAddress').val(optElem.data('address'));
+            $('#RegisterProvince').val(optElem.data('province-id'));
+
+            $('#RegisterDistrict').html('' +
+                '<option value=""></option>' +
+            '');
+
+            $.ajax({
+                url: '{{ action('Frontend\OrderController@getListArea') }}',
+                type: 'get',
+                data: 'parent_id=' + $('#RegisterProvince').val() + '&type={{ \App\Models\Area::TYPE_DISTRICT_DB }}',
+                success: function(result) {
+                    if(result)
+                    {
+                        result = JSON.parse(result);
+
+                        var i;
+
+                        for(i = 0;i < result.length;i ++)
+                        {
+                            if(result[i].id == optElem.data('district-id'))
+                            {
+                                $('#RegisterDistrict').append('' +
+                                    '<option selected="selected" value="' + result[i].id + '">' + result[i].name + '</option>' +
+                                '');
+                            }
+                            else
+                            {
+                                $('#RegisterDistrict').append('' +
+                                    '<option value="' + result[i].id + '">' + result[i].name + '</option>' +
+                                '');
+                            }
+                        }
+
+                        $('#RegisterWard').html('' +
+                            '<option value=""></option>' +
+                        '');
+
+                        $.ajax({
+                            url: '{{ action('Frontend\OrderController@getListArea') }}',
+                            type: 'get',
+                            data: 'parent_id=' + $('#RegisterDistrict').val() + '&type={{ \App\Models\Area::TYPE_WARD_DB }}',
+                            success: function(result) {
+                                if(result)
+                                {
+                                    result = JSON.parse(result);
+
+                                    var i;
+
+                                    for(i = 0;i < result.length;i ++)
+                                    {
+                                        if(result[i].id == optElem.data('ward-id'))
+                                        {
+                                            $('#RegisterWard').append('' +
+                                                '<option selected="selected" value="' + result[i].id + '">' + result[i].name + '</option>' +
+                                            '');
+                                        }
+                                        else
+                                        {
+                                            $('#RegisterWard').append('' +
+                                                '<option value="' + result[i].id + '">' + result[i].name + '</option>' +
+                                            '');
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+
+            $(this).val('');
+        });
+
+        $('#RegisterProvince').change(function() {
+            changeArea($(this), $('#RegisterDistrict'), '{{ \App\Models\Area::TYPE_DISTRICT_DB }}', false);
+            $('#RegisterWard').html('<option value=""></option>');
+        });
+
+        $('#RegisterDistrict').change(function() {
+            changeArea($(this), $('#RegisterWard'), '{{ \App\Models\Area::TYPE_WARD_DB }}', false);
+        });
+
+        $('#ReceiverProvince').change(function() {
+            changeArea($(this), $('#ReceiverDistrict'), '{{ \App\Models\Area::TYPE_DISTRICT_DB }}', true);
+            $('#ReceiverWard').html('<option value=""></option>');
+
+            calculateShippingPrice($('#ReceiverDistrict'), $('#OrderWeightInput'), $('#OrderDimensionInput'), $('#OrderShippingPriceInput'));
+        });
+
+        $('#ReceiverDistrict').change(function() {
+            changeArea($(this), $('#ReceiverWard'), '{{ \App\Models\Area::TYPE_WARD_DB }}', true);
+
+            calculateShippingPrice($('#ReceiverDistrict'), $('#OrderWeightInput'), $('#OrderDimensionInput'), $('#OrderShippingPriceInput'));
+        });
+
+        $('#OrderWeightInput').change(function() {
+            calculateShippingPrice($('#ReceiverDistrict'), $('#OrderWeightInput'), $('#OrderDimensionInput'), $('#OrderShippingPriceInput'));
+        });
+
+        $('#OrderDimensionInput').change(function() {
+            calculateShippingPrice($('#ReceiverDistrict'), $('#OrderWeightInput'), $('#OrderDimensionInput'), $('#OrderShippingPriceInput'));
+        });
+
+        $('#OrderCodPriceInput').change(function() {
+            calculateShippingPrice($('#ReceiverDistrict'), $('#OrderWeightInput'), $('#OrderDimensionInput'), $('#OrderShippingPriceInput'));
+        });
+
+        $('input[type="radio"][name="shipping_payment"]').change(function() {
+            calculateShippingPrice($('#ReceiverDistrict'), $('#OrderWeightInput'), $('#OrderDimensionInput'), $('#OrderShippingPriceInput'));
+        });
+
+        function changeArea(elem, updateElem, type, receiver)
+        {
+            updateElem.html('' +
+                '<option value=""></option>' +
+            '');
+
+            if(elem.val() != '')
+            {
+                $.ajax({
+                    url: '{{ action('Frontend\OrderController@getListArea') }}',
+                    type: 'get',
+                    data: 'parent_id=' + elem.val() + '&type=' + type + (receiver ? '&receiver=1' : ''),
+                    success: function(result) {
+                        if(result)
+                        {
+                            result = JSON.parse(result);
+
+                            var i;
+
+                            for(i = 0;i < result.length;i ++)
+                            {
+                                updateElem.append('' +
+                                    '<option value="' + result[i].id + '">' + result[i].name + '</option>' +
+                                '');
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        function calculateShippingPrice(districtElem, weightElem, dimensionElem, shippingPriceElem)
+        {
+            if(districtElem.val() != '')
+            {
+                $.ajax({
+                    url: '{{ action('Frontend\OrderController@calculateShippingPrice') }}',
+                    type: 'get',
+                    data: 'register_district=' + districtElem.val() + '&weight=' + weightElem.val() + '&dimension=' + dimensionElem.val(),
+                    success: function(result) {
+                        if(result)
+                            shippingPriceElem.val(formatNumber(result, '.'));
+                        else
+                            shippingPriceElem.val('');
+
+                        calculateTotalCodPrice($('#OrderCodPriceInput'), $('#OrderTotalCodPriceInput'), $('#OrderShippingPriceInput'), $('input[type="radio"][name="shipping_payment"]:checked').val());
+                    }
+                });
+            }
+            else
+                shippingPriceElem.val('');
+        }
+
+        function calculateTotalCodPrice(codPriceElem, totalCodPriceElem, shippingPriceElem, shippingPaymentVal)
+        {
+            if(shippingPaymentVal == '{{ \App\Models\Order::SHIPPING_PAYMENT_SENDER_DB }}')
+                totalCodPriceElem.val(codPriceElem.val());
+            else
+            {
+                if(codPriceElem.val() != '' && shippingPriceElem.val() != '')
+                    totalCodPriceElem.val(formatNumber((parseInt(codPriceElem.val().split('.').join('')) + parseInt(shippingPriceElem.val().split('.').join(''))).toString(), '.'));
+                else if(shippingPriceElem.val() != '')
+                    totalCodPriceElem.val(shippingPriceElem.val());
+                else
+                    totalCodPriceElem.val(codPriceElem.val());
+            }
+        }
+    </script>
+@endpush

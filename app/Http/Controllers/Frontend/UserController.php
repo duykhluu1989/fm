@@ -642,6 +642,130 @@ class UserController extends Controller
         if($request->isMethod('post'))
         {
             $inputs = $request->all();
+
+            if(!empty($inputs['cod_price']))
+                $inputs['cod_price'] = implode('', explode('.', $inputs['cod_price']));
+
+            $validator = Validator::make($inputs, [
+                'register_name' => 'required|string|max:255',
+                'register_phone' => [
+                    'required',
+                    'numeric',
+                    'regex:/^(01[2689]|09)[0-9]{8}$/',
+                ],
+                'register_address' => 'required|max:255',
+                'register_province' => 'required|integer|min:1',
+                'register_district' => 'required|integer|min:1',
+                'register_ward' => 'required|integer|min:1',
+                'receiver_name' => 'required|string|max:255',
+                'receiver_phone' => [
+                    'required',
+                    'numeric',
+                    'regex:/^(01[2689]|09)[0-9]{8}$/',
+                ],
+                'receiver_address' => 'required|max:255',
+                'receiver_province' => 'required|integer|min:1',
+                'receiver_district' => 'required|integer|min:1',
+                'receiver_ward' => 'required|integer|min:1',
+                'weight' => 'nullable|integer|min:1',
+                'cod_price' => 'nullable|integer|min:1',
+                'note' => 'nullable|max:255',
+            ]);
+
+            $validator->after(function($validator) use(&$inputs) {
+                if(!empty($inputs['dimension']))
+                {
+                    $dimensions = explode('x', $inputs['dimension']);
+
+                    if(count($dimensions) != 3)
+                        $validator->errors()->add('dimension', trans('validation.dimensions', ['attribute' => 'kích thước']));
+
+                    foreach($dimensions as $dimension)
+                    {
+                        $dimension = trim($dimension);
+                        if(empty($dimension) || !is_numeric($dimension) || $dimension < 1)
+                            $validator->errors()->add('dimension', trans('validation.dimensions', ['attribute' => 'kích thước']));
+                    }
+                }
+            });
+
+            if($validator->passes())
+            {
+                try
+                {
+                    DB::beginTransaction();
+
+                    $order->cod_price = (!empty($inputs['cod_price']) ? $inputs['cod_price'] : 0);
+                    $order->shipping_price = Order::calculateShippingPrice($inputs['receiver_district'], $inputs['weight'], $inputs['dimension']);
+                    $order->shipping_payment = $inputs['shipping_payment'];
+
+                    if($order->shipping_payment == Order::SHIPPING_PAYMENT_RECEIVER_DB)
+                        $order->total_cod_price = $order->cod_price + $order->shipping_price;
+                    else
+                        $order->total_cod_price = $order->cod_price;
+
+                    $order->weight = $inputs['weight'];
+                    $order->dimension = $inputs['dimension'];
+                    $order->note = $inputs['note'];
+
+                    if(isset($inputs['prepay']))
+                        $order->prepay = Utility::ACTIVE_DB;
+                    else
+                        $order->prepay = Utility::INACTIVE_DB;
+
+                    $order->save();
+
+                    $order->senderAddress->name = $inputs['register_name'];
+                    $order->senderAddress->phone = $inputs['register_phone'];
+                    $order->senderAddress->address = $inputs['register_address'];
+                    $order->senderAddress->province = Area::find($inputs['register_province'])->name;
+                    $order->senderAddress->district = Area::find($inputs['register_district'])->name;
+                    $order->senderAddress->ward = Area::find($inputs['register_ward'])->name;
+                    $order->senderAddress->province_id = $inputs['register_province'];
+                    $order->senderAddress->district_id = $inputs['register_district'];
+                    $order->senderAddress->ward_id = $inputs['register_ward'];
+                    $order->senderAddress->save();
+
+                    $order->receiverAddress->name = $inputs['receiver_name'];
+                    $order->receiverAddress->phone = $inputs['receiver_phone'];
+                    $order->receiverAddress->address = $inputs['receiver_address'];
+                    $order->receiverAddress->province = Area::find($inputs['receiver_province'])->name;
+                    $order->receiverAddress->district = Area::find($inputs['receiver_district'])->name;
+                    $order->receiverAddress->ward = Area::find($inputs['receiver_ward'])->name;
+                    $order->receiverAddress->province_id = $inputs['receiver_province'];
+                    $order->receiverAddress->district_id = $inputs['receiver_district'];
+                    $order->receiverAddress->ward_id = $inputs['receiver_ward'];
+                    $order->receiverAddress->save();
+
+                    DB::commit();
+
+                    $detrack = Detrack::make();
+
+                    if($order->collection_call_api == Utility::INACTIVE_DB)
+                    {
+                        $successDos = $detrack->addCollections([$order]);
+
+                        $countSuccessDo = count($successDos);
+                        if($countSuccessDo > 0)
+                        {
+                            $order->collection_call_api = Utility::ACTIVE_DB;
+                            $order->save();
+                        }
+                    }
+                    else
+                        $detrack->editCollections([$order]);
+
+                    return redirect()->action('Frontend\UserController@editOrder', ['id' => $order->id])->with('messageSuccess', 'Thành công');
+                }
+                catch(\Exception $e)
+                {
+                    DB::rollBack();
+
+                    return redirect()->action('Frontend\UserController@editOrder', ['id' => $order->id])->withErrors(['register_name' => $e->getMessage()])->withInput();
+                }
+            }
+            else
+                return redirect()->action('Frontend\UserController@editOrder', ['id' => $order->id])->withErrors($validator)->withInput();
         }
 
         return view('frontend.users.edit_order', [
