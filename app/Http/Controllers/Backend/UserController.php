@@ -273,7 +273,7 @@ class UserController extends Controller
                     $user->bank_holder = $inputs['bank_holder'];
                     $user->bank_number = $inputs['bank_number'];
                     $user->bank_branch = $inputs['bank_branch'];
-                    $user->api_key = $inputs['api_key'];
+                    $user->api_key = strtoupper($inputs['api_key']);
                     $user->save();
 
                     if(isset($inputs['roles']))

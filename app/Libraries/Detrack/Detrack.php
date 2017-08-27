@@ -39,7 +39,7 @@ class Detrack
             $params[] = [
                 'do' => $order->do,
                 'address' => $order->receiverAddress->address . ' ' . $order->receiverAddress->ward . ' ' . $order->receiverAddress->district . ' ' . $order->receiverAddress->province,
-                'date' => explode(' ', $order->created_at)[0],
+                'date' => $order->date,
                 'city' => $order->receiverAddress->district,
                 'country' => $order->receiverAddress->province,
                 'wt' => $order->weight,
@@ -148,7 +148,7 @@ class Detrack
             $params[] = [
                 'do' => $order->do,
                 'address' => $order->receiverAddress->address . ' ' . $order->receiverAddress->ward . ' ' . $order->receiverAddress->district . ' ' . $order->receiverAddress->province,
-                'date' => explode(' ', $order->created_at)[0],
+                'date' => $order->date,
                 'city' => $order->receiverAddress->district,
                 'country' => $order->receiverAddress->province,
                 'wt' => $order->weight,
@@ -285,7 +285,7 @@ class Detrack
             $params[] = [
                 'do' => $order->do,
                 'address' => $order->senderAddress->address . ' ' . $order->senderAddress->ward . ' ' . $order->senderAddress->district . ' ' . $order->senderAddress->province,
-                'date' => explode(' ', $order->created_at)[0],
+                'date' => $order->date,
                 'city' => $order->senderAddress->district,
                 'country' => $order->senderAddress->province,
                 'wt' => $order->weight,
@@ -393,7 +393,7 @@ class Detrack
             $params[] = [
                 'do' => $order->do,
                 'address' => $order->senderAddress->address . ' ' . $order->senderAddress->ward . ' ' . $order->senderAddress->district . ' ' . $order->senderAddress->province,
-                'date' => explode(' ', $order->created_at)[0],
+                'date' => $order->date,
                 'city' => $order->senderAddress->district,
                 'country' => $order->senderAddress->province,
                 'wt' => $order->weight,

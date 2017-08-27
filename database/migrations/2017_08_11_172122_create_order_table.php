@@ -37,6 +37,8 @@ class CreateOrderTable extends Migration
             $table->string('collection_shipper', 255)->nullable();
             $table->unsignedTinyInteger('collection_call_api')->default(0);
             $table->string('delivery_status', 255)->nullable();
+            $table->string('user_notify_url', 1000)->nullable();
+            $table->date('date')->nullable();
         });
     }
 

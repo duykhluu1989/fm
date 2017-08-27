@@ -240,6 +240,7 @@ class OrderController extends Controller
 
                         $order->generateDo(Area::find($inputs['receiver_province'][$k]));
 
+                        $order->date = date('Y-m-d');
                         $order->save();
 
                         $order->setRelation('user', $user);
