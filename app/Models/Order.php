@@ -36,6 +36,13 @@ class Order extends Model
             $order->number = self::ORDER_NUMBER_PREFIX + $order->id;
             $order->save();
         });
+
+        self::updating(function(Order $order) {
+            if($order->collection_status != $order->getOriginal('collection_status') && $order->getOriginal('collection_status') == self::STATUS_INFO_RECEIVED_DB)
+                $order->status = self::STATUS_PROCESSING_DB;
+            else if($order->delivery_status != $order->getOriginal('delivery_status') && $order->getOriginal('delivery_status') == self::STATUS_INFO_RECEIVED_DB)
+                $order->status = $order->delivery_status;
+        });
     }
 
     public function user()
@@ -126,7 +133,7 @@ class Order extends Model
 
     public function generateDo($province)
     {
-        $this->do = 'FM' . str_slug($province->name, '') . date('m') . date('y');
+        $this->do = 'FM' . strtoupper(str_slug($province->name, '')) . date('m') . date('y');
 
         $count = Order::where('do', 'like', $this->do . '%')->count('id');
 

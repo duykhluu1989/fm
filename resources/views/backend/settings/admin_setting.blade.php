@@ -74,12 +74,6 @@
                             <input type="text" class="form-control" name="{{ \App\Models\Setting::ABOUT_US }}" value="{{ old(\App\Models\Setting::ABOUT_US, $settings[\App\Models\Setting::ABOUT_US]->value) }}" />
                         </div>
                     </div>
-                    <div class="col-sm-12">
-                        <div class="form-group">
-                            <label>{{ $settings[\App\Models\Setting::DETRACK_API_KEY]->name }}</label>
-                            <input type="password" class="form-control" name="{{ \App\Models\Setting::DETRACK_API_KEY }}" value="{{ old(\App\Models\Setting::DETRACK_API_KEY, $settings[\App\Models\Setting::DETRACK_API_KEY]->value) }}" />
-                        </div>
-                    </div>
                 </div>
             </div>
             <div class="box-footer">

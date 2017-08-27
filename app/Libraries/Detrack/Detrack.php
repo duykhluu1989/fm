@@ -2,7 +2,9 @@
 
 namespace App\Libraries\Detrack;
 
+use App\Libraries\Helpers\Utility;
 use App\Models\Setting;
+use App\Models\Order;
 
 class Detrack
 {
@@ -11,10 +13,12 @@ class Detrack
     protected static $detrack;
 
     protected $api_key;
+    protected $web_hook_key;
 
     protected function __construct()
     {
-        $this->api_key = Setting::getSettings(Setting::CATEGORY_GENERAL_DB, Setting::DETRACK_API_KEY);
+        $this->api_key = Setting::getSettings(Setting::CATEGORY_API_DB, Setting::DETRACK_API_KEY);
+        $this->web_hook_key = Setting::getSettings(Setting::CATEGORY_API_DB, Setting::DETRACK_WEB_HOOK_KEY);
     }
 
     public static function make()
@@ -40,7 +44,6 @@ class Detrack
                 'wt' => $order->weight,
                 'deliver_to' => $order->receiverAddress->name,
                 'phone' => $order->receiverAddress->phone,
-                'notify_email' => $order->user->email,
                 'notify_url' => action('Api\DeliveryController@handleDeliveryNotification'),
                 'instructions' => !empty($order->note) ? $order->note : '',
                 'pay_amt' => $order->total_cod_price,
@@ -150,7 +153,6 @@ class Detrack
                 'wt' => $order->weight,
                 'deliver_to' => $order->receiverAddress->name,
                 'phone' => $order->receiverAddress->phone,
-                'notify_email' => $order->user->email,
                 'notify_url' => action('Api\DeliveryController@handleDeliveryNotification'),
                 'instructions' => !empty($order->note) ? $order->note : '',
                 'pay_amt' => $order->total_cod_price,
@@ -242,9 +244,32 @@ class Detrack
         return $successDos;
     }
 
-    public function handleDeliveryNotification()
+    public function handleDeliveryNotification($inputs)
     {
+        try
+        {
+            if(isset($inputs['json']) && isset($inputs['key']) && $inputs['key'] == $this->web_hook_key)
+            {
+                $deliveryTrackingData = json_decode($inputs['json'], true);
 
+                $order = Order::where('do', $deliveryTrackingData['do'])->first();
+
+                if(!empty($order))
+                {
+                    if($order->delivery_status != strtolower($deliveryTrackingData['tracking_status']))
+                    {
+                        $order->delivery_status = strtolower($deliveryTrackingData['tracking_status']);
+                        $order->shipper = $deliveryTrackingData['assign_to'];
+                        $order->tracking_detail = $inputs['json'];
+                        $order->save();
+                    }
+                }
+            }
+        }
+        catch(\Exception $e)
+        {
+
+        }
     }
 
     public function addCollections($orders)
@@ -254,7 +279,7 @@ class Detrack
         foreach($orders as $order)
         {
             $params[] = [
-                'do' => $order->do,
+                'do' => 'TEST' . $order->do,
                 'address' => $order->senderAddress->address . ' ' . $order->senderAddress->ward . ' ' . $order->senderAddress->district . ' ' . $order->senderAddress->province,
                 'date' => explode(' ', $order->created_at)[0],
                 'city' => $order->senderAddress->district,
@@ -462,84 +487,42 @@ class Detrack
 
     public function handleCollectionNotification($inputs)
     {
-
-
         try
         {
-            if(!isset($input['json']) || !isset($input['key']))
-                return json_encode(['status' => 'param_invalid']);
-
-            $environment = app()->environment();
-
-            if($environment != 'production' && strtoupper($input['key']) != strtoupper(self::$apiNotifyKeyTest))
-                return json_encode(['status' => 'key_invalid']);
-            else if(strtoupper($input['key']) != strtoupper(self::$apiNotifyKey))
-                return json_encode(['status' => 'key_invalid']);
-
-            $webhookData = json_decode($input['json'], true);
-
-            $shipper = Carrier::where('class_handle', __CLASS__)->first();
-            $fulfillment = OrderFulfillment::with('order.orderStatus', 'order.orderDiscounts')->where('tracking_number', $webhookData['do'])->where('carrier_id', $shipper->id)->first();
-            if(empty($fulfillment))
-                return json_encode(['status' => 'id_invalid']);
-
-            if(empty($fulfillment->weight) && !empty($webhookData['wt']))
+            if(isset($inputs['json']) && isset($inputs['key']) && $inputs['key'] == $this->web_hook_key)
             {
-                $fulfillment->weight = (int)($webhookData['wt'] * 1000);
-                $fulfillment->price = self::calculateShippingPrice($fulfillment->weight, $fulfillment->order->orderBillingAddress->district);
-            }
+                $collectionTrackingData = json_decode($inputs['json'], true);
 
-            $newLog = true;
+                $order = Order::where('do', $collectionTrackingData['do'])->first();
 
-            if(empty($fulfillment->description))
-                $fulfillment->description = json_encode(self::createLogData($webhookData));
-            else
-            {
-                $descriptions = explode(';', $fulfillment->description);
-                if(count($descriptions) > 0)
+                if(!empty($order))
                 {
-                    $lastLog = json_decode($descriptions[count($descriptions) - 1], true);
-                    if($lastLog['tracking_status'] == $webhookData['tracking_status'])
+                    if($order->collection_status != strtolower($collectionTrackingData['tracking_status']))
                     {
-                        $newLog = false;
+                        $order->collection_status = strtolower($collectionTrackingData['tracking_status']);
+                        $order->collection_shipper = $collectionTrackingData['assign_to'];
+                        $order->collection_tracking_detail = $inputs['json'];
+                        $order->save();
 
-                        $descriptions[count($descriptions) - 1] = json_encode(self::createLogData($webhookData));
-                        $fulfillment->description = implode(';', $descriptions);
+                        if($order->collection_status == Order::STATUS_COMPLETED_DB)
+                        {
+                            $successDos = $this->addDeliveries([$order]);
+
+                            $countSuccessDo = count($successDos);
+                            if($countSuccessDo > 0)
+                            {
+                                $order->delivery_status = Order::STATUS_INFO_RECEIVED_DB;
+                                $order->call_api = Utility::ACTIVE_DB;
+                                $order->save();
+                            }
+                        }
                     }
                 }
-
-                if($newLog)
-                    $fulfillment->description .= ';' . json_encode(self::createLogData($webhookData));
             }
-
-            $fulfillment->updated_at = new \DateTime();
-            $fulfillment->save();
-
-            if($newLog)
-            {
-                if($webhookData['tracking_status'] == 'completed')
-                {
-                    $fulfillment->status = Order::FULFILLMENT_STATUS_FULFILLED;
-                    $fulfillment->save();
-
-                    if($fulfillment->type == OrderFulfillment::TYPE_FULFILLMENT_VALUE)
-                        self::updateOrderDeliveried($fulfillment->order);
-                }
-                else if($webhookData['tracking_status'] == 'failed')
-                {
-                    $fulfillment->status = Order::FULFILLMENT_STATUS_NOTFULFILLED;
-                    $fulfillment->save();
-
-                    if($fulfillment->type == OrderFulfillment::TYPE_FULFILLMENT_VALUE)
-                        self::updateOrderFailDeliveried($fulfillment->order);
-                }
-            }
-
-            return json_encode(['status' => 'success']);
         }
         catch(\Exception $e)
         {
-            return json_encode(['status' => 'error']);
+
         }
     }
 }

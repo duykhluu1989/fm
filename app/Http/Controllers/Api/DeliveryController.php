@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Api;
 
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Libraries\Detrack\Detrack;
 
 class DeliveryController extends Controller
 {
@@ -26,8 +28,11 @@ class DeliveryController extends Controller
 
     }
 
-    public function handleDeliveryNotification()
+    public function handleDeliveryNotification(Request $request)
     {
+        $inputs = $request->all();
 
+        $detrack = Detrack::make();
+        $detrack->handleDeliveryNotification($inputs);
     }
 }

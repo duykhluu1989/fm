@@ -58,6 +58,44 @@ class SettingController extends Controller
         ]);
     }
 
+    public function adminSettingApi(Request $request)
+    {
+        $settings = Setting::getSettings(Setting::CATEGORY_API_DB);
+
+        if($request->isMethod('post'))
+        {
+            $inputs = $request->all();
+
+            try
+            {
+                DB::beginTransaction();
+
+                foreach($inputs as $key => $value)
+                {
+                    if(isset($settings[$key]))
+                    {
+                        $settings[$key]->value = $value;
+                        $settings[$key]->save();
+                    }
+                }
+
+                DB::commit();
+
+                return redirect()->action('Backend\SettingController@adminSettingApi')->with('messageSuccess', 'Thành Công');
+            }
+            catch(\Exception $e)
+            {
+                DB::rollBack();
+
+                return redirect()->action('Backend\SettingController@adminSettingApi')->withInput()->with('messageError', $e->getMessage());
+            }
+        }
+
+        return view('backend.settings.admin_setting_api', [
+            'settings' => $settings,
+        ]);
+    }
+
     public function adminSettingSocial(Request $request)
     {
         $settings = Setting::getSettings(Setting::CATEGORY_SOCIAL_DB);

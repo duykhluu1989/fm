@@ -16,6 +16,7 @@ class Setting extends Model
     const ABOUT_US = 'about_us';
 
     const DETRACK_API_KEY = 'detrack_api_key';
+    const DETRACK_WEB_HOOK_KEY = 'detrack_web_hook_key';
 
     const FACEBOOK_APP_ID = 'facebook_app_id';
     const FACEBOOK_APP_SECRET = 'facebook_app_secret';
@@ -50,6 +51,7 @@ class Setting extends Model
             [self::ABOUT_US, 'Về Chúng Tôi', self::TYPE_STRING_DB, '', self::CATEGORY_GENERAL_DB],
 
             [self::DETRACK_API_KEY, 'Detrack Api Key', self::TYPE_STRING_DB, '', self::CATEGORY_API_DB],
+            [self::DETRACK_WEB_HOOK_KEY, 'Detrack Web Hook Key', self::TYPE_STRING_DB, '', self::CATEGORY_API_DB],
 
             [self::FACEBOOK_APP_ID, 'Facebook App Id', self::TYPE_STRING_DB, '', self::CATEGORY_SOCIAL_DB],
             [self::FACEBOOK_APP_SECRET, 'Facebook App Secret', self::TYPE_STRING_DB, '', self::CATEGORY_SOCIAL_DB],
