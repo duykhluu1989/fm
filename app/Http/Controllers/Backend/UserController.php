@@ -15,6 +15,7 @@ use App\Models\User;
 use App\Models\Role;
 use App\Models\UserRole;
 use App\Models\Setting;
+use App\Models\Discount;
 
 class UserController extends Controller
 {
@@ -238,6 +239,9 @@ class UserController extends Controller
         {
             $inputs = $request->all();
 
+            if(!empty($inputs['discount_value']))
+                $inputs['discount_value'] = implode('', explode('.', $inputs['discount_value']));
+
             $validator = Validator::make($inputs, [
                 'username' => 'required|alpha_dash|min:4|max:255|unique:user,username,' . $user->id,
                 'email' => 'required|email|unique:user,email,' . $user->id,
@@ -251,7 +255,16 @@ class UserController extends Controller
                     'numeric',
                     'regex:/^(01[2689]|09)[0-9]{8}$/',
                 ],
+                'discount_value' => 'nullable|integer|min:1',
             ]);
+
+            $validator->after(function($validator) use(&$inputs) {
+                if(isset($inputs['discount_type']) && $inputs['discount_type'] !== '')
+                {
+                    if($inputs['discount_type'] == Discount::TYPE_PERCENTAGE_DB && $inputs['discount_value'] > 99)
+                        $validator->errors()->add('discount_value', 'Phần Trăm Giảm Giá Không Được Lớn Hơn 99');
+                }
+            });
 
             if($validator->passes())
             {
@@ -274,6 +287,18 @@ class UserController extends Controller
                     $user->bank_number = $inputs['bank_number'];
                     $user->bank_branch = $inputs['bank_branch'];
                     $user->api_key = strtoupper($inputs['api_key']);
+
+                    if(isset($inputs['discount_type']) && $inputs['discount_type'] !== '')
+                    {
+                        $user->discount_type = $inputs['discount_type'];
+                        $user->discount_value = $inputs['discount_value'];
+                    }
+                    else
+                    {
+                        $user->discount_type = null;
+                        $user->discount_value = null;
+                    }
+
                     $user->save();
 
                     if(isset($inputs['roles']))

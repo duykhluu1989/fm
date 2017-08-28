@@ -133,6 +133,41 @@
                                 </div>
                                 <div class="col-sm-4">
                                     <div class="form-group">
+                                        <label>Loại Giảm Giá</label>
+                                        <?php
+                                        $discountType = old('discount_type', $user->discount_type);
+                                        ?>
+
+                                        <select class="form-control" name="discount_type" id="DiscountTypeSelect">
+                                            <option value=""></option>
+
+                                            @foreach(\App\Models\Discount::getDiscountType() as $value => $label)
+                                                @if($discountType !== '' && $discountType !== null && $discountType == $value)
+                                                    <option selected="selected" value="{{ $value }}">{{ $label }}</option>
+                                                @else
+                                                    <option value="{{ $value }}">{{ $label }}</option>
+                                                @endif
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group{{ $errors->has('discount_value') ? ' has-error': '' }}">
+                                        <label id="DiscountValueLabel">Giá Trị Giảm Giá{{ (($discountType !== '' && $discountType !== null) ? ' <i>(bắt buộc)</i>' : '') }}</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" id="DiscountValueInput" name="discount_value"{{ (($discountType !== '' && $discountType !== null) ? ' required="required" ' : ' readonly="readonly" ') }}
+                                                   value="{{ old('discount_value', (($discountType !== '' && $discountType !== null) ? ($discountType == \App\Models\Discount::TYPE_FIX_AMOUNT_DB ? \App\Libraries\Helpers\Utility::formatNumber($user->discount_value) : $user->discount_value) : '')) }}" />
+                                            <span class="input-group-addon" id="DiscountValueUnit">{{ (($discountType !== '' && $discountType !== null) ? ($discountType == \App\Models\Discount::TYPE_FIX_AMOUNT_DB ? 'VND' : '%') : '') }}</span>
+                                        </div>
+                                        @if($errors->has('discount_value'))
+                                            <span class="help-block">{{ $errors->first('discount_value') }}</span>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
                                         <label>Trạng Thái</label>
                                         <?php
                                         $status = old('status', $user->status);
@@ -272,5 +307,47 @@
                 }
             });
         });
+
+        setValueInputFormatNumber(true);
+
+        $('#DiscountTypeSelect').change(function() {
+            setValueInputFormatNumber(false);
+        });
+
+        function setValueInputFormatNumber(init)
+        {
+            var valueInputElem = $('#DiscountValueInput');
+            var typeSelectElem = $('#DiscountTypeSelect');
+
+            if(typeSelectElem.val() == '{{ \App\Models\Discount::TYPE_FIX_AMOUNT_DB }}')
+            {
+                $('#DiscountValueLabel').html('Giá Trị Giảm Giá <i>(bắt buộc)</i>');
+                $('#DiscountValueUnit').html('VND');
+                valueInputElem.removeAttr('readonly').prop('required', 'required');
+                if(init == false)
+                    valueInputElem.val(1);
+                valueInputElem.on('keyup', function() {
+                    $(this).val(formatNumber($(this).val(), '.'));
+                });
+            }
+            else if(typeSelectElem.val() == '{{ \App\Models\Discount::TYPE_PERCENTAGE_DB }}')
+            {
+                $('#DiscountValueLabel').html('Giá Trị Giảm Giá <i>(bắt buộc)</i>');
+                $('#DiscountValueUnit').html('%');
+                valueInputElem.removeAttr('readonly').prop('required', 'required');
+                if(init == false)
+                    valueInputElem.val(1);
+                valueInputElem.off('keyup');
+            }
+            else
+            {
+                $('#DiscountValueLabel').html('Giá Trị Giảm Giá');
+                $('#DiscountValueUnit').html('%');
+                valueInputElem.removeAttr('required').prop('readonly', 'readonly');
+                if(init == false)
+                    valueInputElem.val('');
+                valueInputElem.off('keyup');
+            }
+        }
     </script>
 @endpush

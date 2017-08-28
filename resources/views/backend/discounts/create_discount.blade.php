@@ -141,7 +141,7 @@
                         <div class="form-group{{ $errors->has('value') ? ' has-error': '' }}">
                             <label>Giá Trị Giảm Giá <i>(bắt buộc)</i></label>
                             <div class="input-group">
-                                <input type="text" class="form-control" id="ValueInput" name="value" required="required" value="{{ old('value', ($discount->type == \App\Models\Discount::TYPE_FIX_AMOUNT_DB ? \App\Libraries\Helpers\Utility::formatNumber($discount->value) : $discount->value)) }}" />
+                                <input type="text" class="form-control" id="ValueInput" name="value" required="required" value="{{ old('value', ($type == \App\Models\Discount::TYPE_FIX_AMOUNT_DB ? \App\Libraries\Helpers\Utility::formatNumber($discount->value) : $discount->value)) }}" />
                                 <span class="input-group-addon" id="ValueUnit">{{ $type == \App\Models\Discount::TYPE_FIX_AMOUNT_DB ? 'VND' : '%' }}</span>
                             </div>
                             @if($errors->has('value'))
