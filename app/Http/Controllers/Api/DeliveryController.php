@@ -252,8 +252,124 @@ class DeliveryController extends Controller
     {
         $params = $this->getParams($request);
 
-        if($params === null)
-            return $this->apiInvalid();
+        if(!is_array($params))
+            return $params;
+
+        $user = $params['user'];
+
+        $deliveryData = json_decode($params['json'], true);
+
+        $response = [
+            'info' => [
+                'status' => 'ok',
+                'failed' => 0,
+            ],
+            'result' => array(),
+        ];
+
+        if(!is_array($deliveryData))
+            return $this->apiInvalidArgument();
+
+        $viewOrders = array();
+
+        $i = 0;
+        foreach($deliveryData as $data)
+        {
+            if(!empty($data['do']) && !empty($data['date']) && strtotime($data['date']) !== false)
+            {
+                $order = Order::where('user_id', $user->id)->where('user_do', $data['do'])->whereNull('cancelled_at')->first();
+
+                if(!empty($order))
+                {
+                    if($order->call_api == Utility::ACTIVE_DB)
+                        $viewOrders[$order->do] = $order;
+                    else
+                    {
+                        $response['result'][] = [
+                            'date' => $data['date'],
+                            'do' => $data['do'],
+                            'status' => 'ok',
+                            'delivery' => [
+                                'do' => $order->user_do,
+                                'address' => $order->receiverAddress->address,
+                                'date' => $order->date,
+                                'city' => $order->receiverAddress->district,
+                                'country' => $order->receiverAddress->province,
+                                'wt' => $order->weight,
+                                'deliver_to' => $order->receiverAddress->name,
+                                'phone' => $order->receiverAddress->phone,
+                                'notify_url' => $order->user_notify_url,
+                                'instructions' => $order->note,
+                                'pay_amt' => $order->total_cod_price,
+                                'order_no' => $order->number,
+                                'tracking_status' => $order->status,
+                            ]
+                        ];
+                    }
+                }
+                else
+                {
+                    $response['info']['failed'] ++;
+                    $response['result'][] = [
+                        'date' => $data['date'],
+                        'do' => $data['do'],
+                        'status' => 'failed',
+                        'errors' => [
+                            [
+                                'code' => '1003',
+                                'message' => 'Delivery with D.O. # ' . $data['do'] . ' not found on ' . $data['date']
+                            ]
+                        ]
+                    ];
+                }
+            }
+            else
+            {
+                $response['info']['failed'] ++;
+                $response['result'][] = [
+                    'status' => 'failed',
+                    'errors' => [
+                        [
+                            'code' => '1000',
+                            'message' => 'Invalid argument from request'
+                        ]
+                    ]
+                ];
+            }
+
+            $i ++;
+
+            if($i == 100)
+                break;
+        }
+
+        if(count($viewOrders) > 0)
+        {
+            $detrack = Detrack::make();
+            $responseDatas = $detrack->viewDeliveries($viewOrders);
+
+            foreach($responseDatas as $responseData)
+            {
+                if($responseData['status'] == 'ok')
+                {
+                    $responseData['delivery']['notify_url'] = $viewOrders[$responseData['do']]->user_notify_url;
+                    $responseData['delivery']['address'] = $viewOrders[$responseData['do']]->receiverAddress->address;
+                    $responseData['delivery']['do'] = $viewOrders[$responseData['do']]->user_do;
+                    $responseData['do'] = $viewOrders[$responseData['do']]->user_do;
+
+                    $response['result'][] = $responseData;
+                }
+                else
+                {
+                    $responseData['do'] = $viewOrders[$responseData['do']]->user_do;
+
+                    $response['info']['failed'] ++;
+                    $response['result'][] = $responseData;
+                }
+            }
+        }
+
+        return json_encode($response);
     }
 
     public function editDelivery(Request $request)

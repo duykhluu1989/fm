@@ -127,13 +127,7 @@ class Detrack
             $result = json_decode($result, true);
 
             if(is_array($result) && isset($result['info']['status']) && strtoupper($result['info']['status']) == 'OK' && isset($result['results']) && is_array($result['results']))
-            {
-                foreach($result['results'] as $orderResult)
-                {
-                    if(is_array($orderResult) && isset($orderResult['status']) && strtoupper($orderResult['status']) == 'OK' && isset($orderResult['delivery']))
-                        $responseDatas[] = $orderResult['delivery'];
-                }
-            }
+                $responseDatas = $result['results'];
         }
 
         return $responseDatas;
@@ -253,7 +247,7 @@ class Detrack
             {
                 $deliveryTrackingData = json_decode($inputs['json'], true);
 
-                $order = Order::with('user.customerInformation')->where('do', $deliveryTrackingData['do'])->first();
+                $order = Order::with('receiverAddress', 'user.customerInformation')->where('do', $deliveryTrackingData['do'])->first();
 
                 if(!empty($order))
                 {
@@ -272,6 +266,7 @@ class Detrack
                     {
                         $deliveryTrackingData['do'] = $order->user_do;
                         $deliveryTrackingData['notify_url'] = $order->user_notify_url;
+                        $deliveryTrackingData['address'] = $order->receiverAddress->address;
 
                         $params = [
                             'key' => $order->user->api_key,
@@ -397,13 +392,7 @@ class Detrack
             $result = json_decode($result, true);
 
             if(is_array($result) && isset($result['info']['status']) && strtoupper($result['info']['status']) == 'OK' && isset($result['results']) && is_array($result['results']))
-            {
-                foreach($result['results'] as $orderResult)
-                {
-                    if(is_array($orderResult) && isset($orderResult['status']) && strtoupper($orderResult['status']) == 'OK' && isset($orderResult['delivery']))
-                        $responseDatas[] = $orderResult['delivery'];
-                }
-            }
+                $responseDatas = $result['results'];
         }
 
         return $responseDatas;
