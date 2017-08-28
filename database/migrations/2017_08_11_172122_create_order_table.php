@@ -39,6 +39,7 @@ class CreateOrderTable extends Migration
             $table->string('delivery_status', 255)->nullable();
             $table->string('user_notify_url', 1000)->nullable();
             $table->date('date')->nullable();
+            $table->double('discount_shipping_price')->unsigned()->default(0);
         });
     }
 
