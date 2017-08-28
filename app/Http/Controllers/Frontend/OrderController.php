@@ -524,7 +524,10 @@ class OrderController extends Controller
 
         if($validator->passes())
         {
-            $result = Discount::calculateDiscountShippingPrice($inputs['discount_code'], $inputs['shipping_price']);
+            $result = Discount::calculateDiscountShippingPrice($inputs['discount_code'], $inputs['shipping_price'], (isset($inputs['edit']) ? true : false));
+
+            if(isset($inputs['edit']))
+                return $result;
 
             if($result['status'] == 'error')
             {

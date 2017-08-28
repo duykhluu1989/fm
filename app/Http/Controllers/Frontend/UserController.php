@@ -17,6 +17,7 @@ use App\Models\Order;
 use App\Models\OrderAddress;
 use App\Models\Area;
 use App\Models\Article;
+use App\Models\Discount;
 use Firebase\JWT\JWT;
 
 class UserController extends Controller
@@ -701,6 +702,13 @@ class UserController extends Controller
 
                     $order->cod_price = (!empty($inputs['cod_price']) ? $inputs['cod_price'] : 0);
                     $order->shipping_price = Order::calculateShippingPrice($inputs['receiver_district'], $inputs['weight'], $inputs['dimension']);
+
+                    if(!empty($order->discount))
+                    {
+                        $order->discount_shipping_price = Discount::calculateDiscountShippingPrice($order->discount->code, $order->shipping_price, true);
+                        $order->shipping_price = $order->shipping_price - $order->discount_shipping_price;
+                    }
+
                     $order->shipping_payment = $inputs['shipping_payment'];
 
                     if($order->shipping_payment == Order::SHIPPING_PAYMENT_RECEIVER_DB)

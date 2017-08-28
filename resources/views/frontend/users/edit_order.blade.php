@@ -502,7 +502,31 @@
                         else
                             shippingPriceElem.val('');
 
-                        calculateTotalCodPrice($('#OrderCodPriceInput'), $('#OrderTotalCodPriceInput'), $('#OrderShippingPriceInput'), $('input[type="radio"][name="shipping_payment"]:checked').val());
+                        var discountCodeElem = $('#OrderDiscountCodeInput');
+                        var discountShippingPriceElem = $('#OrderDiscountShippingPriceInput');
+
+                        if(discountCodeElem.val() != '')
+                        {
+                            $.ajax({
+                                url: '{{ action('Frontend\OrderController@calculateDiscountShippingPrice') }}',
+                                type: 'get',
+                                data: 'discount_code=' + discountCodeElem.val() + '&shipping_price=' + shippingPriceElem.val() + '&edit=1',
+                                success: function(result) {
+                                    if(result > 0)
+                                    {
+                                        discountShippingPriceElem.val(formatNumber(result, '.'));
+
+                                        shippingPriceElem.val(formatNumber((parseInt(shippingPriceElem.val().split('.').join('')) - parseInt(result)).toString(), '.'));
+                                    }
+                                    else
+                                        discountShippingPriceElem.val('');
+
+                                    calculateTotalCodPrice($('#OrderCodPriceInput'), $('#OrderTotalCodPriceInput'), $('#OrderShippingPriceInput'), $('input[type="radio"][name="shipping_payment"]:checked').val());
+                                }
+                            });
+                        }
+                        else
+                            calculateTotalCodPrice($('#OrderCodPriceInput'), $('#OrderTotalCodPriceInput'), $('#OrderShippingPriceInput'), $('input[type="radio"][name="shipping_payment"]:checked').val());
                     }
                 });
             }
@@ -522,45 +546,6 @@
                     totalCodPriceElem.val(shippingPriceElem.val());
                 else
                     totalCodPriceElem.val(codPriceElem.val());
-            }
-        }
-
-        function calculateDiscountShippingPrice(discountCodeElem, discountShippingPriceElem, shippingPriceElem, containerElem)
-        {
-            if(discountCodeElem.val() != '' && shippingPriceElem.val() != '')
-            {
-                $.ajax({
-                    url: '{{ action('Frontend\OrderController@calculateDiscountShippingPrice') }}',
-                    type: 'get',
-                    data: 'discount_code=' + discountCodeElem.val() + '&shipping_price=' + shippingPriceElem.val(),
-                    success: function(result) {
-                        result = JSON.parse(result);
-
-                        if(result['status'] == 'error')
-                        {
-                            swal({
-                                title: result['message'],
-                                type: 'error',
-                                confirmButtonClass: 'btn-success'
-                            });
-                        }
-                        else
-                        {
-                            if(result['discount'] > 0)
-                                discountShippingPriceElem.val(formatNumber(result['discount'].toString(), '.'));
-                            else
-                                discountShippingPriceElem.val('');
-
-                            calculateShippingPrice(containerElem.find('.ReceiverDistrict').first(), containerElem.find('.OrderWeightInput').first(), containerElem.find('.OrderDimensionInput').first(), containerElem.find('.OrderShippingPriceInput').first(), discountShippingPriceElem, containerElem);
-                        }
-                    }
-                });
-            }
-            else
-            {
-                discountShippingPriceElem.val('');
-
-                calculateShippingPrice(containerElem.find('.ReceiverDistrict').first(), containerElem.find('.OrderWeightInput').first(), containerElem.find('.OrderDimensionInput').first(), containerElem.find('.OrderShippingPriceInput').first(), discountShippingPriceElem, containerElem);
             }
         }
     </script>

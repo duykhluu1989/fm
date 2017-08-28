@@ -69,8 +69,30 @@ class Discount extends Model
         return null;
     }
 
-    public static function calculateDiscountShippingPrice($code, $shippingPrice)
+    public static function calculateDiscountShippingPrice($code, $shippingPrice, $edit = false)
     {
+        if($edit == true)
+        {
+            $discount = Discount::where('code', $code)->first();
+
+            if($discount->type == self::TYPE_FIX_AMOUNT_DB)
+            {
+                $discountPrice = $discount->value;
+
+                if($discountPrice > $shippingPrice)
+                    $discountPrice = $shippingPrice;
+            }
+            else
+            {
+                $discountPrice = round($shippingPrice * $discount->value / 100);
+
+                if(!empty($discount->value_limit) && $discountPrice > $discount->value_limit)
+                    $discountPrice = $discount->value_limit;
+            }
+
+            return $discountPrice;
+        }
+
         $result = [
             'status' => 'error',
             'message' => 'Mã khuyến mãi không hợp lệ',
