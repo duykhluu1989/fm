@@ -17,10 +17,17 @@
                 <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
                     <h2>DỊCH VỤ</h2>
                     <ul class="list_dichvu_footer">
-                        <li><a href=""><i class="fa fa-check-square-o" aria-hidden="true"></i> Lorem ipsum dolor sit amet,  sed diam </a></li>
-                        <li><a href=""><i class="fa fa-check-square-o" aria-hidden="true"></i> Lorem ipsum dolor sit amet,  sed diam </a></li>
-                        <li><a href=""><i class="fa fa-check-square-o" aria-hidden="true"></i> Lorem ipsum dolor sit amet,  sed diam </a></li>
-                        <li><a href=""><i class="fa fa-check-square-o" aria-hidden="true"></i> Lorem ipsum dolor sit amet,  sed diam </a></li>
+                        <?php
+                        $services = \App\Models\Article::select('id', 'name', 'slug')
+                            ->where('status', \App\Models\Article::STATUS_PUBLISH_DB)
+                            ->where('group', \App\Models\Article::ARTICLE_GROUP_SERVICE_DB)
+                            ->orderBy('order', 'desc')
+                            ->get();
+                        ?>
+
+                        @foreach($services as $service)
+                            <li><a href="{{ action('Frontend\PageController@detailPage', ['id' => $service->id, 'slug' => $service->slug]) }}"><i class="fa fa-check-square-o" aria-hidden="true"></i> {{ $service->name }}</a></li>
+                        @endforeach
                     </ul>
                 </div>
                 <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
@@ -45,7 +52,7 @@
                         @if(!empty(\App\Models\Setting::getSettings(\App\Models\Setting::CATEGORY_SOCIAL_DB, \App\Models\Setting::FACEBOOK_PAGE_URL)))
                             <li><a href="{{ \App\Models\Setting::getSettings(\App\Models\Setting::CATEGORY_SOCIAL_DB, \App\Models\Setting::FACEBOOK_PAGE_URL) }}"><i class="fa fa-facebook-square fa-lg" aria-hidden="true"></i></a></li>
                         @endif
-                        
+
                     </ul>
                 </div>
             </div>
