@@ -46,7 +46,7 @@ class Setting extends Model
             [self::WEB_KEYWORD, 'Từ Khóa', self::TYPE_STRING_DB, 'parcelpost', self::CATEGORY_GENERAL_DB],
             [self::WEB_LOGO, 'Logo', self::TYPE_IMAGE_DB, '', self::CATEGORY_GENERAL_DB],
             [self::HOT_LINE, 'Hot Line', self::TYPE_STRING_DB, '', self::CATEGORY_GENERAL_DB],
-            [self::CONTACT_EMAIL, 'Email Liên Hệ', self::TYPE_STRING_DB, '', self::CATEGORY_GENERAL_DB],
+            [self::CONTACT_EMAIL, 'Email Liên Hệ', self::TYPE_STRING_DB, 'info@parcelpost.vn', self::CATEGORY_GENERAL_DB],
             [self::WORKING_TIME, 'Thời Gian Làm Việc', self::TYPE_STRING_DB, '', self::CATEGORY_GENERAL_DB],
             [self::ABOUT_US, 'Về Chúng Tôi', self::TYPE_STRING_DB, '', self::CATEGORY_GENERAL_DB],
 

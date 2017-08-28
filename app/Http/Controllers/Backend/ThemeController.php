@@ -121,7 +121,6 @@ class ThemeController extends Controller
                 }
             });
 
-
             if($validator->passes())
             {
                 $menu->name = $inputs['name'];

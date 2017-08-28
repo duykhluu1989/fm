@@ -49,4 +49,4 @@ $type = request()->input('type', $menu->type);
     </div>
 </div>
 
-<input type="hidden" name="theme_position" value="{{ $menu->theme_position }}" />
+<input type="hidden" name="theme_position" value="{{ request()->input('theme_position', $menu->theme_position) }}" />

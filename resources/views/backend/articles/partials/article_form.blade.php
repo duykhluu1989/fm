@@ -70,7 +70,7 @@
                         $group = old('group', $article->group);
                         ?>
                         @foreach(\App\Models\Article::getArticleGroup() as $value => $label)
-                            @if($group === $value)
+                            @if($group !== '' && $group !== null && $group == $value)
                                 <option value="{{ $value }}" selected="selected">{{ $label }}</option>
                             @else
                                 <option value="{{ $value }}">{{ $label }}</option>
