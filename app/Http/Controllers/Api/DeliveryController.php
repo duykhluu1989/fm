@@ -266,8 +266,115 @@ class DeliveryController extends Controller
     {
         $params = $this->getParams($request);
 
-        if($params === null)
-            return $this->apiInvalid();
+        if(!is_array($params))
+            return $params;
+
+        $user = $params['user'];
+
+        $deliveryData = json_decode($params['json'], true);
+
+        $response = [
+            'info' => [
+                'status' => 'ok',
+                'failed' => 0,
+            ],
+            'result' => array(),
+        ];
+
+        if(!is_array($deliveryData))
+            return $this->apiInvalidArgument();
+
+        $deletedOrders = array();
+
+        $i = 0;
+        foreach($deliveryData as $data)
+        {
+            if(!empty($data['do']) && !empty($data['date']) && strtotime($data['date']) !== false)
+            {
+                $order = Order::where('user_id', $user->id)->where('user_do', $data['do'])->first();
+
+                if(!empty($order))
+                {
+                    if(Order::getOrderStatusOrder($order->status) <= Order::getOrderStatusOrder(Order::STATUS_INFO_RECEIVED_DB))
+                    {
+                        try
+                        {
+                            DB::beginTransaction();
+
+                            $order->cancelOrder();
+
+                            if($order->collection_call_api == Utility::ACTIVE_DB)
+                                $deletedOrders[] = $order;
+
+                            DB::commit();
+
+                            $response['result'][] = [
+                                'date' => $data['date'],
+                                'do' => $data['do'],
+                                'status' => 'ok',
+                            ];
+                        }
+                        catch(\Exception $e)
+                        {
+                            DB::rollBack();
+                        }
+                    }
+                    else
+                    {
+                        $response['info']['failed'] ++;
+                        $response['result'][] = [
+                            'date' => $data['date'],
+                            'do' => $data['do'],
+                            'status' => 'failed',
+                            'errors' => [
+                                [
+                                    'code' => '1005',
+                                    'message' => 'Delivery with D.O. # ' . $data['do'] . ' not deletable'
+                                ]
+                            ]
+                        ];
+                    }
+                }
+                else
+                {
+                    $response['info']['failed'] ++;
+                    $response['result'][] = [
+                        'date' => $data['date'],
+                        'do' => $data['do'],
+                        'status' => 'failed',
+                        'errors' => [
+                            [
+                                'code' => '1003',
+                                'message' => 'Delivery with D.O. # ' . $data['do'] . ' not found on ' . $data['date']
+                            ]
+                        ]
+                    ];
+                }
+            }
+            else
+            {
+                $response['info']['failed'] ++;
+                $response['result'][] = [
+                    'status' => 'failed',
+                    'errors' => [
+                        [
+                            'code' => '1000',
+                            'message' => 'Invalid argument from request'
+                        ]
+                    ]
+                ];
+            }
+
+            $i ++;
+
+            if($i == 100)
+                break;
+        }
+
+        $detrack = Detrack::make();
+        $detrack->deleteCollections($deletedOrders);
+
+        return json_encode($response);
     }
 
     public function handleDeliveryNotification(Request $request)

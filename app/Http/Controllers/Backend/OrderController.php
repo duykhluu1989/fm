@@ -334,13 +334,13 @@ class OrderController extends Controller
     {
         $order = Order::find($id);
 
-        if(empty($order) || $order->payment == Utility::ACTIVE_DB)
+        if(empty($order) || $order->payment == Utility::ACTIVE_DB || $order->status != Order::STATUS_COMPLETED_DB)
             return view('backend.errors.404');
 
         $order->payment = Utility::ACTIVE_DB;
         $order->save();
 
-        return redirect()->action('Backend\OrderController@detailOrder', ['id' => $id])->with('messageError', $e->getMessage());
+        return redirect()->action('Backend\OrderController@detailOrder', ['id' => $id])->with('messageSuccess', 'Xác Nhận Đối Soát Thành Công');
     }
 
     public function cancelOrder($id)
@@ -354,7 +354,7 @@ class OrderController extends Controller
         {
             DB::beginTransaction();
 
-            if($order->call_api == Utility::ACTIVE_DB)
+            if($order->collection_call_api == Utility::ACTIVE_DB)
             {
                 $detrack = Detrack::make();
                 $successDos = $detrack->deleteCollections([$order]);

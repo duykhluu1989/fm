@@ -788,7 +788,7 @@ class UserController extends Controller
         {
             DB::beginTransaction();
 
-            if($order->call_api == Utility::ACTIVE_DB)
+            if($order->collection_call_api == Utility::ACTIVE_DB)
             {
                 $detrack = Detrack::make();
                 $successDos = $detrack->deleteCollections([$order]);

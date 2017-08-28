@@ -6,8 +6,8 @@
 
     <div class="box{{ empty($order->cancelled_at) ? ' box-primary' : ' box-danger' }}">
         <div class="box-header with-border">
-            @if($order->status == \App\Models\Order::STATUS_COMPLETED_DB)
-                <a href="{{ action('Backend\OrderController@paymentOrder', ['id' => $order->id]) }}" class="btn btn-primary Confirmation">Đã Đối Soát</a>
+            @if($order->payment == \App\Libraries\Helpers\Utility::INACTIVE_DB && $order->status == \App\Models\Order::STATUS_COMPLETED_DB)
+                <a href="{{ action('Backend\OrderController@paymentOrder', ['id' => $order->id]) }}" class="btn btn-primary Confirmation">Xác Nhận Đối Soát</a>
             @endif
 
             @if(\App\Models\Order::getOrderStatusOrder($order->status) <= \App\Models\Order::getOrderStatusOrder(\App\Models\Order::STATUS_INFO_RECEIVED_DB))
@@ -163,8 +163,8 @@
             </div>
         </div>
         <div class="box-footer">
-            @if($order->status == \App\Models\Order::STATUS_COMPLETED_DB)
-                <a href="{{ action('Backend\OrderController@paymentOrder', ['id' => $order->id]) }}" class="btn btn-primary Confirmation">Đã Đối Soát</a>
+            @if($order->payment == \App\Libraries\Helpers\Utility::INACTIVE_DB && $order->status == \App\Models\Order::STATUS_COMPLETED_DB)
+                <a href="{{ action('Backend\OrderController@paymentOrder', ['id' => $order->id]) }}" class="btn btn-primary Confirmation">Xác Nhận Đối Soát</a>
             @endif
 
             @if(\App\Models\Order::getOrderStatusOrder($order->status) <= \App\Models\Order::getOrderStatusOrder(\App\Models\Order::STATUS_INFO_RECEIVED_DB))
