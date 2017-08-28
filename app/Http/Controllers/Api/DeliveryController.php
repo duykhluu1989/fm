@@ -161,7 +161,6 @@ class DeliveryController extends Controller
                         $receiverAddress->address = $data['address'];
                         $receiverAddress->province = !empty($data['country']) ? $data['country'] : '';
                         $receiverAddress->district = !empty($data['city']) ? $data['city'] : '';
-                        $receiverAddress->ward = '';
                         $receiverAddress->type = OrderAddress::TYPE_RECEIVER_DB;
                         $receiverAddress->save();
 
@@ -218,27 +217,30 @@ class DeliveryController extends Controller
                 break;
         }
 
-        $detrack = Detrack::make();
-        $successDos = $detrack->addCollections($placedOrders);
-
-        $countSuccessDo = count($successDos);
-        if($countSuccessDo > 0)
+        if(count($placedOrders) > 0)
         {
-            foreach($placedOrders as $placedOrder)
+            $detrack = Detrack::make();
+            $successDos = $detrack->addCollections($placedOrders);
+
+            $countSuccessDo = count($successDos);
+            if($countSuccessDo > 0)
             {
-                $key = array_search($placedOrder->do, $successDos);
-
-                if($key !== false)
+                foreach($placedOrders as $placedOrder)
                 {
-                    $placedOrder->collection_call_api = Utility::ACTIVE_DB;
-                    $placedOrder->save();
+                    $key = array_search($placedOrder->do, $successDos);
 
-                    unset($successDos[$key]);
+                    if($key !== false)
+                    {
+                        $placedOrder->collection_call_api = Utility::ACTIVE_DB;
+                        $placedOrder->save();
 
-                    $countSuccessDo -= 1;
+                        unset($successDos[$key]);
 
-                    if($countSuccessDo == 0)
-                        break;
+                        $countSuccessDo -= 1;
+
+                        if($countSuccessDo == 0)
+                            break;
+                    }
                 }
             }
         }
@@ -258,8 +260,165 @@ class DeliveryController extends Controller
     {
         $params = $this->getParams($request);
 
-        if($params === null)
-            return $this->apiInvalid();
+        if(!is_array($params))
+            return $params;
+
+        $user = $params['user'];
+
+        $deliveryData = json_decode($params['json'], true);
+
+        $response = [
+            'info' => [
+                'status' => 'ok',
+                'failed' => 0,
+            ],
+            'result' => array(),
+        ];
+
+        if(!is_array($deliveryData))
+            return $this->apiInvalidArgument();
+
+        $editedOrders = array();
+        $placedOrders = array();
+
+        $i = 0;
+        foreach($deliveryData as $data)
+        {
+            if(!empty($data['do']) && !empty($data['date']) && strtotime($data['date']) !== false)
+            {
+                $order = Order::with('senderAddress', 'receiverAddress')->where('user_id', $user->id)->where('user_do', $data['do'])->first();
+
+                if(!empty($order))
+                {
+                    if(Order::getOrderStatusOrder($order->status) <= Order::getOrderStatusOrder(Order::STATUS_INFO_RECEIVED_DB))
+                    {
+                        try
+                        {
+                            DB::beginTransaction();
+
+                            $order->cod_price = (!empty($data['pay_amt']) && is_numeric($data['pay_amt']) && $data['pay_amt'] > 0) ? $data['pay_amt'] : $order->cod_price;
+                            $order->shipping_price = 0;
+                            $order->shipping_payment = Order::SHIPPING_PAYMENT_SENDER_DB;
+                            $order->total_cod_price = $order->cod_price;
+                            $order->weight = (!empty($data['wt']) && is_numeric($data['wt']) && $data['wt'] > 0) ? $data['wt'] : $order->weight;
+                            $order->note = !empty($data['instructions']) ? $data['instructions'] : $order->note;
+                            $order->status = Order::STATUS_INFO_RECEIVED_DB;
+                            $order->collection_status = Order::STATUS_INFO_RECEIVED_DB;
+                            $order->user_notify_url = !empty($data['notify_url']) ? $data['notify_url'] : $order->user_notify_url;
+                            $order->save();
+
+                            $order->receiverAddress->name = !empty($data['deliver_to']) ? $data['deliver_to'] : $order->receiverAddress->name;
+                            $order->receiverAddress->phone = !empty($data['phone']) ? $data['phone'] : $order->receiverAddress->phone;
+                            $order->receiverAddress->address = !empty($data['address']) ? $data['address'] : $order->receiverAddress->address;
+                            $order->receiverAddress->province = !empty($data['country']) ? $data['country'] : $order->receiverAddress->province;
+                            $order->receiverAddress->district = !empty($data['city']) ? $data['city'] : $order->receiverAddress->district;
+                            $order->receiverAddress->save();
+
+                            if($order->collection_call_api == Utility::ACTIVE_DB)
+                                $editedOrders[] = $order;
+                            else
+                                $placedOrders[] = $order;
+
+                            DB::commit();
+
+                            $response['result'][] = [
+                                'date' => $data['date'],
+                                'do' => $data['do'],
+                                'status' => 'ok',
+                            ];
+                        }
+                        catch(\Exception $e)
+                        {
+                            DB::rollBack();
+                        }
+                    }
+                    else
+                    {
+                        $response['info']['failed'] ++;
+                        $response['result'][] = [
+                            'date' => $data['date'],
+                            'do' => $data['do'],
+                            'status' => 'failed',
+                            'errors' => [
+                                [
+                                    'code' => '1004',
+                                    'message' => 'Delivery with D.O. # ' . $data['do'] . ' not editable'
+                                ]
+                            ]
+                        ];
+                    }
+                }
+                else
+                {
+                    $response['info']['failed'] ++;
+                    $response['result'][] = [
+                        'date' => $data['date'],
+                        'do' => $data['do'],
+                        'status' => 'failed',
+                        'errors' => [
+                            [
+                                'code' => '1003',
+                                'message' => 'Delivery with D.O. # ' . $data['do'] . ' not found on ' . $data['date']
+                            ]
+                        ]
+                    ];
+                }
+            }
+            else
+            {
+                $response['info']['failed'] ++;
+                $response['result'][] = [
+                    'status' => 'failed',
+                    'errors' => [
+                        [
+                            'code' => '1000',
+                            'message' => 'Invalid argument from request'
+                        ]
+                    ]
+                ];
+            }
+
+            $i ++;
+
+            if($i == 100)
+                break;
+        }
+
+        if(count($editedOrders) > 0)
+        {
+            $detrack = Detrack::make();
+            $detrack->editCollections($editedOrders);
+        }
+
+        if(count($placedOrders) > 0)
+        {
+            $detrack = Detrack::make();
+            $successDos = $detrack->addCollections($placedOrders);
+
+            $countSuccessDo = count($successDos);
+            if($countSuccessDo > 0)
+            {
+                foreach($placedOrders as $placedOrder)
+                {
+                    $key = array_search($placedOrder->do, $successDos);
+
+                    if($key !== false)
+                    {
+                        $placedOrder->collection_call_api = Utility::ACTIVE_DB;
+                        $placedOrder->save();
+
+                        unset($successDos[$key]);
+
+                        $countSuccessDo -= 1;
+
+                        if($countSuccessDo == 0)
+                            break;
+                    }
+                }
+            }
+        }
+
+        return json_encode($response);
     }
 
     public function deleteDelivery(Request $request)
@@ -371,8 +530,11 @@ class DeliveryController extends Controller
                 break;
         }
 
-        $detrack = Detrack::make();
-        $detrack->deleteCollections($deletedOrders);
+        if(count($deletedOrders) > 0)
+        {
+            $detrack = Detrack::make();
+            $detrack->deleteCollections($deletedOrders);
+        }
 
         return json_encode($response);
     }
