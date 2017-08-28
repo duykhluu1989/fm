@@ -69,7 +69,7 @@ class Discount extends Model
         return null;
     }
 
-    public static function calculateDiscountPrice($code)
+    public static function calculateDiscountShippingPrice($code, $shippingPrice)
     {
         $result = [
             'status' => 'error',
@@ -82,6 +82,64 @@ class Discount extends Model
 
         if(empty($discount))
             return $result;
+
+        if(!empty($discount->minimum_order_amount) && $shippingPrice < $discount->minimum_order_amount)
+            return $result;
+
+        $time = time();
+        $startTime = strtotime($discount->start_time);
+        $endTime = strtotime($discount->end_time);
+
+        if($time < $startTime || $time > $endTime)
+            return $result;
+
+        if(!empty($discount->usage_limit) && $discount->used_count >= $discount->usage_limit)
+            return $result;
+
+        $user = auth()->user();
+
+        if(!empty($discount->usage_unique) && !empty($user))
+        {
+            $userUsedCount = Order::where('user_id', $user->id)->where('discount_id', $discount->id)->count('id');
+
+            if($userUsedCount >= $discount->usage_unique)
+                return $result;
+        }
+
+        if(!empty($discount->campaign_code) && !empty($user))
+        {
+            $userUsedInCampaign = Order::select('order.id')
+                ->join('discount', 'order.discount_id', '=', 'discount.id')
+                ->where('order.user_id', $user->id)
+                ->where('discount.campaign_code', $discount->campaign_code)
+                ->where('discount.code', '<>', $discount->code)
+                ->first();
+
+            if(!empty($userUsedInCampaign))
+                return $result;
+        }
+
+        if(!empty($discount->user_id) && !empty($user) && $user->id != $discount->user_id)
+            return $result;
+
+        if($discount->type == self::TYPE_FIX_AMOUNT_DB)
+        {
+            $discountPrice = $discount->value;
+
+            if($discountPrice > $shippingPrice)
+                $discountPrice = $shippingPrice;
+        }
+        else
+        {
+            $discountPrice = round($shippingPrice * $discount->value / 100);
+
+            if(!empty($discount->value_limit) && $discountPrice > $discount->value_limit)
+                $discountPrice = $discount->value_limit;
+        }
+
+        $result['status'] = 'success';
+        $result['discount'] = $discount;
+        $result['discountPrice'] = $discountPrice;
 
         return $result;
     }

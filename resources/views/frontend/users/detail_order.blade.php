@@ -111,6 +111,14 @@
                                     <div class="col-sm-9">{{ \App\Libraries\Helpers\Utility::formatNumber($order->cod_price) }}</div>
                                 </div>
                                 <div class="row">
+                                    <div class="col-sm-3"><b>Mã Giảm Giá</b></div>
+                                    <div class="col-sm-9">{{ !empty($order->discount) ? $order->discount->code : '' }}</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-3"><b>Giảm Giá</b></div>
+                                    <div class="col-sm-9">{{ \App\Libraries\Helpers\Utility::formatNumber($order->discount_shipping_price) }}</div>
+                                </div>
+                                <div class="row">
                                     <div class="col-sm-3"><b>Phí ship</b></div>
                                     <div class="col-sm-9">{{ \App\Libraries\Helpers\Utility::formatNumber($order->shipping_price) }}</div>
                                 </div>

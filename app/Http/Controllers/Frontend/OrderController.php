@@ -15,6 +15,7 @@ use App\Models\Order;
 use App\Models\OrderAddress;
 use App\Models\Customer;
 use App\Models\Area;
+use App\Models\Discount;
 
 class OrderController extends Controller
 {
@@ -65,9 +66,10 @@ class OrderController extends Controller
                         'receiver_province.' . $k => 'required|integer|min:1',
                         'receiver_district.' . $k => 'required|integer|min:1',
                         'receiver_ward.' . $k => 'required|integer|min:1',
-                        'weight.' . $k => 'nullable|integer|min:1',
+                        'weight.' . $k => 'nullable|numeric|min:0.1',
                         'cod_price.' . $k => 'nullable|integer|min:1',
                         'note.' . $k => 'nullable|max:255',
+                        'discount_code.' . $k => 'nullable',
                     ]);
                 }
             }
@@ -150,6 +152,25 @@ class OrderController extends Controller
                         }
                     }
                 }
+
+                if(isset($inputs['discount_code']) && is_array($inputs['discount_code']))
+                {
+                    foreach($inputs['discount_code'] as $key => $discountCode)
+                    {
+                        if(!empty($discountCode))
+                        {
+                            $result = Discount::calculateDiscountShippingPrice($discountCode, Order::calculateShippingPrice($inputs['receiver_district'][$key], $inputs['weight'][$key], $inputs['dimension'][$key]));
+
+                            if($result['status'] == 'error')
+                                $validator->errors()->add('discount_code.' . $key, $result['message']);
+                            else if($result['discountPrice'] > 0)
+                            {
+                                $inputs['discount'][$key] = $result['discount'];
+                                $inputs['discount_price'][$key] = $result['discountPrice'];
+                            }
+                        }
+                    }
+                }
             });
 
             if($validator->passes())
@@ -221,7 +242,22 @@ class OrderController extends Controller
                         $order->user_id = $user->id;
                         $order->created_at = date('Y-m-d H:i:s');
                         $order->cod_price = (!empty($inputs['cod_price'][$k]) ? $inputs['cod_price'][$k] : 0);
-                        $order->shipping_price = Order::calculateShippingPrice($inputs['receiver_district'][$k], $inputs['weight'][$k], $inputs['dimension'][$k]);
+
+                        if(isset($inputs['discount'][$k]))
+                        {
+                            $order->discount_id = $inputs['discount'][$k]->id;
+                            $order->discount_shipping_price = $inputs['discount_price'][$k];
+
+                            DB::statement('
+                                UPDATE `discount`
+                                SET `used_count` = `used_count` + 1
+                                WHERE `id` = ' . $order->discount_id
+                            );
+                        }
+                        else
+                            $order->discount_shipping_price = 0;
+
+                        $order->shipping_price = Order::calculateShippingPrice($inputs['receiver_district'][$k], $inputs['weight'][$k], $inputs['dimension'][$k]) - $order->discount_shipping_price;
                         $order->shipping_payment = $inputs['shipping_payment'][$k];
 
                         if($order->shipping_payment == Order::SHIPPING_PAYMENT_RECEIVER_DB)
@@ -445,7 +481,7 @@ class OrderController extends Controller
 
         $validator = Validator::make($inputs, [
             'register_district' => 'required',
-            'weight' => 'nullable|integer|min:1',
+            'weight' => 'nullable|numeric|min:0.1',
         ]);
 
         $validator->after(function($validator) use(&$inputs) {
@@ -467,6 +503,44 @@ class OrderController extends Controller
 
         if($validator->passes())
             return Order::calculateShippingPrice($inputs['register_district'], $inputs['weight'], $inputs['dimension']);
+        else
+            return '';
+    }
+
+    public function calculateDiscountShippingPrice(Request $request)
+    {
+        if($request->ajax() == false)
+            return view('frontend.errors.404');
+
+        $inputs = $request->all();
+
+        if(!empty($inputs['shipping_price']))
+            $inputs['shipping_price'] = implode('', explode('.', $inputs['shipping_price']));
+
+        $validator = Validator::make($inputs, [
+            'shipping_price' => 'required|integer|min:1',
+            'discount_code' => 'required',
+        ]);
+
+        if($validator->passes())
+        {
+            $result = Discount::calculateDiscountShippingPrice($inputs['discount_code'], $inputs['shipping_price']);
+
+            if($result['status'] == 'error')
+            {
+                return json_encode([
+                    'status' => 'error',
+                    'message' => $result['message'],
+                ]);
+            }
+            else
+            {
+                return json_encode([
+                    'status' => 'success',
+                    'discount' => $result['discountPrice'],
+                ]);
+            }
+        }
         else
             return '';
     }

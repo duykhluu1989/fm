@@ -162,6 +162,14 @@
                                                 @endif
                                             </div>
                                             <div class="form-group">
+                                                <label>Mã giảm giá</label>
+                                                <input type="text" class="form-control" id="OrderDiscountCodeInput" value="{{ !empty($order->discount) ? $order->discount->code : '' }}" readonly="readonly" />
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Được giảm giá</label>
+                                                <input type="text" class="form-control" id="OrderDiscountShippingPriceInput" name="discount_shipping_price" value="{{ old('discount_shipping_price', \App\Libraries\Helpers\Utility::formatNumber($order->discount_shipping_price)) }}" readonly="readonly" />
+                                            </div>
+                                            <div class="form-group">
                                                 <label>Phí ship (tạm tính)</label>
                                                 <input type="text" class="form-control" id="OrderShippingPriceInput" name="shipping_price" value="{{ old('shipping_price', \App\Libraries\Helpers\Utility::formatNumber($order->shipping_price)) }}" readonly="readonly" />
                                             </div>
@@ -514,6 +522,45 @@
                     totalCodPriceElem.val(shippingPriceElem.val());
                 else
                     totalCodPriceElem.val(codPriceElem.val());
+            }
+        }
+
+        function calculateDiscountShippingPrice(discountCodeElem, discountShippingPriceElem, shippingPriceElem, containerElem)
+        {
+            if(discountCodeElem.val() != '' && shippingPriceElem.val() != '')
+            {
+                $.ajax({
+                    url: '{{ action('Frontend\OrderController@calculateDiscountShippingPrice') }}',
+                    type: 'get',
+                    data: 'discount_code=' + discountCodeElem.val() + '&shipping_price=' + shippingPriceElem.val(),
+                    success: function(result) {
+                        result = JSON.parse(result);
+
+                        if(result['status'] == 'error')
+                        {
+                            swal({
+                                title: result['message'],
+                                type: 'error',
+                                confirmButtonClass: 'btn-success'
+                            });
+                        }
+                        else
+                        {
+                            if(result['discount'] > 0)
+                                discountShippingPriceElem.val(formatNumber(result['discount'].toString(), '.'));
+                            else
+                                discountShippingPriceElem.val('');
+
+                            calculateShippingPrice(containerElem.find('.ReceiverDistrict').first(), containerElem.find('.OrderWeightInput').first(), containerElem.find('.OrderDimensionInput').first(), containerElem.find('.OrderShippingPriceInput').first(), discountShippingPriceElem, containerElem);
+                        }
+                    }
+                });
+            }
+            else
+            {
+                discountShippingPriceElem.val('');
+
+                calculateShippingPrice(containerElem.find('.ReceiverDistrict').first(), containerElem.find('.OrderWeightInput').first(), containerElem.find('.OrderDimensionInput').first(), containerElem.find('.OrderShippingPriceInput').first(), discountShippingPriceElem, containerElem);
             }
         }
     </script>

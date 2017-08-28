@@ -224,7 +224,7 @@ class OrderController extends Controller
                 'receiver_province' => 'required|integer|min:1',
                 'receiver_district' => 'required|integer|min:1',
                 'receiver_ward' => 'required|integer|min:1',
-                'weight' => 'nullable|integer|min:1',
+                'weight' => 'nullable|numeric|min:0.1',
                 'cod_price' => 'nullable|integer|min:1',
                 'note' => 'nullable|max:255',
             ]);

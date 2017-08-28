@@ -613,7 +613,9 @@ class UserController extends Controller
            $query->select('order_id', 'name', 'phone', 'address', 'province', 'district', 'ward');
         }, 'receiverAddress' => function($query) {
             $query->select('order_id', 'name', 'phone', 'address', 'province', 'district', 'ward');
-        }])->select('id', 'number', 'created_at', 'cancelled_at', 'cod_price', 'shipping_price', 'total_cod_price', 'shipping_payment', 'note', 'shipper', 'status', 'weight', 'dimension', 'prepay', 'payment')
+        }, 'discount' => function($query) {
+            $query->select('id', 'code');
+        }])->select('id', 'number', 'created_at', 'cancelled_at', 'cod_price', 'shipping_price', 'total_cod_price', 'shipping_payment', 'note', 'shipper', 'status', 'weight', 'dimension', 'prepay', 'payment', 'discount_id', 'discount_shipping_price')
             ->where('user_id', $user->id)
             ->where('id', $id)
             ->first();
@@ -632,7 +634,9 @@ class UserController extends Controller
 
         $order = Order::with(['senderAddress', 'receiverAddress', 'user' => function($query) {
             $query->select('id');
-        }, 'user.userAddresses'])->where('user_id', $user->id)
+        }, 'user.userAddresses', 'discount' => function($query) {
+            $query->select('id', 'code');
+        }])->where('user_id', $user->id)
             ->where('id', $id)
             ->first();
 
@@ -667,7 +671,7 @@ class UserController extends Controller
                 'receiver_province' => 'required|integer|min:1',
                 'receiver_district' => 'required|integer|min:1',
                 'receiver_ward' => 'required|integer|min:1',
-                'weight' => 'nullable|integer|min:1',
+                'weight' => 'nullable|numeric|min:0.1',
                 'cod_price' => 'nullable|integer|min:1',
                 'note' => 'nullable|max:255',
             ]);

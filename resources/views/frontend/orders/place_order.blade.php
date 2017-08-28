@@ -359,6 +359,19 @@
                                                         @endif
                                                     </div>
                                                     <div class="form-group">
+                                                        <label>Mã giảm giá</label>
+                                                        <input type="text" class="form-control OrderDiscountCodeInput" name="discount_code[{{ $k }}]" value="{{ old('discount_code.' . $k) }}" />
+                                                        @if($errors->has('discount_code.' . $k))
+                                                            <span class="has-error">
+                                                                <span class="help-block">* {{ $errors->first('discount_code.' . $k) }}</span>
+                                                            </span>
+                                                        @endif
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>Được giảm giá</label>
+                                                        <input type="text" class="form-control OrderDiscountShippingPriceInput" name="discount_shipping_price[{{ $k }}]" value="{{ old('discount_shipping_price.' . $k) }}" readonly="readonly" />
+                                                    </div>
+                                                    <div class="form-group">
                                                         <label>Phí ship (tạm tính)</label>
                                                         <input type="text" class="form-control OrderShippingPriceInput" name="shipping_price[{{ $k }}]" value="{{ old('shipping_price.' . $k) }}" readonly="readonly" />
                                                     </div>
@@ -612,7 +625,9 @@
                 containerElem.find('.ReceiverWard').first().html('<option value=""></option>');
                 containerElem.find('.OrderShippingPriceInput').first();
 
-                calculateShippingPrice(containerElem.find('.ReceiverDistrict').first(), containerElem.find('.OrderWeightInput').first(), containerElem.find('.OrderDimensionInput').first(), containerElem.find('.OrderShippingPriceInput').first(), containerElem);
+                resetDiscount(containerElem);
+
+                calculateShippingPrice(containerElem.find('.ReceiverDistrict').first(), containerElem.find('.OrderWeightInput').first(), containerElem.find('.OrderDimensionInput').first(), containerElem.find('.OrderShippingPriceInput').first(), containerElem.find('.OrderDiscountShippingPriceInput').first(), containerElem);
             }
             else if($(this).hasClass('ReceiverDistrict'))
             {
@@ -620,7 +635,9 @@
 
                 changeArea($(this), containerElem.find('.ReceiverWard').first(), '{{ \App\Models\Area::TYPE_WARD_DB }}', true);
 
-                calculateShippingPrice(containerElem.find('.ReceiverDistrict').first(), containerElem.find('.OrderWeightInput').first(), containerElem.find('.OrderDimensionInput').first(), containerElem.find('.OrderShippingPriceInput').first(), containerElem);
+                resetDiscount(containerElem);
+
+                calculateShippingPrice(containerElem.find('.ReceiverDistrict').first(), containerElem.find('.OrderWeightInput').first(), containerElem.find('.OrderDimensionInput').first(), containerElem.find('.OrderShippingPriceInput').first(), containerElem.find('.OrderDiscountShippingPriceInput').first(), containerElem);
             }
             else if($(this).hasClass('RegisterUserAddress'))
             {
@@ -654,19 +671,29 @@
             {
                 containerElem = $(this).closest('.OrderFormDiv');
 
-                calculateShippingPrice(containerElem.find('.ReceiverDistrict').first(), containerElem.find('.OrderWeightInput').first(), containerElem.find('.OrderDimensionInput').first(), containerElem.find('.OrderShippingPriceInput').first(), containerElem);
+                resetDiscount(containerElem);
+
+                calculateShippingPrice(containerElem.find('.ReceiverDistrict').first(), containerElem.find('.OrderWeightInput').first(), containerElem.find('.OrderDimensionInput').first(), containerElem.find('.OrderShippingPriceInput').first(), containerElem.find('.OrderDiscountShippingPriceInput').first(), containerElem);
             }
             else if($(this).hasClass('OrderDimensionInput'))
             {
                 containerElem = $(this).closest('.OrderFormDiv');
 
-                calculateShippingPrice(containerElem.find('.ReceiverDistrict').first(), containerElem.find('.OrderWeightInput').first(), containerElem.find('.OrderDimensionInput').first(), containerElem.find('.OrderShippingPriceInput').first(), containerElem);
+                resetDiscount(containerElem);
+
+                calculateShippingPrice(containerElem.find('.ReceiverDistrict').first(), containerElem.find('.OrderWeightInput').first(), containerElem.find('.OrderDimensionInput').first(), containerElem.find('.OrderShippingPriceInput').first(), containerElem.find('.OrderDiscountShippingPriceInput').first(), containerElem);
             }
             else if($(this).hasClass('OrderCodPriceInput'))
             {
                 containerElem = $(this).closest('.OrderFormDiv');
 
                 calculateTotalCodPrice(containerElem.find('.OrderCodPriceInput').first(), containerElem.find('.OrderTotalCodPriceInput').first(), containerElem.find('.OrderShippingPriceInput').first(), containerElem.find('input[type="radio"]:checked').first().val());
+            }
+            else if($(this).hasClass('OrderDiscountCodeInput'))
+            {
+                containerElem = $(this).closest('.OrderFormDiv');
+
+                calculateDiscountShippingPrice($(this), containerElem.find('.OrderDiscountShippingPriceInput').first(), containerElem.find('.OrderShippingPriceInput').first(), containerElem);
             }
             else if($(this).prop('type') == 'radio')
             {
@@ -710,7 +737,7 @@
             }
         }
 
-        function calculateShippingPrice(districtElem, weightElem, dimensionElem, shippingPriceElem, containerElem)
+        function calculateShippingPrice(districtElem, weightElem, dimensionElem, shippingPriceElem, discountShippingPriceElem, containerElem)
         {
             if(districtElem.val() != '')
             {
@@ -720,7 +747,12 @@
                     data: 'register_district=' + districtElem.val() + '&weight=' + weightElem.val() + '&dimension=' + dimensionElem.val(),
                     success: function(result) {
                         if(result)
-                            shippingPriceElem.val(formatNumber(result, '.'));
+                        {
+                            if(discountShippingPriceElem.val() != '')
+                                shippingPriceElem.val(formatNumber((parseInt(result) - parseInt(discountShippingPriceElem.val().split('.').join(''))).toString(), '.'));
+                            else
+                                shippingPriceElem.val(formatNumber(result, '.'));
+                        }
                         else
                             shippingPriceElem.val('');
 
@@ -745,6 +777,51 @@
                 else
                     totalCodPriceElem.val(codPriceElem.val());
             }
+        }
+
+        function calculateDiscountShippingPrice(discountCodeElem, discountShippingPriceElem, shippingPriceElem, containerElem)
+        {
+            if(discountCodeElem.val() != '' && shippingPriceElem.val() != '')
+            {
+                $.ajax({
+                    url: '{{ action('Frontend\OrderController@calculateDiscountShippingPrice') }}',
+                    type: 'get',
+                    data: 'discount_code=' + discountCodeElem.val() + '&shipping_price=' + shippingPriceElem.val(),
+                    success: function(result) {
+                        result = JSON.parse(result);
+
+                        if(result['status'] == 'error')
+                        {
+                            swal({
+                                title: result['message'],
+                                type: 'error',
+                                confirmButtonClass: 'btn-success'
+                            });
+                        }
+                        else
+                        {
+                            if(result['discount'] > 0)
+                                discountShippingPriceElem.val(formatNumber(result['discount'].toString(), '.'));
+                            else
+                                discountShippingPriceElem.val('');
+
+                            calculateShippingPrice(containerElem.find('.ReceiverDistrict').first(), containerElem.find('.OrderWeightInput').first(), containerElem.find('.OrderDimensionInput').first(), containerElem.find('.OrderShippingPriceInput').first(), discountShippingPriceElem, containerElem);
+                        }
+                    }
+                });
+            }
+            else
+            {
+                discountShippingPriceElem.val('');
+
+                calculateShippingPrice(containerElem.find('.ReceiverDistrict').first(), containerElem.find('.OrderWeightInput').first(), containerElem.find('.OrderDimensionInput').first(), containerElem.find('.OrderShippingPriceInput').first(), discountShippingPriceElem, containerElem);
+            }
+        }
+
+        function resetDiscount(containerElem)
+        {
+            containerElem.find('.OrderDiscountCodeInput').first().val('');
+            containerElem.find('.OrderDiscountShippingPriceInput').first().val('');
         }
     </script>
 @endpush

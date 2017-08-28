@@ -110,6 +110,14 @@
             <input type="text" class="form-control InputForNumber OrderCodPriceInput" name="cod_price[{{ $countOrder }}]" />
         </div>
         <div class="form-group">
+            <label>Mã giảm giá</label>
+            <input type="text" class="form-control OrderDiscountCodeInput" name="discount_code[{{ $countOrder }}]" />
+        </div>
+        <div class="form-group">
+            <label>Được giảm giá</label>
+            <input type="text" class="form-control OrderDiscountShippingPriceInput" name="discount_shipping_price[{{ $countOrder }}]" readonly="readonly" />
+        </div>
+        <div class="form-group">
             <label>Phí ship (tạm tính)</label>
             <input type="text" class="form-control OrderShippingPriceInput" name="shipping_price[{{ $countOrder }}]" readonly="readonly" />
         </div>

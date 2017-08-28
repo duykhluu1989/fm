@@ -52,6 +52,8 @@ Route::group(['namespace' => 'Frontend', 'middleware' => ['locale']], function()
 
     Route::get('shippingPrice', 'OrderController@calculateShippingPrice');
 
+    Route::get('discountShippingPrice', 'OrderController@calculateDiscountShippingPrice');
+
     Route::get('/', 'HomeController@home');
 
     Route::post('refreshCsrfToken', 'HomeController@refreshCsrfToken');
