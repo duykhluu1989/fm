@@ -137,6 +137,14 @@
                             @endif
                         </div>
                         <div class="form-group">
+                            <label>Mã giảm giá</label>
+                            <input type="text" class="form-control" id="OrderDiscountCodeInput" value="{{ !empty($order->discount) ? $order->discount->code : '' }}" readonly="readonly" />
+                        </div>
+                        <div class="form-group">
+                            <label>Được giảm giá</label>
+                            <input type="text" class="form-control" id="OrderDiscountShippingPriceInput" name="discount_shipping_price" value="{{ old('discount_shipping_price', \App\Libraries\Helpers\Utility::formatNumber($order->discount_shipping_price)) }}" readonly="readonly" />
+                        </div>
+                        <div class="form-group">
                             <label>Phí Ship</label>
                             <input type="text" class="form-control" id="OrderShippingPriceInput" name="shipping_price" value="{{ old('shipping_price', \App\Libraries\Helpers\Utility::formatNumber($order->shipping_price)) }}" readonly="readonly" />
                         </div>
@@ -448,7 +456,31 @@
                         else
                             shippingPriceElem.val('');
 
-                        calculateTotalCodPrice($('#OrderCodPriceInput'), $('#OrderTotalCodPriceInput'), $('#OrderShippingPriceInput'), $('input[type="radio"][name="shipping_payment"]:checked').val());
+                        var discountCodeElem = $('#OrderDiscountCodeInput');
+                        var discountShippingPriceElem = $('#OrderDiscountShippingPriceInput');
+
+                        if(discountCodeElem.val() != '')
+                        {
+                            $.ajax({
+                                url: '{{ action('Backend\OrderController@calculateDiscountShippingPrice') }}',
+                                type: 'get',
+                                data: 'discount_code=' + discountCodeElem.val() + '&shipping_price=' + shippingPriceElem.val(),
+                                success: function(result) {
+                                    if(result > 0)
+                                    {
+                                        discountShippingPriceElem.val(formatNumber(result, '.'));
+
+                                        shippingPriceElem.val(formatNumber((parseInt(shippingPriceElem.val().split('.').join('')) - parseInt(result)).toString(), '.'));
+                                    }
+                                    else
+                                        discountShippingPriceElem.val('');
+
+                                    calculateTotalCodPrice($('#OrderCodPriceInput'), $('#OrderTotalCodPriceInput'), $('#OrderShippingPriceInput'), $('input[type="radio"][name="shipping_payment"]:checked').val());
+                                }
+                            });
+                        }
+                        else
+                            calculateTotalCodPrice($('#OrderCodPriceInput'), $('#OrderTotalCodPriceInput'), $('#OrderShippingPriceInput'), $('input[type="radio"][name="shipping_payment"]:checked').val());
                     }
                 });
             }

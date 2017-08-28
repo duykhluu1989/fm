@@ -32,6 +32,8 @@ Route::group(['namespace' => 'Backend'], function() {
 
         Route::get('shippingPrice', 'OrderController@calculateShippingPrice');
 
+        Route::get('discountShippingPrice', 'OrderController@calculateDiscountShippingPrice');
+
     });
 
     Route::group(['middleware' => ['auth', 'access', 'permission']], function() {

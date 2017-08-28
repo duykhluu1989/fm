@@ -13,6 +13,7 @@ use App\Libraries\Detrack\Detrack;
 use App\Models\Order;
 use App\Models\OrderAddress;
 use App\Models\Area;
+use App\Models\Discount;
 
 class OrderController extends Controller
 {
@@ -177,7 +178,9 @@ class OrderController extends Controller
     {
         Utility::setBackUrlCookie($request, '/admin/order?');
 
-        $order = Order::with('senderAddress', 'receiverAddress', 'user')->find($id);
+        $order = Order::with(['senderAddress', 'receiverAddress', 'user', 'discount' => function($query) {
+            $query->select('id', 'code');
+        }])->find($id);
 
         if(empty($order))
             return view('frontend.errors.404');
@@ -191,7 +194,9 @@ class OrderController extends Controller
     {
         $order = Order::with(['senderAddress', 'receiverAddress', 'user' => function($query) {
             $query->select('id', 'prepay');
-        }, 'user.userAddresses'])->find($id);
+        }, 'user.userAddresses', 'discount' => function($query) {
+            $query->select('id', 'code');
+        }])->find($id);
 
         if(empty($order) || Order::getOrderStatusOrder($order->status) > Order::getOrderStatusOrder(Order::STATUS_INFO_RECEIVED_DB))
             return view('backend.errors.404');
@@ -254,6 +259,13 @@ class OrderController extends Controller
 
                     $order->cod_price = (!empty($inputs['cod_price']) ? $inputs['cod_price'] : 0);
                     $order->shipping_price = Order::calculateShippingPrice($inputs['receiver_district'], $inputs['weight'], $inputs['dimension']);
+
+                    if(!empty($order->discount))
+                    {
+                        $order->discount_shipping_price = Discount::calculateDiscountShippingPrice($order->discount->code, $order->shipping_price, true);
+                        $order->shipping_price = $order->shipping_price - $order->discount_shipping_price;
+                    }
+
                     $order->shipping_payment = $inputs['shipping_payment'];
 
                     if($order->shipping_payment == Order::SHIPPING_PAYMENT_RECEIVER_DB)
@@ -413,6 +425,31 @@ class OrderController extends Controller
 
         if($validator->passes())
             return Order::calculateShippingPrice($inputs['register_district'], $inputs['weight'], $inputs['dimension']);
+        else
+            return '';
+    }
+
+    public function calculateDiscountShippingPrice(Request $request)
+    {
+        if($request->ajax() == false)
+            return view('frontend.errors.404');
+
+        $inputs = $request->all();
+
+        if(!empty($inputs['shipping_price']))
+            $inputs['shipping_price'] = implode('', explode('.', $inputs['shipping_price']));
+
+        $validator = Validator::make($inputs, [
+            'shipping_price' => 'required|integer|min:1',
+            'discount_code' => 'required',
+        ]);
+
+        if($validator->passes())
+        {
+            $result = Discount::calculateDiscountShippingPrice($inputs['discount_code'], $inputs['shipping_price'], true);
+
+            return $result;
+        }
         else
             return '';
     }
