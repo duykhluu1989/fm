@@ -267,6 +267,31 @@ class Detrack
                     $order->save();
 
                     DB::commit();
+
+                    if($order->status != Order::STATUS_INFO_RECEIVED_DB  && !empty($order->user_notify_url) && !empty($order->user->api_key))
+                    {
+                        $deliveryTrackingData['do'] = $order->user_do;
+                        $deliveryTrackingData['notify_url'] = $order->user_notify_url;
+
+                        $params = [
+                            'key' => $order->user->api_key,
+                            'json' => json_encode($deliveryTrackingData)
+                        ];
+
+                        $curl = curl_init();
+
+                        curl_setopt($curl, CURLOPT_URL, $order->user_notify_url);
+                        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'POST');
+                        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+                        curl_setopt($curl, CURLOPT_FAILONERROR, true);
+                        curl_setopt($curl, CURLOPT_POSTFIELDS, $params);
+
+                        if(app()->environment() != 'production')
+                            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+
+                        $result = curl_exec($curl);
+                        curl_close($curl);
+                    }
                 }
             }
         }
