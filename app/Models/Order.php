@@ -170,9 +170,9 @@ class Order extends Model
         return $status;
     }
 
-    public function generateDo($province)
+    public function generateDo($province = null)
     {
-        $this->do = 'FM' . strtoupper(str_slug($province->name, '')) . date('m') . date('y');
+        $this->do = 'FM' . (!empty($province) ? strtoupper(str_slug($province->name, '')) : '') . date('m') . date('y');
 
         $count = Order::where('do', 'like', $this->do . '%')->count('id');
 

@@ -17,15 +17,26 @@ class DeliveryController extends Controller
     protected function getParams($request)
     {
         if($request->has('key') && $request->has('json'))
-            return ['key' => $request->input('key'), 'json' => $request->input('json')];
+            $params = ['key' => $request->input('key'), 'json' => $request->input('json')];
         else if($request->hasHeader('Content-Type') && strtolower($request->header('Content-Type')) == 'application/json' && $request->hasHeader('X-API-KEY'))
         {
             $json = file_get_contents('php://input');
 
-            return ['key' => $request->header('X-API-KEY'), 'json' => $json];
+            $params = ['key' => $request->header('X-API-KEY'), 'json' => $json];
         }
+        else
+            return $this->apiInvalid();
 
-        return null;
+        $user = User::with(['userAddresses' => function($query) {
+            $query->where('default', Utility::ACTIVE_DB);
+        }, 'customerInformation'])->where('api_key', $params['key'])->where('status', Utility::ACTIVE_DB)->first();
+
+        if(empty($user))
+            return $this->apiInvalid();
+
+        $params['user'] = $user;
+
+        return $params;
     }
 
     protected function apiInvalid()
@@ -58,15 +69,10 @@ class DeliveryController extends Controller
     {
         $params = $this->getParams($request);
 
-        if($params === null)
-            return $this->apiInvalid();
+        if(!is_array($params))
+            return $params;
 
-        $user = User::with(['userAddresses' => function($query) {
-            $query->select('default', Utility::ACTIVE_DB);
-        }, 'customerInformation'])->where('api_key', $params['key'])->where('status', Utility::ACTIVE_DB)->first();
-
-        if(empty($user))
-            return $this->apiInvalid();
+        $user = $params['user'];
 
         $deliveryData = json_decode($params['json'], true);
 
@@ -110,7 +116,7 @@ class DeliveryController extends Controller
                         $order->user_do = strtoupper($data['do']);
                         $order->user_notify_url = !empty($data['notify_url']) ? $data['notify_url'] : '';
 
-                        $order->generateDo(!empty($data['country']) ? $data['country'] : '');
+                        $order->generateDo(null);
 
                         $order->date = date('Y-m-d', strtotime($data['date']));
                         $order->save();
