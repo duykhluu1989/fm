@@ -208,7 +208,7 @@
                             <div class="form-group">
                                 <div class="checkbox">
                                     <label>
-                                        <input type="checkbox" name="register_prepay_service"<?php echo (old('register_prepay_service') ? ' checked="checked"' : ''); ?> />
+                                        <input type="checkbox" id="RegisterPrepayServiceCheckbox" name="register_prepay_service"<?php echo (old('register_prepay_service') ? ' checked="checked"' : ''); ?> />
                                         Dịch Vụ Ứng Trước Tiền Thu Hộ Bằng Chuyển Khoản
                                     </label>
                                 </div>
@@ -216,6 +216,28 @@
                             <hr>
                             <button type="submit" class="btn btnDangky"><i class="fa fa-user fa-lg" aria-hidden="true"></i> ĐĂNG KÝ</button>
                             {{ csrf_field() }}
+
+                            @if(!empty($prepayPage))
+                                <div class="modal fade" tabindex="-1" role="dialog" id="RegisterPrepayServiceModal">
+                                    <div class="modal-dialog modal-lg" role="document">
+                                        <div class="modal-content box">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                                <h4 class="modal-title">{{ $prepayPage->name }}</h4>
+                                            </div>
+                                            <div class="modal-body">
+                                                <?php
+                                                $prepayPageContent = str_replace('{input}', '<input type="text" name="prepay_contract[]" />', $prepayPage->content);
+                                                echo $prepayPageContent;
+                                                ?>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-primary" data-dismiss="modal">Hoàn thành</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
                         </form>
                     </div>
                 </div>
@@ -273,5 +295,25 @@
                 });
             }
         }
+
+        $('#RegisterPrepayServiceCheckbox').click(function() {
+            if($(this).prop('checked'))
+            {
+                $('input[name="prepay_contract[]"]').each(function() {
+                    $(this).prop('required', 'required');
+                });
+
+                $('#RegisterPrepayServiceModal').modal({
+                    backdrop: 'static',
+                    show: true
+                });
+            }
+            else
+            {
+                $('input[name="prepay_contract[]"]').each(function() {
+                    $(this).removeAttr('required');
+                });
+            }
+        });
     </script>
 @endpush

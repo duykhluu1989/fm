@@ -560,7 +560,7 @@ class OrderController extends Controller
             $inputs = $request->all();
 
             $validator = Validator::make($inputs, [
-                //'file' => 'required|file|mimes:' . implode(',', Utility::getValidExcelExt()),
+                'file' => 'required|file|mimes:' . implode(',', Utility::getValidExcelExt()),
             ]);
 
             if($validator->passes())

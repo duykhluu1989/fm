@@ -66,7 +66,7 @@ class UserController extends Controller
             ->where('status', Article::STATUS_PUBLISH_DB)
             ->first();
 
-        $prepayPage = Article::select('id', 'slug')
+        $prepayPage = Article::select('name', 'content')
             ->where('group', Article::ARTICLE_GROUP_PREPAY_DB)
             ->where('status', Article::STATUS_PUBLISH_DB)
             ->first();
