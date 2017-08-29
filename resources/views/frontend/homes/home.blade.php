@@ -123,12 +123,16 @@
                     ?>
 
                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                        <p>{{ isset($details['custom_detail']['title_1']) ? $details['custom_detail']['title_1'] : '' }}</p>
-                        <h3>{{ isset($details['custom_detail']['title_2']) ? $details['custom_detail']['title_2'] : '' }}</h3>
+                        <p>{{ isset($sliderItems['custom_detail']['title_1']) ? $sliderItems['custom_detail']['title_1'] : '' }}</p>
+                        <h3>{{ isset($sliderItems['custom_detail']['title_2']) ? $sliderItems['custom_detail']['title_2'] : '' }}</h3>
                         <a href="{{ action('Frontend\UserController@login') }}" class="btn btnRed"><i class="fa fa-sign-in fa-lg" aria-hidden="true"></i> ĐĂNG KÝ NGAY</a>
                     </div>
                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                         <ul class="list_tienloi">
+                            <?php
+                            unset($sliderItems['custom_detail']);
+                            ?>
+
                             @foreach($sliderItems as $sliderItem)
                                 <li>
                                     <i class="fa fa-{{ isset($sliderItem['icon']) ? $sliderItem['icon'] : '' }} fa-3x" aria-hidden="true"></i>
