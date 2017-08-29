@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Frontend;
 
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
@@ -547,6 +548,16 @@ class OrderController extends Controller
         }
         else
             return '';
+    }
+
+    public function importExcelPlaceOrder()
+    {
+        return view('frontend.orders.import_excel_place_order');
+    }
+
+    public function importExcelPlaceOrderTemplate()
+    {
+        
     }
 
     public function mail(Request $request)

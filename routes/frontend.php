@@ -46,6 +46,10 @@ Route::group(['namespace' => 'Frontend', 'middleware' => ['locale']], function()
 
     Route::match(['get', 'post'], 'order', 'OrderController@placeOrder');
 
+    Route::match(['get', 'post'], 'order/import', 'OrderController@importExcelPlaceOrder');
+
+    Route::get('order/import/template', 'OrderController@importExcelPlaceOrderTemplate');
+
     Route::get('listArea', 'OrderController@getListArea');
 
     Route::get('orderForm', 'OrderController@getOrderForm');

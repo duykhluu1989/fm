@@ -201,4 +201,12 @@ class Utility
     {
         return preg_replace('/\s+/', $replace, $string);
     }
+
+    public static function getValidExcelExt($extensionDot = false)
+    {
+        if($extensionDot == true)
+            return ['.xls', '.xlsx', '.XLS', '.XLSX'];
+
+        return ['xls', 'xlsx', 'XLS', 'XLSX'];
+    }
 }

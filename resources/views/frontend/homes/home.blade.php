@@ -65,12 +65,6 @@
                     ?>
 
                     @foreach($sliderItems as $sliderItem)
-                        <div class="item">
-                            <a href="{{ isset($sliderItem['url']) ? $sliderItem['url'] : 'javascript:void(0)' }}">
-                                <img src="{{ isset($sliderItem['image']) ? $sliderItem['image'] : '' }}" alt="{{ \App\Libraries\Helpers\Utility::getValueByLocale($sliderItem, 'title') }}" class="img-responsive">
-                            </a>
-                        </div>
-
                         <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 thongtin_items">
                             <figure>
                                 <a class="btnThongtin" href="{{ isset($sliderItem['url']) ? $sliderItem['url'] : 'javascript:void(0)' }}">
