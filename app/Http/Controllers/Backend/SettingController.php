@@ -19,7 +19,6 @@ class SettingController extends Controller
             $inputs = $request->all();
 
             $validator = Validator::make($inputs, [
-                Setting::HOT_LINE => 'nullable|numeric',
                 Setting::CONTACT_EMAIL => 'nullable|email',
             ]);
 

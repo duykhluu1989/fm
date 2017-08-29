@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Libraries\Helpers\OrderExcel;
 use App\Libraries\Helpers\Utility;
 use App\Libraries\Detrack\Detrack;
 use App\Models\User;
@@ -550,14 +551,53 @@ class OrderController extends Controller
             return '';
     }
 
-    public function importExcelPlaceOrder()
+    public function importExcelPlaceOrder(Request $request)
     {
+        if($request->isMethod('post'))
+        {
+            $inputs = $request->all();
+
+            $validator = Validator::make($inputs, [
+                'file' => 'required|file|mimes:' . implode(',', Utility::getValidExcelExt()),
+            ]);
+
+            if($validator->passes())
+            {
+                $excelData = Excel::load($inputs['file']->getPathname())->noHeading()->toArray();
+
+                $valid = OrderExcel::validateImportData($excelData);
+
+                if($valid == true)
+                {
+                    echo '<pre>';
+                    print_r(1);
+                    echo '</pre>';
+                    exit();
+                }
+                else
+                    return redirect()->action('Frontend\OrderController@importExcelPlaceOrder')->withErrors(['file' => 'Định dạng file phải giống file mẫu']);
+            }
+            else
+                return redirect()->action('Frontend\OrderController@importExcelPlaceOrder')->withErrors($validator);
+        }
+
         return view('frontend.orders.import_excel_place_order');
     }
 
     public function importExcelPlaceOrderTemplate()
     {
-        
+        $template[] = OrderExcel::getImportColumnLabel();
+        $template[] = OrderExcel::getImportColumnDescription();
+
+        Excel::create('order', function($excel) use($template) {
+
+            $excel->sheet('sheet1', function($sheet) use($template) {
+
+                $sheet->fromArray($template, null, 'A1', true, false);
+
+            });
+
+        })->export('xlsx');
     }
 
     public function mail(Request $request)
