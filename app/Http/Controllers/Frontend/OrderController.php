@@ -72,9 +72,11 @@ class OrderController extends Controller
                         'weight.' . $k => 'nullable|numeric|min:0.1',
                         'cod_price.' . $k => 'nullable|integer|min:1',
                         'note.' . $k => 'nullable|max:255',
-                        'discount_code.' . $k => 'nullable',
                     ]);
                 }
+
+                if(count($inputs['receiver_name']) > 100)
+                    return redirect()->action('Frontend\OrderController@placeOrder')->withErrors(['receiver_name.' . $firstKey => 'Tối đa 100 đơn hàng'])->withInput();
             }
 
             if(count($userAddresses) == 0)
@@ -187,7 +189,7 @@ class OrderController extends Controller
                         $password = rand(100000, 999999);
 
                         $user = new User();
-                        $user->username = explode('@', $inputs['register_email'])[$firstKey] . time();
+                        $user->username = explode('@', $inputs['register_email'][$firstKey])[0] . time();
                         $user->password = Hash::make($password);
                         $user->name = $inputs['register_name'][$firstKey];
                         $user->phone = $inputs['register_phone'][$firstKey];
@@ -274,7 +276,7 @@ class OrderController extends Controller
                         $order->status = Order::STATUS_INFO_RECEIVED_DB;
                         $order->collection_status = Order::STATUS_INFO_RECEIVED_DB;
 
-                        if(isset($inputs['prepay'][$k]))
+                        if($user->prepay == Utility::ACTIVE_DB && isset($inputs['prepay'][$k]))
                             $order->prepay = Utility::ACTIVE_DB;
 
                         $order->generateDo(Area::find($inputs['receiver_province'][$k]));
@@ -558,21 +560,349 @@ class OrderController extends Controller
             $inputs = $request->all();
 
             $validator = Validator::make($inputs, [
-                'file' => 'required|file|mimes:' . implode(',', Utility::getValidExcelExt()),
+                //'file' => 'required|file|mimes:' . implode(',', Utility::getValidExcelExt()),
             ]);
 
             if($validator->passes())
             {
                 $excelData = Excel::load($inputs['file']->getPathname())->noHeading()->toArray();
 
+                if(count($excelData) > 102)
+                    return redirect()->action('Frontend\OrderController@importExcelPlaceOrder')->withErrors(['file' => 'Tối đa 100 đơn hàng 1 lần']);
+
                 $valid = OrderExcel::validateImportData($excelData);
 
                 if($valid == true)
                 {
-                    echo '<pre>';
-                    print_r(1);
-                    echo '</pre>';
-                    exit();
+                    $user = auth()->user();
+
+                    if($user)
+                        $userAddresses = $user->userAddresses;
+                    else
+                        $userAddresses = array();
+
+                    $rules = array();
+
+                    $rules = array_merge($rules, [
+                        OrderExcel::IMPORT_RECEIVER_NAME_COLUMN_LABEL => 'required|string|max:255',
+                        OrderExcel::IMPORT_RECEIVER_PHONE_COLUMN_LABEL => [
+                            'required',
+                            'numeric',
+                            'regex:/^(01[2689]|09)[0-9]{8}$/',
+                        ],
+                        OrderExcel::IMPORT_RECEIVER_ADDRESS_COLUMN_LABEL => 'required|max:255',
+                        OrderExcel::IMPORT_RECEIVER_PROVINCE_COLUMN_LABEL => 'required|max:255',
+                        OrderExcel::IMPORT_RECEIVER_DISTRICT_COLUMN_LABEL => 'required|max:255',
+                        OrderExcel::IMPORT_RECEIVER_WARD_COLUMN_LABEL => 'required|max:255',
+                        OrderExcel::IMPORT_WEIGHT_COLUMN_LABEL => 'nullable|numeric|min:0.1',
+                        OrderExcel::IMPORT_COD_MONEY_COLUMN_LABEL => 'nullable|integer|min:1',
+                        OrderExcel::IMPORT_NOTE_COLUMN_LABEL => 'nullable|max:255',
+                    ]);
+
+                    if(count($userAddresses) == 0)
+                    {
+                        $rules = array_merge($rules, [
+                            OrderExcel::IMPORT_SENDER_NAME_COLUMN_LABEL  => 'required|string|max:255',
+                            OrderExcel::IMPORT_SENDER_PHONE_COLUMN_LABEL => [
+                                'required',
+                                'numeric',
+                                'regex:/^(01[2689]|09)[0-9]{8}$/',
+                            ],
+                            OrderExcel::IMPORT_SENDER_ADDRESS_COLUMN_LABEL => 'required|max:255',
+                            OrderExcel::IMPORT_SENDER_PROVINCE_COLUMN_LABEL => 'required|max:255',
+                            OrderExcel::IMPORT_SENDER_DISTRICT_COLUMN_LABEL => 'required|max:255',
+                            OrderExcel::IMPORT_SENDER_WARD_COLUMN_LABEL => 'required|max:255',
+                        ]);
+                    }
+                    else
+                    {
+                        $rules = array_merge($rules, [
+                            OrderExcel::IMPORT_SENDER_NAME_COLUMN_LABEL  => 'nullable|string|max:255',
+                            OrderExcel::IMPORT_SENDER_PHONE_COLUMN_LABEL => [
+                                'nullable',
+                                'numeric',
+                                'regex:/^(01[2689]|09)[0-9]{8}$/',
+                            ],
+                            OrderExcel::IMPORT_SENDER_ADDRESS_COLUMN_LABEL => 'nullable|max:255',
+                            OrderExcel::IMPORT_SENDER_PROVINCE_COLUMN_LABEL => 'nullable|max:255',
+                            OrderExcel::IMPORT_SENDER_DISTRICT_COLUMN_LABEL => 'nullable|max:255',
+                            OrderExcel::IMPORT_SENDER_WARD_COLUMN_LABEL => 'nullable|max:255',
+                        ]);
+                    }
+
+                    if(empty($user))
+                    {
+                        $rules = array_merge($rules, [
+                            OrderExcel::IMPORT_SENDER_EMAIL_COLUMN_LABEL => 'required|email|max:255|unique:user,email',
+                            OrderExcel::IMPORT_BANK_HOLDER_COLUMN_LABEL => 'nullable|max:255',
+                            OrderExcel::IMPORT_BANK_NUMBER_COLUMN_LABEL => 'nullable|numeric',
+                            OrderExcel::IMPORT_BANK_NAME_COLUMN_LABEL => 'nullable|max:255',
+                            OrderExcel::IMPORT_BANK_BRANCH_COLUMN_LABEL => 'nullable|max:255',
+                        ]);
+                    }
+
+                    $columnMap = OrderExcel::getImportColumnLabel();
+
+                    $password = null;
+
+                    $popupOrderNumber = '';
+                    $placedOrders = array();
+
+                    try
+                    {
+                        DB::beginTransaction();
+
+                        $i = 0;
+                        foreach($excelData as $rowData)
+                        {
+                            $i ++;
+
+                            if($i < 3)
+                                continue;
+
+                            $inputData = array();
+
+                            foreach($rowData as $column => $cellData)
+                                $inputData[$columnMap[$column]] = $cellData;
+
+                            $senderProvince = Area::select('id', 'name')->where('type', Area::TYPE_PROVINCE_DB)->where('name', $inputData[OrderExcel::IMPORT_SENDER_PROVINCE_COLUMN_LABEL])->first();
+                            $senderDistrict = Area::select('id', 'name')->where('type', Area::TYPE_DISTRICT_DB)->where('name', $inputData[OrderExcel::IMPORT_SENDER_DISTRICT_COLUMN_LABEL])->first();
+                            $senderWard = Area::select('id', 'name')->where('type', Area::TYPE_WARD_DB)->where('name', $inputData[OrderExcel::IMPORT_SENDER_WARD_COLUMN_LABEL])->first();
+                            $receiverProvince = Area::select('id', 'name')->where('type', Area::TYPE_PROVINCE_DB)->where('name', $inputData[OrderExcel::IMPORT_RECEIVER_PROVINCE_COLUMN_LABEL])->first();
+                            $receiverDistrict = Area::select('id', 'name')->where('type', Area::TYPE_DISTRICT_DB)->where('name', $inputData[OrderExcel::IMPORT_RECEIVER_DISTRICT_COLUMN_LABEL])->first();
+                            $receiverWard = Area::select('id', 'name')->where('type', Area::TYPE_WARD_DB)->where('name', $inputData[OrderExcel::IMPORT_RECEIVER_WARD_COLUMN_LABEL])->first();
+
+                            $rowValidator = Validator::make($inputData, $rules);
+
+                            $rowValidator->after(function($rowValidator) use(&$inputData, $receiverDistrict) {
+                                if(!empty($inputData[OrderExcel::IMPORT_DIMENSION_COLUMN_LABEL]))
+                                {
+                                    $dimensions = explode('x', $inputData[OrderExcel::IMPORT_DIMENSION_COLUMN_LABEL]);
+
+                                    if(count($dimensions) != 3)
+                                        $rowValidator->errors()->add('dimension', trans('validation.dimensions', ['attribute' => 'kích thước']));
+
+                                    foreach($dimensions as $d)
+                                    {
+                                        $d = trim($d);
+                                        if(empty($d) || !is_numeric($d) || $d < 1)
+                                            $rowValidator->errors()->add('dimension', trans('validation.dimensions', ['attribute' => 'kích thước']));
+                                    }
+                                }
+
+                                if(!empty($inputData[OrderExcel::IMPORT_DISCOUNT_CODE_COLUMN_LABEL]))
+                                {
+                                    $result = Discount::calculateDiscountShippingPrice($inputData[OrderExcel::IMPORT_DISCOUNT_CODE_COLUMN_LABEL], Order::calculateShippingPrice((!empty($receiverDistrict) ? $receiverDistrict->id : null), $inputData[OrderExcel::IMPORT_WEIGHT_COLUMN_LABEL], $inputData[OrderExcel::IMPORT_DIMENSION_COLUMN_LABEL]));
+
+                                    if($result['status'] == 'error')
+                                        $rowValidator->errors()->add('discount_code', $result['message']);
+                                    else if($result['discountPrice'] > 0)
+                                    {
+                                        $inputData['discount'] = $result['discount'];
+                                        $inputData['discount_price'] = $result['discountPrice'];
+                                    }
+                                }
+                            });
+
+                            if($rowValidator->passes())
+                            {
+                                if(empty($user))
+                                {
+                                    $password = rand(100000, 999999);
+
+                                    $user = new User();
+                                    $user->username = explode('@', $inputData[OrderExcel::IMPORT_SENDER_EMAIL_COLUMN_LABEL])[0] . time();
+                                    $user->password = Hash::make($password);
+                                    $user->name = $inputData[OrderExcel::IMPORT_SENDER_NAME_COLUMN_LABEL];
+                                    $user->phone = $inputData[OrderExcel::IMPORT_SENDER_PHONE_COLUMN_LABEL];
+                                    $user->status = Utility::ACTIVE_DB;
+                                    $user->email = $inputData[OrderExcel::IMPORT_SENDER_EMAIL_COLUMN_LABEL];
+                                    $user->admin = Utility::INACTIVE_DB;
+                                    $user->created_at = date('Y-m-d H:i:s');
+                                    $user->bank = $inputData[OrderExcel::IMPORT_BANK_NAME_COLUMN_LABEL];
+                                    $user->bank_branch = $inputData[OrderExcel::IMPORT_BANK_BRANCH_COLUMN_LABEL];
+                                    $user->bank_holder = $inputData[OrderExcel::IMPORT_BANK_HOLDER_COLUMN_LABEL];
+                                    $user->bank_number = $inputData[OrderExcel::IMPORT_BANK_NUMBER_COLUMN_LABEL];
+                                    $user->save();
+
+                                    $userAddress = new UserAddress();
+                                    $userAddress->user_id = $user->id;
+                                    $userAddress->name = $inputData[OrderExcel::IMPORT_SENDER_NAME_COLUMN_LABEL];
+                                    $userAddress->phone = $inputData[OrderExcel::IMPORT_SENDER_PHONE_COLUMN_LABEL];
+                                    $userAddress->address = $inputData[OrderExcel::IMPORT_SENDER_ADDRESS_COLUMN_LABEL];
+                                    $userAddress->province = !empty($senderProvince) ? $senderProvince->name : $inputData[OrderExcel::IMPORT_SENDER_PROVINCE_COLUMN_LABEL];
+                                    $userAddress->district = !empty($senderDistrict) ? $senderDistrict->name : $inputData[OrderExcel::IMPORT_SENDER_DISTRICT_COLUMN_LABEL];
+                                    $userAddress->ward = !empty($senderWard) ? $senderWard->name : $inputData[OrderExcel::IMPORT_SENDER_WARD_COLUMN_LABEL];
+                                    $userAddress->province_id = !empty($senderProvince) ? $senderProvince->id : null;
+                                    $userAddress->district_id = !empty($senderDistrict) ? $senderDistrict->id : null;
+                                    $userAddress->ward_id = !empty($senderWard) ? $senderWard->id : null;
+                                    $userAddress->default = Utility::ACTIVE_DB;
+                                    $userAddress->save();
+
+                                    $userAddresses[] = $userAddress;
+                                }
+                                else if(count($userAddresses) == 0)
+                                {
+                                    $userAddress = new UserAddress();
+                                    $userAddress->user_id = $user->id;
+                                    $userAddress->name = $inputData[OrderExcel::IMPORT_SENDER_NAME_COLUMN_LABEL];
+                                    $userAddress->phone = $inputData[OrderExcel::IMPORT_SENDER_PHONE_COLUMN_LABEL];
+                                    $userAddress->address = $inputData[OrderExcel::IMPORT_SENDER_ADDRESS_COLUMN_LABEL];
+                                    $userAddress->province = !empty($senderProvince) ? $senderProvince->name : $inputData[OrderExcel::IMPORT_SENDER_PROVINCE_COLUMN_LABEL];
+                                    $userAddress->district = !empty($senderDistrict) ? $senderDistrict->name : $inputData[OrderExcel::IMPORT_SENDER_DISTRICT_COLUMN_LABEL];
+                                    $userAddress->ward = !empty($senderWard) ? $senderWard->name : $inputData[OrderExcel::IMPORT_SENDER_WARD_COLUMN_LABEL];
+                                    $userAddress->province_id = !empty($senderProvince) ? $senderProvince->id : null;
+                                    $userAddress->district_id = !empty($senderDistrict) ? $senderDistrict->id : null;
+                                    $userAddress->ward_id = !empty($senderWard) ? $senderWard->id : null;
+                                    $userAddress->default = Utility::ACTIVE_DB;
+                                    $userAddress->save();
+
+                                    $userAddresses[] = $userAddress;
+                                }
+
+                                $order = new Order();
+                                $order->user_id = $user->id;
+                                $order->created_at = date('Y-m-d H:i:s');
+                                $order->cod_price = (!empty($inputData[OrderExcel::IMPORT_COD_MONEY_COLUMN_LABEL]) ? $inputData[OrderExcel::IMPORT_COD_MONEY_COLUMN_LABEL] : 0);
+
+                                if(isset($inputData['discount']))
+                                {
+                                    $order->discount_id = $inputData['discount']->id;
+                                    $order->discount_shipping_price = $inputData['discount_price'];
+
+                                    DB::statement('
+                                        UPDATE `discount`
+                                        SET `used_count` = `used_count` + 1
+                                        WHERE `id` = ' . $order->discount_id
+                                    );
+                                }
+                                else
+                                    $order->discount_shipping_price = 0;
+
+                                $order->shipping_price = Order::calculateShippingPrice((!empty($receiverDistrict) ? $receiverDistrict->id : null), $inputData[OrderExcel::IMPORT_WEIGHT_COLUMN_LABEL], $inputData[OrderExcel::IMPORT_DIMENSION_COLUMN_LABEL]) - $order->discount_shipping_price;
+                                $order->shipping_payment = (!empty($inputData[OrderExcel::IMPORT_PAY_SHIPPING_COLUMN_LABEL]) ? Order::SHIPPING_PAYMENT_RECEIVER_DB : Order::SHIPPING_PAYMENT_SENDER_DB);
+
+                                if($order->shipping_payment == Order::SHIPPING_PAYMENT_RECEIVER_DB)
+                                    $order->total_cod_price = $order->cod_price + $order->shipping_price;
+                                else
+                                    $order->total_cod_price = $order->cod_price;
+
+                                $order->weight = $inputData[OrderExcel::IMPORT_WEIGHT_COLUMN_LABEL];
+                                $order->dimension = $inputData[OrderExcel::IMPORT_DIMENSION_COLUMN_LABEL];
+                                $order->note = $inputData[OrderExcel::IMPORT_NOTE_COLUMN_LABEL];
+                                $order->status = Order::STATUS_INFO_RECEIVED_DB;
+                                $order->collection_status = Order::STATUS_INFO_RECEIVED_DB;
+
+                                if($user->prepay == Utility::ACTIVE_DB && !empty($inputData[OrderExcel::IMPORT_PREPAY_COLUMN_LABEL]))
+                                    $order->prepay = Utility::ACTIVE_DB;
+
+                                $order->generateDo(!empty($receiverProvince) ? $receiverProvince : null);
+
+                                $order->date = date('Y-m-d');
+                                $order->save();
+
+                                $order->setRelation('user', $user);
+
+                                if(empty($user->customerInformation))
+                                {
+                                    $customer = new Customer();
+                                    $customer->user_id = $user->id;
+                                    $customer->order_count = 1;
+                                    $customer->save();
+
+                                    $user->setRelation('customerInformation', $customer);
+                                }
+                                else
+                                {
+                                    $user->customerInformation->order_count += 1;
+                                    $user->customerInformation->save();
+                                }
+
+                                $senderAddress = new OrderAddress();
+                                $senderAddress->order_id = $order->id;
+                                $senderAddress->name = !empty($inputData[OrderExcel::IMPORT_SENDER_NAME_COLUMN_LABEL]) ? $inputData[OrderExcel::IMPORT_SENDER_NAME_COLUMN_LABEL] : $userAddresses[0]->name;
+                                $senderAddress->phone = !empty($inputData[OrderExcel::IMPORT_SENDER_PHONE_COLUMN_LABEL]) ? $inputData[OrderExcel::IMPORT_SENDER_PHONE_COLUMN_LABEL] : $userAddresses[0]->phone;
+                                $senderAddress->address = !empty($inputData[OrderExcel::IMPORT_SENDER_ADDRESS_COLUMN_LABEL]) ? $inputData[OrderExcel::IMPORT_SENDER_ADDRESS_COLUMN_LABEL] : $userAddresses[0]->address;
+                                $senderAddress->province = !empty($senderProvince) ? $senderProvince->name : $userAddresses[0]->province;
+                                $senderAddress->district = !empty($senderDistrict) ? $senderDistrict->name : $userAddresses[0]->district;
+                                $senderAddress->ward = !empty($senderWard) ? $senderWard->name : $userAddresses[0]->ward;
+                                $senderAddress->province_id = !empty($senderProvince) ? $senderProvince->id : $userAddresses[0]->province_id;
+                                $senderAddress->district_id = !empty($senderDistrict) ? $senderProvince->id : $userAddresses[0]->district_id;
+                                $senderAddress->ward_id = !empty($senderWard) ? $senderProvince->id : $userAddresses[0]->ward_id;
+                                $senderAddress->type = OrderAddress::TYPE_SENDER_DB;
+                                $senderAddress->save();
+
+                                $order->setRelation('senderAddress', $senderAddress);
+
+                                $receiverAddress = new OrderAddress();
+                                $receiverAddress->order_id = $order->id;
+                                $receiverAddress->name = $inputData[OrderExcel::IMPORT_RECEIVER_NAME_COLUMN_LABEL];
+                                $receiverAddress->phone = $inputData[OrderExcel::IMPORT_RECEIVER_PHONE_COLUMN_LABEL];
+                                $receiverAddress->address = $inputData[OrderExcel::IMPORT_RECEIVER_ADDRESS_COLUMN_LABEL];
+                                $receiverAddress->province = !empty($receiverProvince) ? $receiverProvince->name : $inputData[OrderExcel::IMPORT_RECEIVER_PROVINCE_COLUMN_LABEL];
+                                $receiverAddress->district = !empty($receiverDistrict) ? $receiverDistrict->name : $inputData[OrderExcel::IMPORT_RECEIVER_DISTRICT_COLUMN_LABEL];
+                                $receiverAddress->ward = !empty($receiverWard) ? $receiverWard->name : $inputData[OrderExcel::IMPORT_RECEIVER_WARD_COLUMN_LABEL];
+                                $receiverAddress->province_id = !empty($receiverProvince) ? $receiverProvince->id : null;
+                                $receiverAddress->district_id = !empty($receiverDistrict) ? $receiverDistrict->id : null;
+                                $receiverAddress->ward_id = !empty($receiverWard) ? $receiverWard->id : null;
+                                $receiverAddress->type = OrderAddress::TYPE_RECEIVER_DB;
+                                $receiverAddress->save();
+
+                                $order->setRelation('receiverAddress', $receiverAddress);
+
+                                if($popupOrderNumber == '')
+                                    $popupOrderNumber = $order->number;
+                                else
+                                    $popupOrderNumber .= ', ' . $order->number;
+
+                                $placedOrders[] = $order;
+                            }
+                            else
+                                return redirect()->action('Frontend\OrderController@importExcelPlaceOrder')->withErrors(['file' => 'Row ' . $i . ': ' .$rowValidator->errors()->first()]);
+                        }
+
+                        DB::commit();
+
+                        if(auth()->guest())
+                        {
+                            auth()->login($user);
+
+                            register_shutdown_function([UserController::class, 'sendRegisterEmail'], $user, $password);
+                        }
+
+                        $detrack = Detrack::make();
+                        $successDos = $detrack->addCollections($placedOrders);
+
+                        $countSuccessDo = count($successDos);
+                        if($countSuccessDo > 0)
+                        {
+                            foreach($placedOrders as $placedOrder)
+                            {
+                                $key = array_search($placedOrder->do, $successDos);
+
+                                if($key !== false)
+                                {
+                                    $placedOrder->collection_call_api = Utility::ACTIVE_DB;
+                                    $placedOrder->save();
+
+                                    unset($successDos[$key]);
+
+                                    $countSuccessDo -= 1;
+
+                                    if($countSuccessDo == 0)
+                                        break;
+                                }
+                            }
+                        }
+
+                        return redirect()->action('Frontend\OrderController@importExcelPlaceOrder')->with('messageSuccess', 'Đặt đơn hàng thành công, mã đơn hàng: ' . $popupOrderNumber);
+                    }
+                    catch(\Exception $e)
+                    {
+                        DB::rollBack();
+
+                        return redirect()->action('Frontend\OrderController@importExcelPlaceOrder')->withErrors(['file' => $e->getMessage()]);
+                    }
                 }
                 else
                     return redirect()->action('Frontend\OrderController@importExcelPlaceOrder')->withErrors(['file' => 'Định dạng file phải giống file mẫu']);

@@ -98,6 +98,11 @@ class OrderExcel
     const IMPORT_DISCOUNT_CODE_COLUMN_LABEL = 'DISCOUNT_CODE';
     const IMPORT_PAY_SHIPPING_COLUMN_LABEL = 'PAY_SHIPPING';
     const IMPORT_NOTE_COLUMN_LABEL = 'NOTE';
+    const IMPORT_BANK_HOLDER_COLUMN_LABEL = 'BANK_HOLDER';
+    const IMPORT_BANK_NUMBER_COLUMN_LABEL = 'BANK_NUMBER';
+    const IMPORT_BANK_NAME_COLUMN_LABEL = 'BANK_NAME';
+    const IMPORT_BANK_BRANCH_COLUMN_LABEL = 'BANK_BRANCH';
+    const IMPORT_PREPAY_COLUMN_LABEL = 'PREPAY';
 
     public static function getImportColumnLabel()
     {
@@ -121,6 +126,11 @@ class OrderExcel
             self::IMPORT_DISCOUNT_CODE_COLUMN_LABEL,
             self::IMPORT_PAY_SHIPPING_COLUMN_LABEL,
             self::IMPORT_NOTE_COLUMN_LABEL,
+            self::IMPORT_BANK_HOLDER_COLUMN_LABEL,
+            self::IMPORT_BANK_NUMBER_COLUMN_LABEL,
+            self::IMPORT_BANK_NAME_COLUMN_LABEL,
+            self::IMPORT_BANK_BRANCH_COLUMN_LABEL,
+            self::IMPORT_PREPAY_COLUMN_LABEL,
         ];
     }
 
@@ -146,6 +156,11 @@ class OrderExcel
             'Mã giảm giá',
             'Người trả phí ship (để trống là người gửi trả, nhập 1 là người nhận trả)',
             'Ghi chú',
+            'Chủ tài khoản ngân hàng',
+            'Số tài khoản ngân hàng',
+            'Tên ngân hàng',
+            'Chi nhánh ngân hàng',
+            'Ứng trước tiền thu hộ (để trống là không sử dụng, nhập 1 là sử dụng dịch vụ)'
         ];
     }
 
