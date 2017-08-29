@@ -10,6 +10,7 @@ class Setting extends Model
     const WEB_DESCRIPTION = 'web_description';
     const WEB_KEYWORD = 'web_keyword';
     const WEB_LOGO = 'web_logo';
+    const WEB_BACKGROUND = 'web_background';
     const HOT_LINE = 'hot_line';
     const CONTACT_EMAIL = 'contact_email';
     const WORKING_TIME = 'working_time';
@@ -45,6 +46,7 @@ class Setting extends Model
             [self::WEB_DESCRIPTION, 'Mô Tả Website', self::TYPE_STRING_DB, 'parcelpost', self::CATEGORY_GENERAL_DB],
             [self::WEB_KEYWORD, 'Từ Khóa', self::TYPE_STRING_DB, 'parcelpost', self::CATEGORY_GENERAL_DB],
             [self::WEB_LOGO, 'Logo', self::TYPE_IMAGE_DB, '', self::CATEGORY_GENERAL_DB],
+            [self::WEB_BACKGROUND, 'Background', self::TYPE_IMAGE_DB, '', self::CATEGORY_GENERAL_DB],
             [self::HOT_LINE, 'Hot Line', self::TYPE_STRING_DB, '', self::CATEGORY_GENERAL_DB],
             [self::CONTACT_EMAIL, 'Email Liên Hệ', self::TYPE_STRING_DB, 'info@parcelpost.vn', self::CATEGORY_GENERAL_DB],
             [self::WORKING_TIME, 'Thời Gian Làm Việc', self::TYPE_STRING_DB, '', self::CATEGORY_GENERAL_DB],

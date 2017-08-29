@@ -28,6 +28,20 @@
                     </div>
                     <div class="col-sm-12">
                         <div class="form-group">
+                            <label>{{ $settings[\App\Models\Setting::WEB_BACKGROUND]->name }}</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" name="{{ \App\Models\Setting::WEB_BACKGROUND }}" value="{{ old(\App\Models\Setting::WEB_BACKGROUND, $settings[\App\Models\Setting::WEB_BACKGROUND]->value) }}" />
+                                <span class="input-group-btn">
+                                    <button type="button" class="btn btn-default" id="WebBackgroundElFinderPopupOpen"><i class="fa fa-image fa-fw"></i></button>
+                                </span>
+                            </div>
+                            @if(!empty(old(\App\Models\Setting::WEB_BACKGROUND, $settings[\App\Models\Setting::WEB_BACKGROUND]->value)))
+                                <img src="{{ old(\App\Models\Setting::WEB_BACKGROUND, $settings[\App\Models\Setting::WEB_BACKGROUND]->value) }}" width="50%" alt="Web Background" />
+                            @endif
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="form-group">
                             <label>{{ $settings[\App\Models\Setting::WEB_TITLE]->name }}</label>
                             <input type="text" class="form-control" name="{{ \App\Models\Setting::WEB_TITLE }}" value="{{ old(\App\Models\Setting::WEB_TITLE, $settings[\App\Models\Setting::WEB_TITLE]->value) }}" />
                         </div>
@@ -94,9 +108,21 @@
     <script src="{{ asset('assets/js/jquery.colorbox-min.js') }}"></script>
     <script type="text/javascript">
         var elFinderSelectedFile;
+        var imageTarget;
 
         $('#WebLogoElFinderPopupOpen').click(function() {
-            elFinderSelectedFile = $(this).parent().parent().find('input').first();
+            imageTarget = 'logo';
+            openElFinderPopup($(this));
+        });
+
+        $('#WebBackgroundElFinderPopupOpen').click(function() {
+            imageTarget = 'background';
+            openElFinderPopup($(this));
+        });
+
+        function openElFinderPopup(elem)
+        {
+            elFinderSelectedFile = elem.parent().parent().find('input').first();
 
             $.colorbox({
                 href: '{{ action('Backend\ElFinderController@popup') }}',
@@ -105,7 +131,7 @@
                 height: '600',
                 closeButton: false
             });
-        });
+        }
 
         function elFinderProcessSelectedFile(fileUrl)
         {
@@ -115,9 +141,18 @@
                 elFinderSelectedFile.parent().parent().find('img').first().prop('src', fileUrl);
             else
             {
-                elFinderSelectedFile.parent().parent().append('' +
-                    '<img src="' + fileUrl + '" width="20%" alt="Web Logo" />' +
-                '');
+                if(imageTarget == 'logo')
+                {
+                    elFinderSelectedFile.parent().parent().append('' +
+                        '<img src="' + fileUrl + '" width="20%" alt="Web Logo" />' +
+                    '');
+                }
+                else
+                {
+                    elFinderSelectedFile.parent().parent().append('' +
+                        '<img src="' + fileUrl + '" width="50%" alt="Web Background" />' +
+                    '');
+                }
             }
         }
     </script>

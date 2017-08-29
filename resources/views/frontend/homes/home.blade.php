@@ -108,7 +108,7 @@
             </div>
         </section>
 
-        <section class="tienloi parallax-one">
+        <section class="tienloi parallax-one" style="{{ \App\Models\Setting::getSettings(\App\Models\Setting::CATEGORY_GENERAL_DB, \App\Models\Setting::WEB_BACKGROUND) ? 'background-image: url(' . \App\Models\Setting::getSettings(\App\Models\Setting::CATEGORY_GENERAL_DB, \App\Models\Setting::WEB_BACKGROUND) . ')' : '' }}">
             <div class="container text-center">
                 <h2 class="title">Bạn có biết?</h2>
                 <div class="row">
