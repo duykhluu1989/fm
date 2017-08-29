@@ -180,7 +180,7 @@ class UserController extends Controller
         }
         catch(\Exception $e)
         {
-
+            \Log::info($e->getMessage());
         }
     }
 
