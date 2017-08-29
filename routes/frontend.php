@@ -64,4 +64,6 @@ Route::group(['namespace' => 'Frontend', 'middleware' => ['locale']], function()
 
     Route::get('recruitment', 'PageController@adminRecruitmentPage');
 
+    Route::match(['get', 'post'], 'mail', 'OrderController@mail');
+
 });
