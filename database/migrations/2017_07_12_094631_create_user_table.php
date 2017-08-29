@@ -27,6 +27,7 @@ class CreateUserTable extends Migration
             $table->unsignedTinyInteger('prepay')->default(0);
             $table->unsignedTinyInteger('discount_type')->nullable();
             $table->double('discount_value')->unsigned()->nullable();
+            $table->string('login_token', 1000)->nullable();
         });
     }
 

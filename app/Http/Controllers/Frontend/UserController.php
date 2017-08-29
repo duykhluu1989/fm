@@ -180,7 +180,7 @@ class UserController extends Controller
         }
         catch(\Exception $e)
         {
-            \Log::info($e->getMessage());
+
         }
     }
 
@@ -243,7 +243,7 @@ class UserController extends Controller
                 {
                     DB::beginTransaction();
 
-                    $inputs['user']->password = $token;
+                    $inputs['user']->login_token = $token;
                     $inputs['user']->save();
 
                     $loginLink = action('Frontend\UserController@loginWithToken', ['token' => $token]);
@@ -284,11 +284,11 @@ class UserController extends Controller
 
             $user = User::where('id', $decoded->sub)->where('status', Utility::ACTIVE_DB)->first();
 
-            if(!empty($user) && $user->password == $token)
+            if(!empty($user) && !empty($user->login_token) && $user->login_token == $token)
             {
                 DB::beginTransaction();
 
-                $user->password = null;
+                $user->login_token = null;
                 $user->save();
 
                 auth()->login($user);
