@@ -947,12 +947,29 @@ class UserController extends Controller
         }
     }
 
-    public function general()
+    public function general(Request $request)
     {
         $user = auth()->user();
 
+        $inputs = $request->all();
+
+        if(!empty($inputs['created_at_from']) && !empty($inputs['created_at_to']) && strtotime($inputs['created_at_from']) !== false && strtotime($inputs['created_at_to']) !== false)
+        {
+            $orders = DB::table('order')
+                ->select(DB::raw('status, count(id) as count'))
+                ->where('user_id', $user->id)
+                ->where('created_at', '>=', $inputs['created_at_from'])
+                ->where('created_at', '<=', $inputs['created_at_to'] . ' 23:59:59')
+                ->groupBy('status')
+                ->pluck('count', 'status')
+                ->toArray();
+        }
+        else
+            $orders = array();
+
         return view('frontend.users.general', [
             'user' => $user,
+            'orders' => $orders,
         ]);
     }
 }

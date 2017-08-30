@@ -636,7 +636,9 @@ ul.list_breadcrumb_user li:hover a, ul.list_breadcrumb_user li.active a {
 .btnThemDD:hover, .btnThemDH:hover {
   color: #393E46;
 }
-
+.ui-datepicker-year, .ui-datepicker-month {
+  color: black;
+}
 
 
 
