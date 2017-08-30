@@ -108,6 +108,40 @@ class UserController extends Controller
             'register_accept_policy' => 'required',
         ]);
 
+        $validator->after(function($validator) use(&$inputs) {
+            if(!empty($inputs['register_prepay_service']))
+            {
+                $prepayPage = Article::select('name', 'content')
+                    ->where('group', Article::ARTICLE_GROUP_PREPAY_DB)
+                    ->where('status', Article::STATUS_PUBLISH_DB)
+                    ->first();
+
+                if(!empty($prepayPage))
+                {
+                    $countContractInput = substr_count($prepayPage->content, '{input}');
+
+                    if($countContractInput > 0)
+                    {
+                        if(!isset($inputs['register_prepay_contract']) || !is_array($inputs['register_prepay_contract']) || count($inputs['register_prepay_contract']) != $countContractInput)
+                            $validator->errors()->add('register_prepay_service', 'Vui lòng điền đầy đủ thông tin vào hợp đồng');
+                        else
+                        {
+                            $prepayPageContent = $prepayPage->content;
+
+                            foreach($inputs['register_prepay_contract'] as $contractInput)
+                            {
+                                $startPos = strpos($prepayPageContent, '{input}');
+
+                                $prepayPageContent = substr($prepayPageContent, 0, $startPos) . $contractInput . substr($prepayPageContent, $startPos + 7);
+
+                                $inputs['prepay_contract'] = $prepayPageContent;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
         if($validator->passes())
         {
             try
@@ -129,7 +163,10 @@ class UserController extends Controller
                 $user->bank_number = $inputs['register_bank_number'];
 
                 if(!empty($inputs['register_prepay_service']))
+                {
                     $user->prepay = Utility::ACTIVE_DB;
+                    $user->prepay_contract = $inputs['prepay_contract'];
+                }
 
                 $user->save();
 
@@ -181,6 +218,30 @@ class UserController extends Controller
         catch(\Exception $e)
         {
 
+        }
+
+        self::sendPrepayContractEmail($user);
+    }
+
+    public static function sendPrepayContractEmail($user)
+    {
+        if(!empty($user->prepay_contract))
+        {
+            try
+            {
+                Mail::raw('', function($message) use($user) {
+
+                    $message->setBody($user->prepay_contract, 'text/html');
+                    $message->from($user->email, $user->name);
+                    $message->to(Setting::getSettings(Setting::CATEGORY_GENERAL_DB, Setting::CONTACT_EMAIL), Setting::getSettings(Setting::CATEGORY_GENERAL_DB, Setting::WEB_TITLE));
+                    $message->subject('Hợp đồng dịch vụ ứng trước tiền thu hộ');
+
+                });
+            }
+            catch(\Exception $e)
+            {
+
+            }
         }
     }
 

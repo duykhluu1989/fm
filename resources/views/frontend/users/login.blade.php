@@ -212,6 +212,11 @@
                                         Dịch Vụ Ứng Trước Tiền Thu Hộ Bằng Chuyển Khoản
                                     </label>
                                 </div>
+                                @if($errors->has('register_prepay_service'))
+                                    <span class="has-error">
+                                        <span class="help-block">* {{ $errors->first('register_prepay_service') }}</span>
+                                    </span>
+                                @endif
                             </div>
                             <hr>
                             <button type="submit" class="btn btnDangky"><i class="fa fa-user fa-lg" aria-hidden="true"></i> ĐĂNG KÝ</button>
@@ -227,7 +232,7 @@
                                             </div>
                                             <div class="modal-body">
                                                 <?php
-                                                $prepayPageContent = str_replace('{input}', '<input type="text" name="prepay_contract[]" />', $prepayPage->content);
+                                                $prepayPageContent = str_replace('{input}', '<input type="text" name="register_prepay_contract[]" />', $prepayPage->content);
                                                 echo $prepayPageContent;
                                                 ?>
                                             </div>
@@ -299,7 +304,7 @@
         $('#RegisterPrepayServiceCheckbox').click(function() {
             if($(this).prop('checked'))
             {
-                $('input[name="prepay_contract[]"]').each(function() {
+                $('input[name="register_prepay_contract[]"]').each(function() {
                     $(this).prop('required', 'required');
                 });
 
@@ -310,7 +315,7 @@
             }
             else
             {
-                $('input[name="prepay_contract[]"]').each(function() {
+                $('input[name="register_prepay_contract[]"]').each(function() {
                     $(this).removeAttr('required');
                 });
             }
