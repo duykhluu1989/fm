@@ -16,7 +16,7 @@ class PageController extends Controller
             ->where('slug', $slug)
             ->first();
 
-        if(empty($page))
+        if(empty($page) || $page->group == Article::ARTICLE_GROUP_PREPAY_DB)
             return view('frontend.errors.404');
 
         Utility::viewCount($page, 'view_count', Utility::VIEW_ARTICLE_COOKIE_NAME);

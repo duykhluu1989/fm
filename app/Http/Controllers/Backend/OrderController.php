@@ -361,6 +361,27 @@ class OrderController extends Controller
         return redirect()->action('Backend\OrderController@detailOrder', ['id' => $id])->with('messageSuccess', 'Xác Nhận Đối Soát Thành Công');
     }
 
+    public function controlPaymentOrder(Request $request)
+    {
+        $ids = $request->input('ids');
+
+        $orders = Order::whereIn('id', explode(';', $ids))->get();
+
+        foreach($orders as $order)
+        {
+            if($order->payment == Utility::INACTIVE_DB && $order->status == Order::STATUS_COMPLETED_DB)
+            {
+                $order->payment = Utility::ACTIVE_DB;
+                $order->save();
+            }
+        }
+
+        if($request->headers->has('referer'))
+            return redirect($request->headers->get('referer'))->with('messageSuccess', 'Thành Công');
+        else
+            return redirect()->action('Backend\OrderController@adminOrder')->with('messageSuccess', 'Thành Công');
+    }
+
     public function cancelOrder($id)
     {
         $order = Order::find($id);
@@ -395,6 +416,53 @@ class OrderController extends Controller
 
             return redirect()->action('Backend\OrderController@detailOrder', ['id' => $id])->with('messageError', $e->getMessage());
         }
+    }
+
+    public function controlCancelOrder(Request $request)
+    {
+        $ids = $request->input('ids');
+
+        $orders = Order::whereIn('id', explode(';', $ids))->get();
+
+        $deletedOrders = array();
+
+        try
+        {
+            DB::beginTransaction();
+
+            foreach($orders as $order)
+            {
+                if(Order::getOrderStatusOrder($order->status) <= Order::getOrderStatusOrder(Order::STATUS_INFO_RECEIVED_DB))
+                {
+                    $order->cancelOrder();
+
+                    if($order->collection_call_api == Utility::ACTIVE_DB)
+                        $deletedOrders[] = $order;
+                }
+            }
+
+            DB::commit();
+
+            if(count($deletedOrders) > 0)
+            {
+                $detrack = Detrack::make();
+                $detrack->deleteCollections($deletedOrders);
+            }
+        }
+        catch(\Exception $e)
+        {
+            DB::rollBack();
+
+            if($request->headers->has('referer'))
+                return redirect($request->headers->get('referer'))->with('messageError', $e->getMessage());
+            else
+                return redirect()->action('Backend\OrderController@adminOrder')->with('messageError', $e->getMessage());
+        }
+
+        if($request->headers->has('referer'))
+            return redirect($request->headers->get('referer'))->with('messageSuccess', 'Thành Công');
+        else
+            return redirect()->action('Backend\OrderController@adminOrder')->with('messageSuccess', 'Thành Công');
     }
 
     public function calculateShippingPrice(Request $request)
