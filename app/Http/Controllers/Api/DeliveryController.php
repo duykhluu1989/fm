@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Models\Order;
 use App\Models\OrderAddress;
 use App\Models\Customer;
+use App\Models\Area;
 
 class DeliveryController extends Controller
 {
@@ -98,6 +99,16 @@ class DeliveryController extends Controller
 
                 if(empty($validOrder))
                 {
+                    if(!empty($data['country']))
+                        $receiverProvince = Area::select('id', 'name')->where('type', Area::TYPE_PROVINCE_DB)->where('name', $data['country'])->first();
+                    else
+                        $receiverProvince = null;
+
+                    if(!empty($data['city']))
+                        $receiverDistrict = Area::select('id', 'name')->where('type', Area::TYPE_DISTRICT_DB)->where('name', $data['city'])->first();
+                    else
+                        $receiverDistrict = null;
+
                     try
                     {
                         DB::beginTransaction();
@@ -106,17 +117,19 @@ class DeliveryController extends Controller
                         $order->user_id = $user->id;
                         $order->created_at = date('Y-m-d H:i:s');
                         $order->cod_price = (!empty($data['pay_amt']) && is_numeric($data['pay_amt']) && $data['pay_amt'] > 0) ? $data['pay_amt'] : 0;
-                        $order->shipping_price = 0;
+                        $order->weight = (!empty($data['wt']) && is_numeric($data['wt']) && $data['wt'] > 0) ? $data['wt'] : 0;
+                        $order->shipping_price = Order::calculateShippingPrice((!empty($receiverDistrict) ? $receiverDistrict->id : null), $order->weight);
+                        $order->discount_shipping_price = User::calculateDiscountShippingPrice($user, $order->shipping_price);
+                        $order->shipping_price = $order->shipping_price - $order->discount_shipping_price;
                         $order->shipping_payment = Order::SHIPPING_PAYMENT_SENDER_DB;
                         $order->total_cod_price = $order->cod_price;
-                        $order->weight = (!empty($data['wt']) && is_numeric($data['wt']) && $data['wt'] > 0) ? $data['wt'] : 0;
                         $order->note = !empty($data['instructions']) ? $data['instructions'] : '';
                         $order->status = Order::STATUS_INFO_RECEIVED_DB;
                         $order->collection_status = Order::STATUS_INFO_RECEIVED_DB;
                         $order->user_do = strtoupper($data['do']);
                         $order->user_notify_url = !empty($data['notify_url']) ? $data['notify_url'] : '';
 
-                        $order->generateDo(null);
+                        $order->generateDo(!empty($receiverProvince) ? $receiverProvince : null);
 
                         $order->date = date('Y-m-d', strtotime($data['date']));
                         $order->save();
@@ -159,8 +172,10 @@ class DeliveryController extends Controller
                         $receiverAddress->name = !empty($data['deliver_to']) ? $data['deliver_to'] : '';
                         $receiverAddress->phone = !empty($data['phone']) ? $data['phone'] : '';
                         $receiverAddress->address = $data['address'];
-                        $receiverAddress->province = !empty($data['country']) ? $data['country'] : '';
-                        $receiverAddress->district = !empty($data['city']) ? $data['city'] : '';
+                        $receiverAddress->province = !empty($receiverProvince) ? $receiverProvince->name : (!empty($data['country']) ? $data['country'] : '');
+                        $receiverAddress->district = !empty($receiverDistrict) ? $receiverDistrict->name : (!empty($data['city']) ? $data['city'] : '');
+                        $receiverAddress->province_id = !empty($receiverProvince) ? $receiverProvince->id : null;
+                        $receiverAddress->district_id = !empty($receiverDistrict) ? $receiverDistrict->id : null;
                         $receiverAddress->type = OrderAddress::TYPE_RECEIVER_DB;
                         $receiverAddress->save();
 
@@ -408,12 +423,25 @@ class DeliveryController extends Controller
                 {
                     if(Order::getOrderStatusOrder($order->status) <= Order::getOrderStatusOrder(Order::STATUS_INFO_RECEIVED_DB))
                     {
+                        if(!empty($data['country']))
+                            $receiverProvince = Area::select('id', 'name')->where('type', Area::TYPE_PROVINCE_DB)->where('name', $data['country'])->first();
+                        else
+                            $receiverProvince = null;
+
+                        if(!empty($data['city']))
+                            $receiverDistrict = Area::select('id', 'name')->where('type', Area::TYPE_DISTRICT_DB)->where('name', $data['city'])->first();
+                        else
+                            $receiverDistrict = null;
+
                         try
                         {
                             DB::beginTransaction();
 
                             $order->cod_price = (!empty($data['pay_amt']) && is_numeric($data['pay_amt']) && $data['pay_amt'] > 0) ? $data['pay_amt'] : $order->cod_price;
-                            $order->shipping_price = 0;
+                            $order->weight = (!empty($data['wt']) && is_numeric($data['wt']) && $data['wt'] > 0) ? $data['wt'] : $order->weight;
+                            $order->shipping_price = Order::calculateShippingPrice((!empty($receiverDistrict) ? $receiverDistrict->id : (!empty($order->receiverAddress->district_id) ? $order->receiverAddress->district_id : null)), $order->weight);
+                            $order->discount_shipping_price = User::calculateDiscountShippingPrice($user, $order->shipping_price);
+                            $order->shipping_price = $order->shipping_price - $order->discount_shipping_price;
                             $order->shipping_payment = Order::SHIPPING_PAYMENT_SENDER_DB;
                             $order->total_cod_price = $order->cod_price;
                             $order->weight = (!empty($data['wt']) && is_numeric($data['wt']) && $data['wt'] > 0) ? $data['wt'] : $order->weight;
@@ -426,8 +454,10 @@ class DeliveryController extends Controller
                             $order->receiverAddress->name = !empty($data['deliver_to']) ? $data['deliver_to'] : $order->receiverAddress->name;
                             $order->receiverAddress->phone = !empty($data['phone']) ? $data['phone'] : $order->receiverAddress->phone;
                             $order->receiverAddress->address = !empty($data['address']) ? $data['address'] : $order->receiverAddress->address;
-                            $order->receiverAddress->province = !empty($data['country']) ? $data['country'] : $order->receiverAddress->province;
-                            $order->receiverAddress->district = !empty($data['city']) ? $data['city'] : $order->receiverAddress->district;
+                            $order->receiverAddress->province = !empty($receiverProvince) ? $receiverProvince->name : (!empty($data['country']) ? $data['country'] : $order->receiverAddress->province);
+                            $order->receiverAddress->district = !empty($receiverDistrict) ? $receiverDistrict->name : (!empty($data['city']) ? $data['city'] : $order->receiverAddress->district);
+                            $order->receiverAddress->province_id = !empty($receiverProvince) ? $receiverProvince->id : $order->receiverAddress->province_id;
+                            $order->receiverAddress->district_id = !empty($receiverDistrict) ? $receiverDistrict->id : $order->receiverAddress->district_id;
                             $order->receiverAddress->save();
 
                             if($order->collection_call_api == Utility::ACTIVE_DB)

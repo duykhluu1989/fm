@@ -179,7 +179,7 @@ class Order extends Model
         $this->do .= (100000 + $count + 1);
     }
 
-    public static function calculateShippingPrice($districtId, $weight, $dimension)
+    public static function calculateShippingPrice($districtId = null, $weight = null, $dimension = null)
     {
         $shippingPrice = 0;
 
