@@ -630,11 +630,6 @@ class UserController extends Controller
             return '';
     }
 
-    public function quanlydongtien()
-    {
-        return view('frontend.users.quanlydongtien');
-    }
-
     public function adminOrder(Request $request)
     {
         $user = auth()->user();
@@ -952,8 +947,12 @@ class UserController extends Controller
         }
     }
 
-    public function tongquanchung()
+    public function general()
     {
-        return view('frontend.users.tongquanchung');
+        $user = auth()->user();
+
+        return view('frontend.users.general', [
+            'user' => $user,
+        ]);
     }
 }

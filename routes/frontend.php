@@ -38,9 +38,7 @@ Route::group(['namespace' => 'Frontend', 'middleware' => ['locale']], function()
 
         Route::get('account/order/{id}/cancel', 'UserController@cancelOrder');
 
-        Route::get('quanlydongtien', 'UserController@quanlydongtien');
-
-        Route::get('tongquanchung', 'UserController@tongquanchung');
+        Route::get('account/general', 'UserController@general');
 
     });
 
