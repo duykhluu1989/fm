@@ -462,8 +462,47 @@ class UserController extends Controller
 
             $validator = Validator::make($inputs, $rules);
 
+            $validator->after(function($validator) use(&$inputs, $user) {
+                if($user->prepay == Utility::INACTIVE_DB)
+                {
+                    if(!empty($inputs['register_prepay_service']))
+                    {
+                        $prepayPage = Article::select('name', 'content')
+                            ->where('group', Article::ARTICLE_GROUP_PREPAY_DB)
+                            ->where('status', Article::STATUS_PUBLISH_DB)
+                            ->first();
+
+                        if(!empty($prepayPage))
+                        {
+                            $countContractInput = substr_count($prepayPage->content, '{input}');
+
+                            if($countContractInput > 0)
+                            {
+                                if(!isset($inputs['register_prepay_contract']) || !is_array($inputs['register_prepay_contract']) || count($inputs['register_prepay_contract']) != $countContractInput)
+                                    $validator->errors()->add('register_prepay_service', 'Vui lòng điền đầy đủ thông tin vào hợp đồng');
+                                else
+                                {
+                                    $prepayPageContent = $prepayPage->content;
+
+                                    foreach($inputs['register_prepay_contract'] as $contractInput)
+                                    {
+                                        $startPos = strpos($prepayPageContent, '{input}');
+
+                                        $prepayPageContent = substr($prepayPageContent, 0, $startPos) . $contractInput . substr($prepayPageContent, $startPos + 7);
+
+                                        $inputs['prepay_contract'] = $prepayPageContent;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
             if($validator->passes())
             {
+                $sendPrepayContractEmail = false;
+
                 try
                 {
                     DB::beginTransaction();
@@ -471,6 +510,14 @@ class UserController extends Controller
                     $user->name = $inputs['register_name'];
                     $user->phone = $inputs['register_phone'];
                     $user->email = $inputs['register_email'];
+
+                    if($user->prepay == Utility::INACTIVE_DB && !empty($inputs['register_prepay_service']))
+                    {
+                        $user->prepay = Utility::ACTIVE_DB;
+                        $user->prepay_contract = $inputs['prepay_contract'];
+
+                        $sendPrepayContractEmail = true;
+                    }
 
                     if(!empty($inputs['register_password']))
                         $user->password = Hash::make($inputs['register_password']);
@@ -530,6 +577,9 @@ class UserController extends Controller
 
                     DB::commit();
 
+                    if($sendPrepayContractEmail == true)
+                        register_shutdown_function([get_class(new self), 'sendPrepayContractEmail'], $user);
+
                     return redirect()->action('Frontend\UserController@editAccount')->with('messageSuccess', 'Thành công');
                 }
                 catch(\Exception $e)
@@ -543,8 +593,19 @@ class UserController extends Controller
                 return redirect()->action('Frontend\UserController@editAccount')->withErrors($validator)->withInput();
         }
 
+        if($user->prepay == Utility::INACTIVE_DB)
+        {
+            $prepayPage = Article::select('name', 'content')
+                ->where('group', Article::ARTICLE_GROUP_PREPAY_DB)
+                ->where('status', Article::STATUS_PUBLISH_DB)
+                ->first();
+        }
+        else
+            $prepayPage = null;
+
         return view('frontend.users.edit_account', [
             'user' => $user,
+            'prepayPage' => $prepayPage,
         ]);
     }
 

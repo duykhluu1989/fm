@@ -95,8 +95,47 @@
                                             </span>
                                         @endif
                                     </div>
+
+                                    @if($user->prepay == \App\Libraries\Helpers\Utility::INACTIVE_DB)
+                                        <div class="form-group">
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input type="checkbox" id="RegisterPrepayServiceCheckbox" name="register_prepay_service"<?php echo (old('register_prepay_service') ? ' checked="checked"' : ''); ?> />
+                                                    Dịch Vụ Ứng Trước Tiền Thu Hộ Bằng Chuyển Khoản
+                                                </label>
+                                            </div>
+                                            @if($errors->has('register_prepay_service'))
+                                                <span class="has-error">
+                                                    <span class="help-block">* {{ $errors->first('register_prepay_service') }}</span>
+                                                </span>
+                                            @endif
+                                        </div>
+                                    @endif
+
                                     <button type="submit" class="btn btnLuuTT"><i class="fa fa-floppy-o fa-lg" aria-hidden="true"></i> LƯU THÔNG TIN</button>
                                     {{ csrf_field() }}
+
+                                    @if(!empty($prepayPage))
+                                        <div class="modal fade" tabindex="-1" role="dialog" id="RegisterPrepayServiceModal">
+                                            <div class="modal-dialog modal-lg" role="document">
+                                                <div class="modal-content box">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                                        <h4 class="modal-title">{{ $prepayPage->name }}</h4>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <?php
+                                                        $prepayPageContent = str_replace('{input}', '<input type="text" name="register_prepay_contract[]" />', $prepayPage->content);
+                                                        echo $prepayPageContent;
+                                                        ?>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-primary" data-dismiss="modal">Hoàn thành</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endif
                                 </div>
                                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12"></div>
                             </div>
@@ -442,5 +481,25 @@
                 });
             }
         }
+
+        $('#RegisterPrepayServiceCheckbox').click(function() {
+            if($(this).prop('checked'))
+            {
+                $('input[name="register_prepay_contract[]"]').each(function() {
+                    $(this).prop('required', 'required');
+                });
+
+                $('#RegisterPrepayServiceModal').modal({
+                    backdrop: 'static',
+                    show: true
+                });
+            }
+            else
+            {
+                $('input[name="register_prepay_contract[]"]').each(function() {
+                    $(this).removeAttr('required');
+                });
+            }
+        });
     </script>
 @endpush
