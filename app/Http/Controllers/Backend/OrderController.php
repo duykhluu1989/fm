@@ -14,6 +14,7 @@ use App\Models\Order;
 use App\Models\OrderAddress;
 use App\Models\Area;
 use App\Models\Discount;
+use App\Models\User;
 
 class OrderController extends Controller
 {
@@ -193,7 +194,7 @@ class OrderController extends Controller
     public function editOrder(Request $request, $id)
     {
         $order = Order::with(['senderAddress', 'receiverAddress', 'user' => function($query) {
-            $query->select('id', 'prepay');
+            $query->select('id', 'prepay', 'discount_type', 'discount_value');
         }, 'user.userAddresses', 'discount' => function($query) {
             $query->select('id', 'code');
         }])->find($id);
@@ -263,6 +264,11 @@ class OrderController extends Controller
                     if(!empty($order->discount))
                     {
                         $order->discount_shipping_price = Discount::calculateDiscountShippingPrice($order->discount->code, $order->shipping_price, true);
+                        $order->shipping_price = $order->shipping_price - $order->discount_shipping_price;
+                    }
+                    else
+                    {
+                        $order->discount_shipping_price = User::calculateDiscountShippingPrice($order->user, $order->shipping_price);
                         $order->shipping_price = $order->shipping_price - $order->discount_shipping_price;
                     }
 

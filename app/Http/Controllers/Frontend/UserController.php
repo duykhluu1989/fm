@@ -830,6 +830,11 @@ class UserController extends Controller
                         $order->discount_shipping_price = Discount::calculateDiscountShippingPrice($order->discount->code, $order->shipping_price, true);
                         $order->shipping_price = $order->shipping_price - $order->discount_shipping_price;
                     }
+                    else
+                    {
+                        $order->discount_shipping_price = User::calculateDiscountShippingPrice($user, $order->shipping_price);
+                        $order->shipping_price = $order->shipping_price - $order->discount_shipping_price;
+                    }
 
                     $order->shipping_payment = $inputs['shipping_payment'];
 
