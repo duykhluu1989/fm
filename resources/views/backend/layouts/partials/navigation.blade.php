@@ -1,6 +1,9 @@
 <aside class="main-sidebar">
     <section class="sidebar">
         <ul class="sidebar-menu">
+            <li class="{{ (request()->is('admin') ? 'active' : '') }}">
+                <a href="{{ action('Backend\HomeController@home') }}"><i class="fa fa-dashboard"></i><span>Dashboard</span></a>
+            </li>
             <li class="treeview{{ (request()->is('admin/order*') ? ' active' : '') }}">
                 <a href="#"><i class="fa fa-inbox"></i><span>Đơn Hàng</span></a>
                 <ul class="treeview-menu">
