@@ -929,29 +929,4 @@ class OrderController extends Controller
 
         })->export('xlsx');
     }
-
-    public function mail(Request $request)
-    {
-        if($request->isMethod('post'))
-        {
-            try
-            {
-                Mail::raw('hello', function($message) use($request) {
-
-                    $message->from('info@parcelpost.vn', 'Parcelpost');
-                    $message->to($request->input('email'), $request->input('name'));
-                    $message->subject('Mail');
-
-                });
-            }
-            catch(\Exception $e)
-            {
-                echo '<pre>';
-                print_r($e->getMessage());
-                echo '</pre>';
-            }
-        }
-
-        return view('frontend.emails.mail');
-    }
 }
