@@ -26,7 +26,7 @@ class OrderController extends Controller
             $query->select('id', 'order_id', 'address');
         }, 'receiverAddress' => function($query) {
             $query->select('id', 'order_id', 'address');
-        }])->select('order.id', 'order.user_id', 'order.number', 'order.created_at', 'order.cancelled_at', 'order.status', 'order.shipper', 'order.total_cod_price', 'order.do')
+        }])->select('order.id', 'order.user_id', 'order.number', 'order.created_at', 'order.cancelled_at', 'order.status', 'order.shipper', 'order.total_cod_price', 'order.do', 'order.source')
             ->orderBy('order.id', 'desc');
 
         $inputs = $request->all();
@@ -52,6 +52,9 @@ class OrderController extends Controller
                 else
                     $dataProvider->whereNull('order.cancelled_at');
             }
+
+            if(isset($inputs['source']) && $inputs['source'] !== '')
+                $dataProvider->where('order.source', $inputs['source']);
 
             if(!empty($inputs['status']))
                 $dataProvider->where('order.status', 'like', '%' . $inputs['status'] . '%');
@@ -120,6 +123,12 @@ class OrderController extends Controller
                 },
             ],
             [
+                'title' => 'Nguồn',
+                'data' => function($row) {
+                    echo Order::getOrderSource($row->source);
+                }
+            ],
+            [
                 'title' => 'Đặt Đơn Hàng Lúc',
                 'data' => 'created_at',
             ],
@@ -157,6 +166,12 @@ class OrderController extends Controller
                 'title' => 'Shipper',
                 'name' => 'shipper',
                 'type' => 'input',
+            ],
+            [
+                'title' => 'Nguồn',
+                'name' => 'source',
+                'type' => 'select',
+                'options' => Order::getOrderSource(),
             ],
             [
                 'title' => 'Hủy',

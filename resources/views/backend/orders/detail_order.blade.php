@@ -104,6 +104,10 @@
                         <div class="col-sm-9">{{ $order->created_at }}</div>
                     </div>
                     <div class="row">
+                        <div class="col-sm-3"><b>Nguồn</b></div>
+                        <div class="col-sm-9">{{ \App\Models\Order::getOrderSource($order->source) }}</div>
+                    </div>
+                    <div class="row">
                         <div class="col-sm-3"><b>Mã Đơn Hàng</b></div>
                         <div class="col-sm-9">{{ $order->number }}</div>
                     </div>

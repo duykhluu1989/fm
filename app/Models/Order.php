@@ -177,6 +177,20 @@ class Order extends Model
         return $status;
     }
 
+    public static function getOrderSource($value = null)
+    {
+        $source = [
+            self::SOURCE_WEBSITE_DB => self::SOURCE_WEBSITE_LABEL,
+            self::SOURCE_API_DB => self::SOURCE_API_LABEL,
+            self::SOURCE_EXCEL_DB => self::SOURCE_EXCEL_LABEL,
+        ];
+
+        if($value !== null && isset($source[$value]))
+            return $source[$value];
+
+        return $source;
+    }
+
     public function generateDo($province = null)
     {
         $this->do = 'FM' . (!empty($province) ? strtoupper(str_slug($province->name, '')) : '') . date('m') . date('y');
