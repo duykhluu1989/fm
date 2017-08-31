@@ -56,6 +56,8 @@ Route::group(['namespace' => 'Backend'], function() {
 
         Route::match(['get', 'post'], 'area/{id}/edit', 'AreaController@editArea');
 
+        Route::get('area/export', 'AreaController@exportArea');
+
         Route::get('discount', 'DiscountController@adminDiscount');
 
         Route::match(['get', 'post'], 'discount/create', 'DiscountController@createDiscount');

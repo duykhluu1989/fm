@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Backend;
 
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -149,5 +150,40 @@ class AreaController extends Controller
         return view('backend.areas.edit_area', [
             'area' => $area,
         ]);
+    }
+
+    public function exportArea()
+    {
+        $areas = Area::with(['parentArea' => function($query) {
+            $query->select('id', 'name');
+        }])->select('name', 'type', 'parent_id')
+            ->get();
+
+        $exportData = [
+            [
+                'Tên Khu Vực',
+                'Loại Khu Vực',
+                'Thuộc Khu Vực',
+            ],
+        ];
+
+        foreach($areas as $area)
+        {
+            $exportData[] = [
+                $area->name,
+                Area::getAreaType($area->type),
+                !empty($area->parentArea) ? $area->parentArea->name : '',
+            ];
+        }
+
+        Excel::create('area', function($excel) use($exportData) {
+
+            $excel->sheet('sheet1', function($sheet) use($exportData) {
+
+                $sheet->fromArray($exportData, null, 'A1', true, false);
+
+            });
+
+        })->export('xlsx');
     }
 }
