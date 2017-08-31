@@ -279,7 +279,20 @@ class OrderController extends Controller
                         if($user->prepay == Utility::ACTIVE_DB && isset($inputs['prepay'][$k]))
                             $order->prepay = Utility::ACTIVE_DB;
 
-                        $order->generateDo(Area::find($inputs['receiver_province'][$k]));
+                        if(count($userAddresses) == 0 || empty($inputs['user_address'][$k]))
+                            $order->generateDo(Area::find($inputs['register_province'][$k]));
+                        else
+                        {
+                            foreach($user->userAddresses as $userAddress)
+                            {
+                                if($userAddress->id == $inputs['user_address'][$k])
+                                {
+                                    $order->generateDo(Area::find($userAddress->province_id));
+
+                                    break;
+                                }
+                            }
+                        }
 
                         $order->date = date('Y-m-d');
                         $order->save();
@@ -796,9 +809,10 @@ class OrderController extends Controller
                                 if($user->prepay == Utility::ACTIVE_DB && !empty($inputData[OrderExcel::IMPORT_PREPAY_COLUMN_LABEL]))
                                     $order->prepay = Utility::ACTIVE_DB;
 
-                                $order->generateDo(!empty($receiverProvince) ? $receiverProvince : null);
+                                $order->generateDo(!empty($senderProvince) ? $senderProvince : null);
 
                                 $order->date = date('Y-m-d');
+                                $order->source = Order::SOURCE_EXCEL_DB;
                                 $order->save();
 
                                 $order->setRelation('user', $user);

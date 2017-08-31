@@ -129,9 +129,10 @@ class DeliveryController extends Controller
                         $order->user_do = strtoupper($data['do']);
                         $order->user_notify_url = !empty($data['notify_url']) ? $data['notify_url'] : '';
 
-                        $order->generateDo(!empty($receiverProvince) ? $receiverProvince : null);
+                        $order->generateDo(Area::find($user->userAddresses[0]->province_id));
 
                         $order->date = date('Y-m-d', strtotime($data['date']));
+                        $order->source = Order::SOURCE_API_DB;
                         $order->save();
 
                         $order->setRelation('user', $user);

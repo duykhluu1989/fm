@@ -24,6 +24,13 @@ class Order extends Model
     const SHIPPING_PAYMENT_SENDER_DB = 0;
     const SHIPPING_PAYMENT_RECEIVER_DB = 1;
 
+    const SOURCE_WEBSITE_DB = 0;
+    const SOURCE_API_DB = 1;
+    const SOURCE_EXCEL_DB = 2;
+    const SOURCE_WEBSITE_LABEL = 'Website';
+    const SOURCE_API_LABEL = 'Api';
+    const SOURCE_EXCEL_LABEL = 'Excel';
+
     const ORDER_NUMBER_PREFIX = 1987654321;
 
     protected $table = 'order';
