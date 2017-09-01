@@ -385,7 +385,11 @@ class UserController extends Controller
                 $query->select('order_id', 'name');
             }])->select('id', 'number', 'status', 'shipper', 'created_at', 'cancelled_at', 'cod_price', 'shipping_price')
                 ->where('user_id', $user->id)
-                ->where('number', 'like', $keyword . '%')
+                ->where(function($query) use($keyword) {
+                    $query->where('number', 'like', $keyword . '%')
+                        ->orWhere('do', 'like', $keyword . '%')
+                        ->orWhere('user_do', 'like', $keyword . '%');
+                })
                 ->orderBy('id', 'desc')
                 ->paginate(Utility::FRONTEND_ROWS_PER_PAGE);
         }
