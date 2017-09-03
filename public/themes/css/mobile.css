@@ -153,6 +153,8 @@
         top: 0;
         width: 100%;
         padding-left: 10px;
+        background-position: left;
+        background: #D23D44;
     }
     .frm_searchDH .form-control {
         width: 100%;

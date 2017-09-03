@@ -193,7 +193,29 @@ class Order extends Model
 
     public function generateDo($province = null)
     {
-        $this->do = 'FM' . (!empty($province) ? strtoupper(str_slug($province->name, '')) : '') . date('m') . date('y');
+        if(!empty($province))
+        {
+            $name = str_replace('Thành phố ' , '', $province->name);
+            $name = str_replace('Tỉnh ' , '', $name);
+            $name = str_replace('-' , '', $name);
+            $name = strtoupper(str_slug($name, ' '));
+
+            $words = explode(' ', $name);
+            $countWord = count($words);
+
+            $code = '';
+            if($countWord > 2)
+            {
+                foreach($words as $word)
+                    $code .= $word[0];
+            }
+            else
+                $code .= $words[0][0] . $words[1][0] . $words[1][1];
+        }
+        else
+            $code = '';
+
+        $this->do = 'FM' . $code . date('m') . date('y');
 
         $count = Order::where('do', 'like', $this->do . '%')->count('id');
 
