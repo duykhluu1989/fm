@@ -77,6 +77,18 @@
                                         <td>Tỉ lệ hủy</td>
                                         <td>{{ (!empty($user->customerInformation) && !empty($user->customerInformation->order_count)) ? round($user->customerInformation->cancel_order_count * 100 / $user->customerInformation->order_count, 2) : 0 }} %</td>
                                     </tr>
+                                    <tr>
+                                        <td>Tổng khối lượng</td>
+                                        <td>{{ !empty($user->customerInformation) ? \App\Libraries\Helpers\Utility::formatNumber($user->customerInformation->total_weight) : 0 }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Tổng thu hộ</td>
+                                        <td>{{ !empty($user->customerInformation) ? \App\Libraries\Helpers\Utility::formatNumber($user->customerInformation->total_cod_price) : 0 }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Tổng phí ship</td>
+                                        <td>{{ !empty($user->customerInformation) ? \App\Libraries\Helpers\Utility::formatNumber($user->customerInformation->total_shipping_price) : 0 }}</td>
+                                    </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -93,47 +105,47 @@
                                         <tbody>
                                         <tr>
                                             <td>Số đơn hàng</td>
-                                            <?php
-                                            $totalOrder = array_sum($orders);
-                                            ?>
-                                            <td>{{ \App\Libraries\Helpers\Utility::formatNumber($totalOrder) }}</td>
+                                            <td>{{ \App\Libraries\Helpers\Utility::formatNumber($orders->total) }}</td>
                                         </tr>
                                         <tr>
                                             <td>Hoàn thành</td>
-                                            <?php
-                                            $totalCompleteOrder = (isset($orders[\App\Models\Order::STATUS_COMPLETED_DB]) ? $orders[\App\Models\Order::STATUS_COMPLETED_DB] : 0);
-                                            ?>
-                                            <td>{{ \App\Libraries\Helpers\Utility::formatNumber($totalCompleteOrder) }}</td>
+                                            <td>{{ \App\Libraries\Helpers\Utility::formatNumber($orders->complete) }}</td>
                                         </tr>
                                         <tr>
                                             <td>Không giao được</td>
-                                            <?php
-                                            $totalFailOrder = (isset($orders[\App\Models\Order::STATUS_FAILED_DB]) ? $orders[\App\Models\Order::STATUS_FAILED_DB] : 0);
-                                            ?>
-                                            <td>{{ \App\Libraries\Helpers\Utility::formatNumber($totalFailOrder) }}</td>
+                                            <td>{{ \App\Libraries\Helpers\Utility::formatNumber($orders->fail) }}</td>
                                         </tr>
                                         <tr>
                                             <td>Đơn hàng hủy</td>
-                                            <?php
-                                            $totalCancelOrder = (isset($orders[\App\Models\Order::STATUS_CANCELLED_DB]) ? $orders[\App\Models\Order::STATUS_CANCELLED_DB] : 0);
-                                            ?>
-                                            <td>{{ \App\Libraries\Helpers\Utility::formatNumber($totalCancelOrder) }}</td>
+                                            <td>{{ \App\Libraries\Helpers\Utility::formatNumber($orders->cancel) }}</td>
                                         </tr>
                                         <tr>
                                             <td>Đang giao hàng</td>
-                                            <td>{{ \App\Libraries\Helpers\Utility::formatNumber($totalOrder - $totalCompleteOrder - $totalFailOrder - $totalCancelOrder) }}</td>
+                                            <td>{{ \App\Libraries\Helpers\Utility::formatNumber($orders->total - $orders->complete - $orders->fail - $orders->cancel) }}</td>
                                         </tr>
                                         <tr>
                                             <td>Tỉ lệ hoàn thành</td>
-                                            <td>{{ !empty($totalOrder) ? round($totalCompleteOrder * 100 / $totalOrder, 2) : 0 }} %</td>
+                                            <td>{{ !empty($orders->total) ? round($orders->complete * 100 / $orders->total, 2) : 0 }} %</td>
                                         </tr>
                                         <tr>
                                             <td>Tỉ lệ không giao được</td>
-                                            <td>{{ !empty($totalOrder) ? round($totalFailOrder * 100 / $totalOrder, 2) : 0 }} %</td>
+                                            <td>{{ !empty($orders->total) ? round($orders->fail * 100 / $orders->total, 2) : 0 }} %</td>
                                         </tr>
                                         <tr>
                                             <td>Tỉ lệ hủy</td>
-                                            <td>{{ !empty($totalOrder) ? round($totalCancelOrder * 100 / $totalOrder, 2) : 0 }} %</td>
+                                            <td>{{ !empty($orders->total) ? round($orders->cancel * 100 / $orders->total, 2) : 0 }} %</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Tổng khối lượng</td>
+                                            <td>{{ \App\Libraries\Helpers\Utility::formatNumber($orders->weight) }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Tổng thu hộ</td>
+                                            <td>{{ \App\Libraries\Helpers\Utility::formatNumber($orders->cod_price) }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Tổng phí ship</td>
+                                            <td>{{ \App\Libraries\Helpers\Utility::formatNumber($orders->shipping_price) }}</td>
                                         </tr>
                                         </tbody>
                                     </table>

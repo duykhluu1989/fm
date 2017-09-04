@@ -960,16 +960,17 @@ class UserController extends Controller
         if(!empty($inputs['created_at_from']) && !empty($inputs['created_at_to']) && strtotime($inputs['created_at_from']) !== false && strtotime($inputs['created_at_to']) !== false)
         {
             $orders = DB::table('order')
-                ->select(DB::raw('status, count(id) as count'))
+                ->select(DB::raw('count(id) as total, count(if(completed_at is not null, id, null)) as complete, count(if(failed_at is not null, id, null)) as fail, count(if(cancelled_at is not null, id, null)) as cancel, sum(if(completed_at is not null, weight, 0)) as weight, sum(if(completed_at is not null, cod_price, 0)) as cod_price, sum(if(completed_at is not null, shipping_price, 0)) as shipping_price'))
                 ->where('user_id', $user->id)
                 ->where('created_at', '>=', $inputs['created_at_from'])
                 ->where('created_at', '<=', $inputs['created_at_to'] . ' 23:59:59')
-                ->groupBy('status')
-                ->pluck('count', 'status')
+                ->get()
                 ->toArray();
+
+            $orders = $orders[0];
         }
         else
-            $orders = array();
+            $orders = null;
 
         return view('frontend.users.general', [
             'user' => $user,

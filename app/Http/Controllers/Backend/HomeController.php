@@ -25,7 +25,7 @@ class HomeController extends Controller
             ->toArray();
 
         $orderByShippers = DB::table('order')
-            ->select(DB::raw('shipper, count(order.id) as total, count(if(order.completed_at is not null, order.id, null)) as complete, count(if(order.failed_at is not null, order.id, null)) as fail, count(if(order.cancelled_at is not null, order.id, null)) as cancel, sum(if(order.completed_at is not null, order.weight, 0)) as weight, sum(if(order.completed_at is not null, order.cod_price, 0)) as cod_price, sum(if(order.completed_at is not null, order.shipping_price, 0)) as shipping_price'))
+            ->select(DB::raw('shipper, count(id) as total, count(if(completed_at is not null, id, null)) as complete, count(if(failed_at is not null, id, null)) as fail, count(if(cancelled_at is not null, id, null)) as cancel, sum(if(completed_at is not null, weight, 0)) as weight, sum(if(completed_at is not null, cod_price, 0)) as cod_price, sum(if(completed_at is not null, shipping_price, 0)) as shipping_price'))
             ->groupBy('shipper')
             ->orderBy('shipper')
             ->get()
