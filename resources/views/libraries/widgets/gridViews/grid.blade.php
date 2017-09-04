@@ -29,6 +29,14 @@
                                             'name' => $filter['name'],
                                         ]);
                                         ?>
+                                    @elseif($filter['type'] == 'date')
+                                        <?php
+                                        echo \App\Libraries\Helpers\Html::input((isset($filterValues[$filter['name']]) ? $filterValues[$filter['name']] : ''), [
+                                            'type' => 'text',
+                                            'class' => 'form-control DatePicker',
+                                            'name' => $filter['name'],
+                                        ]);
+                                        ?>
                                     @endif
                                 </div>
                             </div>

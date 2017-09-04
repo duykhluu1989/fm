@@ -21,28 +21,32 @@ class OrderController extends Controller
     public function adminOrder(Request $request)
     {
         $dataProvider = Order::with(['user' => function($query) {
-            $query->select('id', 'name');
+            $query->select('id', 'username');
         }, 'senderAddress' => function($query) {
-            $query->select('id', 'order_id', 'address');
-        }, 'receiverAddress' => function($query) {
-            $query->select('id', 'order_id', 'address');
-        }])->select('order.id', 'order.user_id', 'order.number', 'order.created_at', 'order.cancelled_at', 'order.status', 'order.shipper', 'order.total_cod_price', 'order.do', 'order.source')
+            $query->select('id', 'order_id', 'address', 'province', 'district', 'ward');
+        }])->select('order.id', 'order.user_id', 'order.number', 'order.created_at', 'order.cancelled_at', 'order.status', 'order.cod_price', 'order.shipper', 'order.do', 'order.shipping_price', 'order.source', 'order.prepay')
             ->orderBy('order.id', 'desc');
 
         $inputs = $request->all();
 
         if(count($inputs) > 0)
         {
+            if(!empty($inputs['created_at_from']))
+                $dataProvider->where('order.created_at', '>=', $inputs['created_at_from']);
+
+            if(!empty($inputs['created_at_to']))
+                $dataProvider->where('order.created_at', '<=', $inputs['created_at_to'] . ' 23:59:59');
+
             if(!empty($inputs['number']))
                 $dataProvider->where('order.number', 'like', '%' . $inputs['number'] . '%');
 
             if(!empty($inputs['do']))
                 $dataProvider->where('order.do', 'like', '%' . $inputs['do'] . '%');
 
-            if(!empty($inputs['name']))
+            if(!empty($inputs['username']))
             {
                 $dataProvider->join('user', 'order.user_id', '=', 'user.id')
-                    ->where('user.name', 'like', '%' . $inputs['name'] . '%');
+                    ->where('user.username', 'like', '%' . $inputs['username'] . '%');
             }
 
             if(isset($inputs['cancelled']) && $inputs['cancelled'] !== '')
@@ -55,6 +59,9 @@ class OrderController extends Controller
 
             if(isset($inputs['source']) && $inputs['source'] !== '')
                 $dataProvider->where('order.source', $inputs['source']);
+
+            if(isset($inputs['prepay']) && $inputs['prepay'] !== '')
+                $dataProvider->where('order.prepay', $inputs['prepay']);
 
             if(!empty($inputs['status']))
                 $dataProvider->where('order.status', 'like', '%' . $inputs['status'] . '%');
@@ -89,32 +96,56 @@ class OrderController extends Controller
                 'data' => 'do',
             ],
             [
-                'title' => 'Tên',
+                'title' => 'Khách Hàng',
                 'data' => function($row) {
-                    echo $row->user->name;
+                    echo $row->user->username;
                 },
             ],
             [
-                'title' => 'Địa Chỉ Gửi',
-                'data' => function($row) {
-                    echo $row->senderAddress->address;
-                },
-            ],
-            [
-                'title' => 'Địa Chỉ Nhận',
+                'title' => 'Địa Chỉ',
                 'data' => function($row) {
                     echo $row->receiverAddress->address;
                 },
             ],
             [
-                'title' => 'Tổng Tiền Thu Hộ',
+                'title' => 'Thành Phố',
                 'data' => function($row) {
-                    echo Utility::formatNumber($row->total_cod_price) . ' VND';
+                    echo $row->receiverAddress->province;
+                },
+            ],
+            [
+                'title' => 'Quận',
+                'data' => function($row) {
+                    echo $row->receiverAddress->district;
+                },
+            ],
+            [
+                'title' => 'Phường',
+                'data' => function($row) {
+                    echo $row->receiverAddress->ward;
+                },
+            ],
+            [
+                'title' => 'Ứng Trước Tiền Thu Hộ',
+                'data' => function($row) {
+                    echo Order::getOrderPrepay($row->prepay);
+                },
+            ],
+            [
+                'title' => 'Tiền Thu Hộ',
+                'data' => function($row) {
+                    echo Utility::formatNumber($row->cod_price) . ' VND';
                 },
             ],
             [
                 'title' => 'Shipper',
                 'data' => 'shipper',
+            ],
+            [
+                'title' => 'Phí Ship',
+                'data' => function($row) {
+                    echo Utility::formatNumber($row->shipping_price) . ' VND';
+                },
             ],
             [
                 'title' => 'Trạng Thái',
@@ -132,15 +163,21 @@ class OrderController extends Controller
                 'title' => 'Đặt Đơn Hàng Lúc',
                 'data' => 'created_at',
             ],
-            [
-                'title' => 'Hủy Đơn Hàng Lúc',
-                'data' => 'cancelled_at',
-            ],
         ];
 
         $gridView = new GridView($dataProvider, $columns);
         $gridView->setCheckbox();
         $gridView->setFilters([
+            [
+                'title' => 'Từ Ngày',
+                'name' => 'created_at_from',
+                'type' => 'date',
+            ],
+            [
+                'title' => 'Tới Ngày',
+                'name' => 'created_at_to',
+                'type' => 'date',
+            ],
             [
                 'title' => 'Mã',
                 'name' => 'number',
@@ -152,8 +189,8 @@ class OrderController extends Controller
                 'type' => 'input',
             ],
             [
-                'title' => 'Tên',
-                'name' => 'name',
+                'title' => 'Khách Hàng',
+                'name' => 'username',
                 'type' => 'input',
             ],
             [
@@ -181,6 +218,12 @@ class OrderController extends Controller
                     Utility::ACTIVE_DB => 'Đã Hủy',
                     Utility::INACTIVE_DB => 'Không Hủy',
                 ],
+            ],
+            [
+                'title' => 'Ứng Trước Tiền Thu Hộ',
+                'name' => 'prepay',
+                'type' => 'select',
+                'options' => Order::getOrderPrepay(),
             ],
         ]);
         $gridView->setFilterValues($inputs);

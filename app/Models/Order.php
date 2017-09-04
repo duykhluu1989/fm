@@ -31,6 +31,9 @@ class Order extends Model
     const SOURCE_API_LABEL = 'Api';
     const SOURCE_EXCEL_LABEL = 'Excel';
 
+    const PREPAY_FALSE_LABEL = 'Không Ứng Trước Tiền Thu Hộ';
+    const PREPAY_TRUE_LABEL = 'Ứng Trước Tiền Thu Hộ';
+
     const ORDER_NUMBER_PREFIX = 1987654321;
 
     protected $table = 'order';
@@ -44,6 +47,26 @@ class Order extends Model
         self::created(function(Order $order) {
             $order->number = self::ORDER_NUMBER_PREFIX + $order->id;
             $order->save();
+        });
+
+        self::saving(function(Order $order) {
+            if(empty($order->weight) && !empty($order->dimension))
+            {
+                $dimensions = explode('x', $order->dimension);
+
+                $volume = 0;
+
+                foreach($dimensions as $d)
+                {
+                    $d = trim($d);
+                    if($volume == 0)
+                        $volume = $d;
+                    else
+                        $volume = $volume * $d;
+                }
+
+                $order->weight = round($volume / 5000, 1);
+            }
         });
 
         self::updating(function(Order $order) {
@@ -65,17 +88,20 @@ class Order extends Model
                     $order->completed_at = date('Y-m-d H:i:s');
 
                     $order->user->customerInformation->complete_order_count += 1;
+
+                    if(!empty($order->weight))
+                        $order->user->customerInformation->total_weight += $order->weight;
+
+                    if(!empty($order->cod_price))
+                        $order->user->customerInformation->total_cod_price += $order->cod_price;
+
+                    if(!empty($order->shipping_price))
+                        $order->user->customerInformation->total_shipping_price += $order->shipping_price;
+
                     $order->user->customerInformation->save();
                 }
                 else if($order->status == self::STATUS_FAILED_DB)
                 {
-                    if(!empty($order->completed_at))
-                    {
-                        $order->completed_at = null;
-
-                        $order->user->customerInformation->complete_order_count -= 1;
-                    }
-
                     $order->failed_at = date('Y-m-d H:i:s');
 
                     $order->user->customerInformation->fail_order_count += 1;
@@ -189,6 +215,19 @@ class Order extends Model
             return $source[$value];
 
         return $source;
+    }
+
+    public static function getOrderPrepay($value = null)
+    {
+        $prepay = [
+            Utility::ACTIVE_DB => self::PREPAY_TRUE_LABEL,
+            Utility::INACTIVE_DB => self::PREPAY_FALSE_LABEL,
+        ];
+
+        if($value !== null && isset($prepay[$value]))
+            return $prepay[$value];
+
+        return $prepay;
     }
 
     public function generateDo($province = null)
