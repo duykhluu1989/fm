@@ -140,7 +140,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-3"><b>Đối soát</b></div>
-                                    <div class="col-sm-9">{{ ($order->payment == \App\Libraries\Helpers\Utility::ACTIVE_DB ? 'Đã đối soát' : 'Chưa đối soát') }}</div>
+                                    <div class="col-sm-9">{{ \App\Models\Order::getOrderPayment($order->payment) }}</div>
                                 </div>
                             </div>
                         </div>

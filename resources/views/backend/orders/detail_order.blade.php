@@ -6,8 +6,8 @@
 
     <div class="box{{ empty($order->cancelled_at) ? ' box-primary' : ' box-danger' }}">
         <div class="box-header with-border">
-            @if($order->payment == \App\Libraries\Helpers\Utility::INACTIVE_DB && $order->status == \App\Models\Order::STATUS_COMPLETED_DB)
-                <a href="{{ action('Backend\OrderController@paymentOrder', ['id' => $order->id]) }}" class="btn btn-primary Confirmation">Xác Nhận Đối Soát</a>
+            @if($order->payment == \App\Models\Order::NOT_PAYMENT_DB && $order->status == \App\Models\Order::STATUS_COMPLETED_DB)
+                <a href="{{ action('Backend\OrderController@paymentOrder', ['id' => $order->id]) }}" class="btn btn-primary Confirmation">Tiến Hành Đối Soát</a>
             @endif
 
             @if(\App\Models\Order::getOrderStatusOrder($order->status) <= \App\Models\Order::getOrderStatusOrder(\App\Models\Order::STATUS_INFO_RECEIVED_DB))
@@ -153,11 +153,11 @@
                     </div>
                     <div class="row">
                         <div class="col-sm-3"><b>Shipper Lấy Hàng</b></div>
-                        <div class="col-sm-9">{{ $order->shipper }}</div>
+                        <div class="col-sm-9">{{ $order->collection_shipper }}</div>
                     </div>
                     <div class="row">
                         <div class="col-sm-3"><b>Shipper Giao Hàng</b></div>
-                        <div class="col-sm-9">{{ $order->collection_shipper }}</div>
+                        <div class="col-sm-9">{{ $order->shipper }}</div>
                     </div>
                     <div class="row">
                         <div class="col-sm-3"><b>Ghi Chú</b></div>
@@ -169,7 +169,7 @@
                     </div>
                     <div class="row">
                         <div class="col-sm-3"><b>Đối Soát</b></div>
-                        <div class="col-sm-9">{{ ($order->payment == \App\Libraries\Helpers\Utility::ACTIVE_DB ? 'Đã Đối Soát' : 'Chưa Đối Soát') }}</div>
+                        <div class="col-sm-9">{{ \App\Models\Order::getOrderPayment($order->payment) }}</div>
                     </div>
                 </div>
             </div>
@@ -249,8 +249,8 @@
             @endif
         </div>
         <div class="box-footer">
-            @if($order->payment == \App\Libraries\Helpers\Utility::INACTIVE_DB && $order->status == \App\Models\Order::STATUS_COMPLETED_DB)
-                <a href="{{ action('Backend\OrderController@paymentOrder', ['id' => $order->id]) }}" class="btn btn-primary Confirmation">Xác Nhận Đối Soát</a>
+            @if($order->payment == \App\Models\Order::NOT_PAYMENT_DB && $order->status == \App\Models\Order::STATUS_COMPLETED_DB)
+                <a href="{{ action('Backend\OrderController@paymentOrder', ['id' => $order->id]) }}" class="btn btn-primary Confirmation">Tiến Hàng Đối Soát</a>
             @endif
 
             @if(\App\Models\Order::getOrderStatusOrder($order->status) <= \App\Models\Order::getOrderStatusOrder(\App\Models\Order::STATUS_INFO_RECEIVED_DB))

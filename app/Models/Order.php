@@ -34,6 +34,13 @@ class Order extends Model
     const PREPAY_FALSE_LABEL = 'Không Ứng Trước Tiền Thu Hộ';
     const PREPAY_TRUE_LABEL = 'Ứng Trước Tiền Thu Hộ';
 
+    const NOT_PAYMENT_DB = 0;
+    const PAYMENT_DB = 1;
+    const PROCESSING_PAYMENT_DB = 2;
+    const NOT_PAYMENT_LABEL = 'Chưa Đối Soát';
+    const PAYMENT_LABEL = 'Đã Đối Soát';
+    const PROCESSING_PAYMENT_LABEL = 'Đang Đối Soát';
+
     const ORDER_NUMBER_PREFIX = 1987654321;
 
     protected $table = 'order';
@@ -235,6 +242,20 @@ class Order extends Model
             return $prepay[$value];
 
         return $prepay;
+    }
+
+    public static function getOrderPayment($value = null)
+    {
+        $payment = [
+            self::NOT_PAYMENT_DB => self::NOT_PAYMENT_LABEL,
+            self::PAYMENT_DB => self::PAYMENT_LABEL,
+            self::PROCESSING_PAYMENT_DB => self::PROCESSING_PAYMENT_LABEL,
+        ];
+
+        if($value !== null && isset($payment[$value]))
+            return $payment[$value];
+
+        return $payment;
     }
 
     public function generateDo($province = null)
