@@ -427,31 +427,52 @@ class UserController extends Controller
                 },
             ],
             [
-                'title' => 'Tổng Số Đơn Hàng',
+                'title' => 'Tổng Đơn Hàng',
                 'data' => function($row) {
                     if(!empty($row->customerInformation))
                         echo Utility::formatNumber($row->customerInformation->order_count);
                 },
             ],
             [
-                'title' => 'Đơn Hàng Hoàn Thành',
+                'title' => 'Hoàn Thành',
                 'data' => function($row) {
                     if(!empty($row->customerInformation))
                         echo Utility::formatNumber($row->customerInformation->complete_order_count);
                 },
             ],
             [
-                'title' => 'Đơn Hàng Không Giao Được',
+                'title' => 'Không Giao Được',
                 'data' => function($row) {
                     if(!empty($row->customerInformation))
                         echo Utility::formatNumber($row->customerInformation->fail_order_count);
                 },
             ],
             [
-                'title' => 'Đơn Hàng Hủy',
+                'title' => 'Hủy',
                 'data' => function($row) {
                     if(!empty($row->customerInformation))
                         echo Utility::formatNumber($row->customerInformation->cancel_order_count);
+                },
+            ],
+            [
+                'title' => 'Tổng Khối Lượng',
+                'data' => function($row) {
+                    if(!empty($row->customerInformation))
+                        echo Utility::formatNumber($row->customerInformation->total_weight);
+                },
+            ],
+            [
+                'title' => 'Tổng Thu Hộ',
+                'data' => function($row) {
+                    if(!empty($row->customerInformation))
+                        echo Utility::formatNumber($row->customerInformation->total_cod_price);
+                },
+            ],
+            [
+                'title' => 'Tổng Phí Ship',
+                'data' => function($row) {
+                    if(!empty($row->customerInformation))
+                        echo Utility::formatNumber($row->customerInformation->shipping_price);
                 },
             ],
         ];

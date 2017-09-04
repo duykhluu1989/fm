@@ -15,6 +15,9 @@ class CreateCustomerTable extends Migration
             $table->unsignedInteger('complete_order_count')->default(0);
             $table->unsignedInteger('fail_order_count')->default(0);
             $table->unsignedInteger('cancel_order_count')->default(0);
+            $table->double('total_weight')->unsigned()->default(0);
+            $table->double('total_cod_price')->unsigned()->default(0);
+            $table->double('total_shipping_price')->unsigned()->default(0);
         });
     }
 

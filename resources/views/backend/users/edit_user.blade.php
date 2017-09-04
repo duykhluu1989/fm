@@ -88,6 +88,24 @@
                                         <span class="form-control no-border">{{ !empty($user->customerInformation) ? \App\Libraries\Helpers\Utility::formatNumber($user->customerInformation->cancel_order_count) : '' }}</span>
                                     </div>
                                 </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label>Tổng Khối Lượng</label>
+                                        <span class="form-control no-border">{{ !empty($user->customerInformation) ? \App\Libraries\Helpers\Utility::formatNumber($user->customerInformation->total_weight) : '' }}</span>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label>Tổng Thu Hộ</label>
+                                        <span class="form-control no-border">{{ !empty($user->customerInformation) ? \App\Libraries\Helpers\Utility::formatNumber($user->customerInformation->total_cod_price) : '' }}</span>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label>Tổng Phí Ship</label>
+                                        <span class="form-control no-border">{{ !empty($user->customerInformation) ? \App\Libraries\Helpers\Utility::formatNumber($user->customerInformation->shipping_price) : '' }}</span>
+                                    </div>
+                                </div>
                             </div>
                             <div class="row">
                                 <div class="col-sm-4">
