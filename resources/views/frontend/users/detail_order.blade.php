@@ -136,7 +136,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-3"><b>Dịch vụ ứng trước tiền thu hộ</b></div>
-                                    <div class="col-sm-9">{{ ($order->prepay == \App\Libraries\Helpers\Utility::ACTIVE_DB ? 'Có sử dụng' : 'Không sử dụng') }}</div>
+                                    <div class="col-sm-9">{{ \App\Models\Order::getOrderPrepay($order->prepay) }}</div>
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-3"><b>Đối soát</b></div>

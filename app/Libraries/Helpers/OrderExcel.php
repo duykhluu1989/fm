@@ -4,81 +4,6 @@ namespace App\Libraries\Helpers;
 
 class OrderExcel
 {
-    #   D.O.
-    #	Attempt
-    #	Date
-    #	Start Date
-    #	Age
-    #	Order
-    #	Job type
-    #	Address
-    #	Zip Code
-    #	City
-    #	State
-    #	Country
-    #	Deliver to / Collect from
-    #	Phone
-    #	Sender Phone
-    #   Instructions
-    #	Assign to
-    #	Notify email
-    #	Notify url
-    #	Zone
-    #	Pay back COD FM
-    #	Pay back COD client
-    #	Payment mode
-    #	Payment amt (VND)
-    #	Group
-    #	Weight (kg)
-    #	CBM
-    #	Boxes
-    #	Cartons
-    #	Job title
-    #	Envelopes
-    #	Job Fee
-    #	Detrack
-    #	Status
-    #	Time
-    #	Reason
-    #	Last Reason
-    #	Received by
-    #	Note
-    #	POD lat
-    #	POD lng
-    #	POD address
-    #	Address tracked at
-    #	Arrived lat
-    #	Arrived lng
-    #	Arrived address
-    #	Arrived at
-    #	Texted at
-    #	Called at
-    #	Serial
-    #	Signed at
-    #	Photo 1 at
-    #	Photo 2 at
-    #	Photo 3 at
-    #	Photo 4 at
-    #	Photo 5 at
-    #	Actual Weight
-    #	Temperature
-    #	Hold Time
-    #	Payment Collected
-    #	Actual Crates
-    #	Actual Pallets
-    #	Actual Utilization
-    #	Goods Service Rating
-    #	Driver Rating
-    #	Feedback Remarks
-    #	Pick up from
-    #	Pick up address
-    #	Pick up city
-    #	Pick up state
-    #	Pick up country
-    #	Pick up zip code
-    #	Pick up zone
-    #	POD at
-
     const IMPORT_SENDER_NAME_COLUMN_LABEL = 'SENDER_NAME';
     const IMPORT_SENDER_PHONE_COLUMN_LABEL = 'SENDER_PHONE';
     const IMPORT_SENDER_EMAIL_COLUMN_LABEL = 'SENDER_EMAIL';
@@ -180,5 +105,85 @@ class OrderExcel
         }
 
         return false;
+    }
+
+    public static function getExportColumnLabel()
+    {
+        return [
+            'D.O.',
+            'Attempt',
+        	'Date',
+            'Start Date',
+            'Age',
+            'Order',
+            'Job type',
+            'Address',
+            'Zip Code',
+            'City',
+            'State',
+            'Country',
+            'Deliver to / Collect from',
+            'Phone',
+            'Sender Phone',
+            'Instructions',
+            'Assign to',
+            'Notify email',
+            'Notify url',
+            'Zone',
+            'Pay back COD FM',
+            'Pay back COD client',
+            'Payment mode',
+            'Payment amt (VND)',
+            'Group',
+            'Weight (kg)',
+            'CBM',
+            'Boxes',
+            'Cartons',
+            'Job title',
+            'Envelopes',
+            'Job Fee',
+            'Detrack',
+            'Status',
+            'Time',
+            'Reason',
+            'Last Reason',
+            'Received by',
+            'Note',
+            'POD lat',
+            'POD lng',
+            'POD address',
+            'Address tracked at',
+            'Arrived lat',
+            'Arrived lng',
+            'Arrived address',
+            'Arrived at',
+            'Texted at',
+            'Called at',
+            'Serial',
+            'Signed at',
+            'Photo 1 at',
+            'Photo 2 at',
+            'Photo 3 at',
+            'Photo 4 at',
+            'Photo 5 at',
+            'Actual Weight',
+            'Temperature',
+            'Hold Time',
+            'Payment Collected',
+            'Actual Crates',
+            'Actual Pallets',
+            'Actual Utilization',
+            'Goods Service Rating',
+            'Driver Rating',
+            'Feedback Remarks',
+            'Pick up from',
+            'Pick up address',
+            'Pick up city',
+            'Pick up state',
+            'Pick up country',
+            'Pick up zip code',
+            'Pick up zone',
+            'POD at',
+        ];
     }
 }

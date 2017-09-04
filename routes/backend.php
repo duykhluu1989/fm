@@ -52,6 +52,8 @@ Route::group(['namespace' => 'Backend'], function() {
 
         Route::get('order/controlCancel', 'OrderController@controlCancelOrder');
 
+        Route::get('order/controlExport', 'OrderController@controlExportOrder');
+
         Route::get('area', 'AreaController@adminArea');
 
         Route::match(['get', 'post'], 'area/{id}/edit', 'AreaController@editArea');

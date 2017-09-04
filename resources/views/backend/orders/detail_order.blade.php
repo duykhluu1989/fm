@@ -165,7 +165,7 @@
                     </div>
                     <div class="row">
                         <div class="col-sm-3"><b>Dịch Vụ Ứng Trước Tiền Thu Hộ</b></div>
-                        <div class="col-sm-9">{{ ($order->prepay == \App\Libraries\Helpers\Utility::ACTIVE_DB ? 'Có Sử Dụng' : 'Không Sử Dụng') }}</div>
+                        <div class="col-sm-9">{{ \App\Models\Order::getOrderPrepay($order->prepay) }}</div>
                     </div>
                     <div class="row">
                         <div class="col-sm-3"><b>Đối Soát</b></div>
@@ -173,6 +173,80 @@
                     </div>
                 </div>
             </div>
+
+            @if(!empty($order->collection_tracking_detail))
+                <?php
+                $collectionTrackingDetail = json_decode($order->collection_tracking_detail, true);
+                ?>
+                @if(isset($collectionTrackingDetail['milestones']))
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <h3>Collection</h3>
+                            <div class="table-responsive no-padding">
+                                <table class="table table-striped table-hover table-condensed">
+                                    <thead>
+                                    <tr>
+
+                                        @foreach($collectionTrackingDetail['milestones'][0] as $label => $value)
+                                            <th>{{ $label }}</th>
+                                        @endforeach
+
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+
+                                    @foreach($collectionTrackingDetail['milestones'] as $milestones)
+                                        <tr>
+                                            @foreach($milestones as $value)
+                                                <td>{{ $value }}</td>
+                                            @endforeach
+                                        </tr>
+                                    @endforeach
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+            @endif
+
+            @if(!empty($order->tracking_detail))
+                <?php
+                $deliveryTrackingDetail = json_decode($order->tracking_detail, true);
+                ?>
+                @if(isset($deliveryTrackingDetail['milestones']))
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <h3>Collection</h3>
+                            <div class="table-responsive no-padding">
+                                <table class="table table-striped table-hover table-condensed">
+                                    <thead>
+                                    <tr>
+
+                                        @foreach($deliveryTrackingDetail['milestones'][0] as $label => $value)
+                                            <th>{{ $label }}</th>
+                                        @endforeach
+
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+
+                                    @foreach($deliveryTrackingDetail['milestones'] as $milestones)
+                                        <tr>
+                                            @foreach($milestones as $value)
+                                                <td>{{ $value }}</td>
+                                            @endforeach
+                                        </tr>
+                                    @endforeach
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+            @endif
         </div>
         <div class="box-footer">
             @if($order->payment == \App\Libraries\Helpers\Utility::INACTIVE_DB && $order->status == \App\Models\Order::STATUS_COMPLETED_DB)

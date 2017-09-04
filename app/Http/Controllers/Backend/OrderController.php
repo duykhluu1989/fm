@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Backend;
 
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
@@ -10,6 +11,7 @@ use App\Libraries\Widgets\GridView;
 use App\Libraries\Helpers\Html;
 use App\Libraries\Helpers\Utility;
 use App\Libraries\Detrack\Detrack;
+use App\Libraries\Helpers\OrderExcel;
 use App\Models\Order;
 use App\Models\OrderAddress;
 use App\Models\Area;
@@ -584,5 +586,56 @@ class OrderController extends Controller
         }
         else
             return '';
+    }
+
+    public function controlExportOrder(Request $request)
+    {
+        $ids = $request->input('ids');
+
+        $orders = Order::whereIn('id', explode(';', $ids))->get();
+
+        $exportCollectionData[] = OrderExcel::getExportColumnLabel();
+        $exportDeliveryData[] = OrderExcel::getExportColumnLabel();
+
+        foreach($orders as $order)
+        {
+            if(!empty($order->collection_tracking_detail))
+            {
+                $collectionTrackingDetail = json_decode($order->collection_tracking_detail, true);
+
+                $exportCollectionData[] = [
+
+                ];
+            }
+            else
+                $exportCollectionData[] = array();
+
+            if(!empty($order->tracking_detail))
+            {
+                $deliveryTrackingDetail = json_decode($order->tracking_detail, true);
+
+                $exportDeliveryData[] = [
+
+                ];
+            }
+            else
+                $exportDeliveryData[] = array();
+        }
+
+        Excel::create('order', function($excel) use($exportCollectionData, $exportDeliveryData) {
+
+            $excel->sheet('collection', function($sheet) use($exportCollectionData) {
+
+                $sheet->fromArray($exportCollectionData, null, 'A1', true, false);
+
+            });
+
+            $excel->sheet('delivery', function($sheet) use($exportDeliveryData) {
+
+                $sheet->fromArray($exportDeliveryData, null, 'A1', true, false);
+
+            });
+
+        })->export('xlsx');
     }
 }
