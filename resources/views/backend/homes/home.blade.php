@@ -4,6 +4,41 @@
 
 @section('section')
 
+    <div class="box box-primary">
+        <div class="box-header with-border">
+            <h3 class="box-title">Lọc Thống Kê</h3>
+            <div class="box-tools pull-right">
+                <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus fa-fw"></i></button>
+            </div>
+        </div>
+        <form method="get" action="{{ action('Backend\HomeController@home') }}">
+            <div class="box-body">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label class="col-sm-5 control-label">Từ Ngày</label>
+                            <div class="col-sm-7">
+                                <input type="text" class="form-control DatePicker" name="created_at_from" value="{{ request('created_at_from') }}" required="required" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label class="col-sm-5 control-label">Tới Ngày</label>
+                            <div class="col-sm-7">
+                                <input type="text" class="form-control DatePicker" name="created_at_to" value="{{ request('created_at_to') }}" required="required" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="box-footer text-center">
+                <button type="submit" class="btn btn-primary">Lọc Thống Kê</button>
+                <a href="{{ action('Backend\HomeController@home') }}" class="btn btn-default">Hủy Lọc Thống Kê</a>
+            </div>
+        </form>
+    </div>
+
     <div class="row">
         <div class="col-md-3 col-sm-6 col-xs-12">
             <div class="info-box">
