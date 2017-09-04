@@ -48,6 +48,8 @@ Route::group(['namespace' => 'Backend'], function() {
 
         Route::get('order/controlPayment', 'OrderController@controlPaymentOrder');
 
+        Route::get('order/{id}/completePayment', 'OrderController@completePaymentOrder');
+
         Route::get('order/{id}/cancel', 'OrderController@cancelOrder');
 
         Route::get('order/controlCancel', 'OrderController@controlCancelOrder');

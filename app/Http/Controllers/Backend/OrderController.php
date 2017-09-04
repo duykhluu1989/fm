@@ -412,13 +412,13 @@ class OrderController extends Controller
     {
         $order = Order::find($id);
 
-        if(empty($order) || $order->payment == Utility::ACTIVE_DB || $order->status != Order::STATUS_COMPLETED_DB)
+        if(empty($order) || $order->payment == Order::NOT_PAYMENT_DB || $order->status != Order::STATUS_COMPLETED_DB)
             return view('backend.errors.404');
 
-        $order->payment = Utility::ACTIVE_DB;
+        $order->payment = Order::PROCESSING_PAYMENT_DB;
         $order->save();
 
-        return redirect()->action('Backend\OrderController@detailOrder', ['id' => $id])->with('messageSuccess', 'Xác Nhận Đối Soát Thành Công');
+        return redirect()->action('Backend\OrderController@detailOrder', ['id' => $id])->with('messageSuccess', 'Tiến Hành Đối Soát Thành Công');
     }
 
     public function controlPaymentOrder(Request $request)
@@ -427,19 +427,47 @@ class OrderController extends Controller
 
         $orders = Order::whereIn('id', explode(';', $ids))->get();
 
+        $exportData = [
+            'Order Number',
+            'DO',
+        ];
+
         foreach($orders as $order)
         {
-            if($order->payment == Utility::INACTIVE_DB && $order->status == Order::STATUS_COMPLETED_DB)
+            if($order->payment == Order::NOT_PAYMENT_DB && $order->status == Order::STATUS_COMPLETED_DB)
             {
-                $order->payment = Utility::ACTIVE_DB;
+                $order->payment = Order::PROCESSING_PAYMENT_DB;
                 $order->save();
+
+                $exportData[] = [
+                    $order->number,
+                    $order->do,
+                ];
             }
         }
 
-        if($request->headers->has('referer'))
-            return redirect($request->headers->get('referer'))->with('messageSuccess', 'Thành Công');
-        else
-            return redirect()->action('Backend\OrderController@adminOrder')->with('messageSuccess', 'Thành Công');
+        Excel::create('order', function($excel) use($exportData) {
+
+            $excel->sheet('sheet1', function($sheet) use($exportData) {
+
+                $sheet->fromArray($exportData, null, 'A1', true, false);
+
+            });
+
+        })->export('xlsx');
+    }
+
+    public function completePaymentOrder($id)
+    {
+        $order = Order::find($id);
+
+        if(empty($order) || $order->payment == Order::PROCESSING_PAYMENT_DB || $order->status != Order::STATUS_COMPLETED_DB)
+            return view('backend.errors.404');
+
+        $order->payment = Order::PAYMENT_DB;
+        $order->save();
+
+        return redirect()->action('Backend\OrderController@detailOrder', ['id' => $id])->with('messageSuccess', 'Xác Nhận Đối Soát Thành Công');
     }
 
     public function cancelOrder($id)

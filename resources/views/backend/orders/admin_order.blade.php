@@ -13,8 +13,8 @@
                 'data-container' => 'body',
                 'data-toggle' => 'popover',
                 'data-placement' => 'top',
-                'data-content' => 'Xác Nhận Đối Soát',
-                'value' => action('Backend\OrderController@controlCancelOrder'),
+                'data-content' => 'Tiến Hành Đối Soát',
+                'value' => action('Backend\OrderController@controlPaymentOrder'),
                 'style' => 'display: none',
             ]);
         },
