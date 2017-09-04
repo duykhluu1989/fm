@@ -10,7 +10,7 @@ class HomeController extends Controller
     public function home()
     {
         $orders = DB::table('customer')
-            ->select(DB::raw('sum(order_count) as total, sum(complete_order_count) as complete, sum(fail_order_count) as fail, sum(cancel_order_count) as cancel'))
+            ->select(DB::raw('sum(order_count) as total, sum(complete_order_count) as complete, sum(fail_order_count) as fail, sum(cancel_order_count) as cancel, sum(total_weight) as weight, sum(total_cod_price) as cod_price, sum(total_shipping_price) as shipping_price'))
             ->get()
             ->toArray();
 
