@@ -26,15 +26,16 @@ class AreaController extends Controller
             if(!empty($inputs['name']))
                 $dataProvider->where('area.name', 'like', '%' . $inputs['name'] . '%');
 
-            if(!empty($inputs['parent_name']))
+            if(!empty($inputs['district']))
+                $dataProvider->where('area.parent_id', $inputs['district']);
+            else if(!empty($inputs['province']))
             {
                 $dataProvider->join('area as pa', function($join) {
                     $join->on('area.parent_id', '=', 'pa.id');
-                })->where('pa.name', 'like', '%' . $inputs['parent_name'] . '%');
+                })->where(function($query) use($inputs) {
+                    $query->where('area.parent_id', $inputs['province'])->orWhere('pa.parent_id', $inputs['province']);
+                });
             }
-
-            if(isset($inputs['type']) && $inputs['type'] !== '')
-                $dataProvider->where('area.type', $inputs['type']);
 
             if(isset($inputs['status']) && $inputs['status'] !== '')
                 $dataProvider->where('area.status', $inputs['status']);
@@ -90,15 +91,16 @@ class AreaController extends Controller
                 'type' => 'input',
             ],
             [
-                'title' => 'Thuộc',
-                'name' => 'parent_name',
-                'type' => 'input',
+                'title' => 'Thành Phố',
+                'name' => 'province',
+                'type' => 'select',
+                'options' => Area::getProvinces()->pluck('name', 'id')->toArray(),
             ],
             [
-                'title' => 'Loại',
-                'name' => 'type',
+                'title' => 'Quận',
+                'name' => 'district',
                 'type' => 'select',
-                'options' => Area::getAreaType(),
+                'options' => (isset($inputs['province']) ? Area::getDistricts($inputs['province'])->pluck('name', 'id')->toArray() : array()),
             ],
             [
                 'title' => 'Trạng Thái',
