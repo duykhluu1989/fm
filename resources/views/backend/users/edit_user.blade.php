@@ -186,6 +186,14 @@
                             <div class="row">
                                 <div class="col-sm-4">
                                     <div class="form-group">
+                                        <label>Group</label>
+                                        <input type="text" class="form-control" name="group" value="{{ old('group', $user->group) }}" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
                                         <label>Trạng Thái</label>
                                         <?php
                                         $status = old('status', $user->status);

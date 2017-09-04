@@ -29,6 +29,7 @@ class CreateUserTable extends Migration
             $table->double('discount_value')->unsigned()->nullable();
             $table->string('login_token', 1000)->nullable();
             $table->text('prepay_contract')->nullable();
+            $table->string('group', 255)->nullable();
         });
     }
 

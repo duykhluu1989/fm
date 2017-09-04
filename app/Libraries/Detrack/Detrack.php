@@ -49,6 +49,7 @@ class Detrack
                 'instructions' => !empty($order->note) ? $order->note : '',
                 'pay_amt' => $order->total_cod_price,
                 'order_no' => $order->number,
+                'group_name' => $order->user->group,
             ];
         }
 
@@ -152,6 +153,7 @@ class Detrack
                 'instructions' => !empty($order->note) ? $order->note : '',
                 'pay_amt' => $order->total_cod_price,
                 'order_no' => $order->number,
+                'group_name' => $order->user->group,
             ];
         }
 
@@ -314,6 +316,7 @@ class Detrack
                 'notify_url' => action('Api\CollectionController@handleCollectionNotification'),
                 'instructions' => !empty($order->note) ? $order->note : '',
                 'order_no' => $order->number,
+                'group_name' => $order->user->group,
             ];
         }
 
@@ -416,6 +419,7 @@ class Detrack
                 'notify_url' => action('Api\CollectionController@handleCollectionNotification'),
                 'instructions' => !empty($order->note) ? $order->note : '',
                 'order_no' => $order->number,
+                'group_name' => $order->user->group,
             ];
         }
 

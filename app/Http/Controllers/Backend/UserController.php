@@ -287,6 +287,7 @@ class UserController extends Controller
                     $user->bank_number = $inputs['bank_number'];
                     $user->bank_branch = $inputs['bank_branch'];
                     $user->api_key = strtoupper($inputs['api_key']);
+                    $user->group = $inputs['group'];
 
                     if(isset($inputs['discount_type']) && $inputs['discount_type'] !== '')
                     {
