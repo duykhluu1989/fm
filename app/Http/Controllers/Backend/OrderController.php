@@ -152,7 +152,7 @@ class OrderController extends Controller
             [
                 'title' => 'Trạng Thái',
                 'data' => function($row) {
-                    echo Html::span($row->status, ['class' => 'label label-' . Order::getOrderStatusLabel($row->status)]);
+                    echo Html::span(Order::getOrderStatus($row->status), ['class' => 'label label-' . Order::getOrderStatusLabel($row->status)]);
                 },
             ],
             [

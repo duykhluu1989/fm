@@ -58,6 +58,9 @@
                     <li class="{{ (request()->is('admin/setting/social') ? 'active' : '') }}">
                         <a href="{{ action('Backend\SettingController@adminSettingSocial') }}">Mạng Xã Hội</a>
                     </li>
+                    <li class="{{ (request()->is('admin/setting/orderStatus') ? 'active' : '') }}">
+                        <a href="{{ action('Backend\SettingController@adminSettingOrderStatus') }}">Trạng Thái Đơn Hàng</a>
+                    </li>
                 </ul>
             </li>
         </ul>

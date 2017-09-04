@@ -24,6 +24,8 @@ class Setting extends Model
     const FACEBOOK_GRAPH_VERSION = 'facebook_graph_version';
     const FACEBOOK_PAGE_URL = 'facebook_page_url';
 
+    const ORDER_STATUS_LIST = 'order_status_list';
+
     const TYPE_STRING_DB = 0;
     const TYPE_INT_DB = 1;
     const TYPE_JSON_DB = 2;
@@ -32,6 +34,7 @@ class Setting extends Model
     const CATEGORY_GENERAL_DB = 0;
     const CATEGORY_API_DB = 1;
     const CATEGORY_SOCIAL_DB = 2;
+    const CATEGORY_LABEL_DB = 3;
 
     protected static $settings;
 
@@ -59,6 +62,8 @@ class Setting extends Model
             [self::FACEBOOK_APP_SECRET, 'Facebook App Secret', self::TYPE_STRING_DB, '', self::CATEGORY_SOCIAL_DB],
             [self::FACEBOOK_GRAPH_VERSION, 'Facebook Graph Version', self::TYPE_STRING_DB, 'v2.9', self::CATEGORY_SOCIAL_DB],
             [self::FACEBOOK_PAGE_URL, 'Facebook Page', self::TYPE_STRING_DB, '', self::CATEGORY_SOCIAL_DB],
+
+            [self::ORDER_STATUS_LIST, 'Order Status List', self::TYPE_JSON_DB, json_decode(Order::getOrderStatus()), self::CATEGORY_LABEL_DB],
         ];
 
         foreach($coreSettings as $coreSetting)

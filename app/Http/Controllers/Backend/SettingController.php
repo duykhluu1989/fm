@@ -132,4 +132,40 @@ class SettingController extends Controller
             'settings' => $settings,
         ]);
     }
+
+    public function adminSettingOrderStatus(Request $request)
+    {
+        $settings = Setting::getSettings(Setting::CATEGORY_LABEL_DB);
+
+        if($request->isMethod('post'))
+        {
+            $inputs = $request->all();
+
+            $orderStatusList = json_decode($settings[\App\Models\Setting::ORDER_STATUS_LIST]->value, true);
+
+            $rules = array();
+
+            foreach($orderStatusList as $code => $value)
+                $rules[$code] = 'required';
+
+            $validator = Validator::make($inputs, $rules);
+
+            if($validator->passes())
+            {
+                foreach($orderStatusList as $code => $value)
+                    $orderStatusList[$code] = $inputs[$code];
+
+                $settings[\App\Models\Setting::ORDER_STATUS_LIST]->value = json_encode($orderStatusList);
+                $settings[\App\Models\Setting::ORDER_STATUS_LIST]->save();
+
+                return redirect()->action('Backend\SettingController@adminSettingOrderStatus')->with('messageSuccess', 'Thành Công');
+            }
+            else
+                return redirect()->action('Backend\SettingController@adminSettingOrderStatus')->withErrors($validator)->withInput();
+        }
+
+        return view('backend.settings.admin_setting_order_status', [
+            'settings' => $settings,
+        ]);
+    }
 }

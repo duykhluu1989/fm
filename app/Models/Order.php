@@ -133,21 +133,28 @@ class Order extends Model
 
     public static function getOrderStatus($value = null)
     {
-        $status = [
-            self::STATUS_INFO_RECEIVED_DB => self::STATUS_INFO_RECEIVED_DB,
-            self::STATUS_PROCESSING_DB => self::STATUS_PROCESSING_DB,
-            self::STATUS_SCHEDULED_DB => self::STATUS_SCHEDULED_DB,
-            self::STATUS_PRE_JOB_DB => self::STATUS_PRE_JOB_DB,
-            self::STATUS_HEADING_TO_DB => self::STATUS_HEADING_TO_DB,
-            self::STATUS_CANCEL_HEADING_TO_DB => self::STATUS_CANCEL_HEADING_TO_DB,
-            self::STATUS_ARRIVED_DB => self::STATUS_ARRIVED_DB,
-            self::STATUS_COMPLETED_DB => self::STATUS_COMPLETED_DB,
-            self::STATUS_PARTIALLY_COMPLETED_DB => self::STATUS_PARTIALLY_COMPLETED_DB,
-            self::STATUS_FAILED_DB => self::STATUS_FAILED_DB,
-            self::STATUS_RETURN_DB => self::STATUS_RETURN_DB,
-            self::STATUS_ON_HOLD_DB => self::STATUS_ON_HOLD_DB,
-            self::STATUS_CANCELLED_DB => self::STATUS_CANCELLED_DB,
-        ];
+        $setting = Setting::where('code', Setting::ORDER_STATUS_LIST)->first();
+
+        if(!empty($setting))
+            $status = json_decode($setting->value, true);
+        else
+        {
+            $status = [
+                self::STATUS_INFO_RECEIVED_DB => self::STATUS_INFO_RECEIVED_DB,
+                self::STATUS_PROCESSING_DB => self::STATUS_PROCESSING_DB,
+                self::STATUS_SCHEDULED_DB => self::STATUS_SCHEDULED_DB,
+                self::STATUS_PRE_JOB_DB => self::STATUS_PRE_JOB_DB,
+                self::STATUS_HEADING_TO_DB => self::STATUS_HEADING_TO_DB,
+                self::STATUS_CANCEL_HEADING_TO_DB => self::STATUS_CANCEL_HEADING_TO_DB,
+                self::STATUS_ARRIVED_DB => self::STATUS_ARRIVED_DB,
+                self::STATUS_COMPLETED_DB => self::STATUS_COMPLETED_DB,
+                self::STATUS_PARTIALLY_COMPLETED_DB => self::STATUS_PARTIALLY_COMPLETED_DB,
+                self::STATUS_FAILED_DB => self::STATUS_FAILED_DB,
+                self::STATUS_RETURN_DB => self::STATUS_RETURN_DB,
+                self::STATUS_ON_HOLD_DB => self::STATUS_ON_HOLD_DB,
+                self::STATUS_CANCELLED_DB => self::STATUS_CANCELLED_DB,
+            ];
+        }
 
         if($value !== null && isset($status[$value]))
             return $status[$value];

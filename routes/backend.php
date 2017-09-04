@@ -122,6 +122,8 @@ Route::group(['namespace' => 'Backend'], function() {
 
         Route::match(['get', 'post'], 'setting/social', 'SettingController@adminSettingSocial');
 
+        Route::match(['get', 'post'], 'setting/orderStatus', 'SettingController@adminSettingOrderStatus');
+
     });
 
 });
