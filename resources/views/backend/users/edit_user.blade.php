@@ -11,6 +11,8 @@
                 <button type="submit" class="btn btn-primary">Cập Nhật</button>
                 <a href="{{ \App\Libraries\Helpers\Utility::getBackUrlCookie(action('Backend\UserController@adminUser')) }}" class="btn btn-default">Quay Lại</a>
 
+                <button type="button" class="btn btn-primary" id="AttachmentFileListButton">Attachment File</button>
+
                 <button type="button" class="btn btn-primary" id="UploadPlaceOrderButton">Tạo Đơn Hàng Bằng Excel</button>
 
                 <a class="btn btn-primary pull-right" href="{{ action('Frontend\OrderController@importExcelPlaceOrderTemplate') }}" target="_blank">Tải File Excel Mẫu</a>
@@ -344,10 +346,12 @@
 
 @push('stylesheets')
     <link rel="stylesheet" href="{{ asset('assets/css/bootstrap-toggle.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/colorbox.css') }}">
 @endpush
 
 @push('scripts')
     <script src="{{ asset('assets/js/bootstrap-toggle.min.js') }}"></script>
+    <script src="{{ asset('assets/js/jquery.colorbox-min.js') }}"></script>
     <script type="text/javascript">
         $('#GenerateApiKeyButton').click(function() {
             $.ajax({
@@ -406,6 +410,16 @@
 
         $('#UploadPlaceOrderButton').click(function() {
             $('#UploadPlaceOrderModal').modal('show');
+        });
+
+        $('#AttachmentFileListButton').click(function() {
+            $.colorbox({
+                href: '{{ action('Backend\ElFinderController@popupUserAttachment', ['id' => $user->id]) }}',
+                iframe: true,
+                width: '1200',
+                height: '600',
+                closeButton: false
+            });
         });
     </script>
 @endpush

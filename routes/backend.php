@@ -84,6 +84,10 @@ Route::group(['namespace' => 'Backend'], function() {
 
         Route::get('elFinder/tinymce', 'ElFinderController@tinymce');
 
+        Route::get('elFinder/popup/userAttachment/{id}', 'ElFinderController@popupUserAttachment');
+
+        Route::match(['get', 'post'], 'elFinder/popupConnector/userAttachment/{id}', 'ElFinderController@popupConnectorUserAttachment');
+
         Route::get('article', 'ArticleController@adminArticle');
 
         Route::match(['get', 'post'], 'article/create', 'ArticleController@createArticle');

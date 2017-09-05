@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
 use Barryvdh\Elfinder\Connector;
+use App\Models\User;
 
 class ElFinderController extends Controller
 {
@@ -43,5 +44,36 @@ class ElFinderController extends Controller
     public function tinymce()
     {
         return view('backend.elFinders.tinymce');
+    }
+
+    public function popupUserAttachment($id)
+    {
+        return view('backend.elFinders.popup_user_attachment', ['id' => $id]);
+    }
+
+    public function popupConnectorUserAttachment($id)
+    {
+        $path = public_path() . User::ORDER_UPLOAD_PATH . '/' . $id;
+
+        if(!file_exists($path))
+            mkdir($path, 0755, true);
+
+        $opts = [
+            'roots'  => [
+                [
+                    'driver'        => 'LocalFileSystem',
+                    'path'          => $path,
+                    'URL'           => url(User::ORDER_UPLOAD_PATH . '/' . $id),
+                    'uploadDeny'    => ['all'],
+                    'uploadAllow'   => ['image'],
+                    'uploadOrder'   => ['deny', 'allow'],
+                    'accessControl' => 'Barryvdh\Elfinder\Elfinder::checkAccess',
+                ]
+            ]
+        ];
+
+        $connector = new Connector(new \elFinder($opts));
+        $connector->run();
+        return $connector->getResponse();
     }
 }
