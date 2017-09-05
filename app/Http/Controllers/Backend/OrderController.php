@@ -430,6 +430,8 @@ class OrderController extends Controller
         $exportData = [
             'Order Number',
             'DO',
+            'Code',
+            'Note',
         ];
 
         foreach($orders as $order)
@@ -442,6 +444,8 @@ class OrderController extends Controller
                 $exportData[] = [
                     $order->number,
                     $order->do,
+                    '',
+                    '',
                 ];
             }
         }
@@ -491,6 +495,8 @@ class OrderController extends Controller
             }
 
             $doColumn = null;
+            $codeColumn = null;
+            $noteColumn = null;
 
             $i = 0;
             foreach($excelData as $rowData)
@@ -501,9 +507,13 @@ class OrderController extends Controller
                     {
                         if(Utility::removeWhitespace($cellData, '') == 'DO')
                             $doColumn = $column;
+                        else if(Utility::removeWhitespace($cellData, '') == 'Code')
+                            $codeColumn = $column;
+                        else if(Utility::removeWhitespace($cellData, '') == 'Note')
+                            $noteColumn = $column;
                     }
 
-                    if($doColumn === null)
+                    if($doColumn === null || $codeColumn === null || $noteColumn === null)
                     {
                         if($request->headers->has('referer'))
                             return redirect($request->headers->get('referer'))->with('messageError', 'File Excel Phải Có Column DO');
@@ -518,6 +528,9 @@ class OrderController extends Controller
                     if(!empty($order) && $order->payment == Order::PROCESSING_PAYMENT_DB && $order->status == Order::STATUS_COMPLETED_DB)
                     {
                         $order->payment = Order::PAYMENT_DB;
+                        $order->payment_code = $rowData[$codeColumn];
+                        $order->payment_note = $rowData[$noteColumn];
+                        $order->payment_completed_at = date('Y-m-d H:i:s');
                         $order->save();
                     }
                 }

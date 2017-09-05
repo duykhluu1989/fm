@@ -10,6 +10,10 @@
             <div class="box-header with-border">
                 <button type="submit" class="btn btn-primary">Cập Nhật</button>
                 <a href="{{ \App\Libraries\Helpers\Utility::getBackUrlCookie(action('Backend\UserController@adminUser')) }}" class="btn btn-default">Quay Lại</a>
+
+                <button type="button" class="btn btn-primary" id="UploadPlaceOrderButton">Tạo Đơn Hàng Bằng Excel</button>
+
+                <a class="btn btn-primary pull-right" href="{{ action('Frontend\OrderController@importExcelPlaceOrderTemplate') }}" target="_blank">Tải File Excel Mẫu</a>
             </div>
             <div class="box-body">
                 <div class="nav-tabs-custom">
@@ -312,6 +316,30 @@
 
     </form>
 
+    <div class="modal fade" tabindex="-1" role="dialog" id="UploadPlaceOrderModal">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content box">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Tạo Đơn Hàng Bằng Excel</h4>
+                </div>
+                <form action="{{ action('Backend\UserController@importExcelPlaceOrder', ['id' => $user->id]) }}" method="post" enctype="multipart/form-data">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>File Excel <i>(bắt buộc)</i></label>
+                            <input type="file" name="file" required="required" accept="{{ implode(', ', \App\Libraries\Helpers\Utility::getValidExcelExt(true)) }}" />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Hủy</button>
+                        <button type="submit" class="btn btn-primary">Xác Nhận</button>
+                    </div>
+                    {{ csrf_field() }}
+                </form>
+            </div>
+        </div>
+    </div>
+
 @stop
 
 @push('stylesheets')
@@ -375,5 +403,9 @@
                 valueInputElem.off('keyup');
             }
         }
+
+        $('#UploadPlaceOrderButton').click(function() {
+            $('#UploadPlaceOrderModal').modal('show');
+        });
     </script>
 @endpush

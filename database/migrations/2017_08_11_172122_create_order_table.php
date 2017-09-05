@@ -41,6 +41,9 @@ class CreateOrderTable extends Migration
             $table->date('date')->nullable();
             $table->double('discount_shipping_price')->unsigned()->default(0);
             $table->unsignedTinyInteger('source')->default(0);
+            $table->string('payment_code', 255)->nullable();
+            $table->string('payment_note', 255)->nullable();
+            $table->dateTime('payment_completed_at')->nullable();
         });
     }
 

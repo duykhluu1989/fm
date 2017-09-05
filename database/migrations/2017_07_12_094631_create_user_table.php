@@ -30,6 +30,7 @@ class CreateUserTable extends Migration
             $table->string('login_token', 1000)->nullable();
             $table->text('prepay_contract')->nullable();
             $table->string('group', 255)->nullable();
+            $table->unsignedTinyInteger('attachment')->default(0);
         });
     }
 

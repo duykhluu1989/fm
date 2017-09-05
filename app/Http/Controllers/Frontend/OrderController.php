@@ -566,6 +566,7 @@ class OrderController extends Controller
             return '';
     }
 
+    /*
     public function importExcelPlaceOrder(Request $request)
     {
         if($request->isMethod('post'))
@@ -872,7 +873,7 @@ class OrderController extends Controller
                                 $placedOrders[] = $order;
                             }
                             else
-                                return redirect()->action('Frontend\OrderController@importExcelPlaceOrder')->withErrors(['file' => 'Row ' . $i . ': ' .$rowValidator->errors()->first()]);
+                                return redirect()->action('Frontend\OrderController@importExcelPlaceOrder')->withErrors(['file' => 'Row ' . $i . ': ' . $rowValidator->errors()->first()]);
                         }
 
                         DB::commit();
@@ -920,6 +921,47 @@ class OrderController extends Controller
                 }
                 else
                     return redirect()->action('Frontend\OrderController@importExcelPlaceOrder')->withErrors(['file' => 'Định dạng file phải giống file mẫu']);
+            }
+            else
+                return redirect()->action('Frontend\OrderController@importExcelPlaceOrder')->withErrors($validator);
+        }
+
+        return view('frontend.orders.import_excel_place_order');
+    }
+    */
+
+    public function importExcelPlaceOrder(Request $request)
+    {
+        if($request->isMethod('post'))
+        {
+            $user = auth()->user();
+
+            $inputs = $request->all();
+
+            $validator = Validator::make($inputs, [
+                'file' => 'required|file|mimes:' . implode(',', Utility::getValidExcelExt()),
+            ]);
+
+            if($validator->passes())
+            {
+                $uploadFile = $inputs['file'];
+
+                $fullSavePath = public_path() . User::ORDER_UPLOAD_PATH . '/' . $user->id;
+
+                if(!file_exists($fullSavePath))
+                    mkdir($fullSavePath, 0755, true);
+
+                $fileName = date('Y_m_d_H_i_s') . '.' . strtolower($uploadFile->getClientOriginalExtension());
+
+                $uploadFile->move($fullSavePath, $fileName);
+
+                if($user->attachment == false)
+                {
+                    $user->attachment = true;
+                    $user->save();
+                }
+
+                return redirect()->action('Frontend\OrderController@importExcelPlaceOrder')->with('messageSuccess', 'File excel đã được tải lên thành công và đang tiến hành xử lý tạo đơn hàng, hệ thống sẽ gửi email thông báo cho bạn khi tiến trình xử lý hoàn tất');
             }
             else
                 return redirect()->action('Frontend\OrderController@importExcelPlaceOrder')->withErrors($validator);

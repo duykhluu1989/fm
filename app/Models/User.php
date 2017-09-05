@@ -8,6 +8,8 @@ use App\Libraries\Helpers\Utility;
 
 class User extends Authenticatable
 {
+    const ORDER_UPLOAD_PATH = '/uploads/users/orders';
+
     protected $table = 'user';
 
     public $timestamps = false;

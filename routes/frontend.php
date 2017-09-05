@@ -40,11 +40,11 @@ Route::group(['namespace' => 'Frontend', 'middleware' => ['locale']], function()
 
         Route::get('account/general', 'UserController@general');
 
+        Route::match(['get', 'post'], 'order/import', 'OrderController@importExcelPlaceOrder');
+
     });
 
     Route::match(['get', 'post'], 'order', 'OrderController@placeOrder');
-
-    Route::match(['get', 'post'], 'order/import', 'OrderController@importExcelPlaceOrder');
 
     Route::get('order/import/template', 'OrderController@importExcelPlaceOrderTemplate');
 
