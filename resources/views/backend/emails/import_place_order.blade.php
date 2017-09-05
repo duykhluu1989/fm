@@ -1,0 +1,1 @@
+<p>File excel được tải lên vào lúc {{ $uploadedDateTime }} đã được xử lý tạo đơn hàng hoàn tất</p>

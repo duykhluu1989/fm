@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
 use Barryvdh\Elfinder\Connector;
+use App\Libraries\Helpers\Utility;
 use App\Models\User;
 
 class ElFinderController extends Controller
@@ -59,6 +60,25 @@ class ElFinderController extends Controller
             mkdir($path, 0755, true);
 
         $opts = [
+            'bind' => [
+                'rm' => function($cmd) use($id) {
+                    if($cmd == 'rm')
+                    {
+                        $user = User::find($id);
+
+                        if($user->attachment == true)
+                        {
+                            $fullSavePath = public_path() . User::ORDER_UPLOAD_PATH . '/' . $user->id;
+
+                            if(file_exists($fullSavePath) && count(glob($fullSavePath . '/*.{' . implode(',', Utility::getValidExcelExt()) . '}', GLOB_BRACE)) == 0)
+                            {
+                                $user->attachment = false;
+                                $user->save();
+                            }
+                        }
+                    }
+                },
+            ],
             'roots'  => [
                 [
                     'driver'        => 'LocalFileSystem',

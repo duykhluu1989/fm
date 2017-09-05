@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Backend;
 
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -950,15 +951,26 @@ class UserController extends Controller
 
                     DB::commit();
 
+                    $uploadFile = $inputs['file'];
 
+                    $uploadedDateTime = str_replace('_', '-', str_replace('.' . $uploadFile->getClientOriginalExtension(), '', $uploadFile->getClientOriginalName()));
 
+                    $fullSavePath = public_path() . User::ORDER_UPLOAD_PATH . '/' . $user->id;
+                    $fullFilePath = $fullSavePath . '/' . $uploadFile->getClientOriginalName();
 
+                    if(file_exists($fullFilePath) && is_file($fullFilePath))
+                        unlink($fullFilePath);
 
-                    // send email
+                    if($user->attachment == true)
+                    {
+                        if(file_exists($fullSavePath) && count(glob($fullSavePath . '/*.{' . implode(',', Utility::getValidExcelExt()) . '}', GLOB_BRACE)) == 0)
+                        {
+                            $user->attachment = false;
+                            $user->save();
+                        }
+                    }
 
-
-
-
+                    register_shutdown_function([UserController::class, 'sendImportExcelPlaceOrderEmail'], $user, $uploadedDateTime);
 
                     $detrack = Detrack::make();
                     $successDos = $detrack->addCollections($placedOrders);
@@ -999,5 +1011,23 @@ class UserController extends Controller
         }
         else
             return redirect()->action('Backend\UserController@editUser', ['id' => $user->id])->with('messageError', $validator->errors()->first());
+    }
+
+    public static function sendImportExcelPlaceOrderEmail($user, $uploadedDateTime)
+    {
+        try
+        {
+            Mail::send('backend.emails.import_place_order', ['uploadedDateTime' => $uploadedDateTime], function($message) use($user) {
+
+                $message->from(Setting::getSettings(Setting::CATEGORY_GENERAL_DB, Setting::CONTACT_EMAIL), Setting::getSettings(Setting::CATEGORY_GENERAL_DB, Setting::WEB_TITLE));
+                $message->to($user->email, $user->name);
+                $message->subject(Setting::getSettings(Setting::CATEGORY_GENERAL_DB, Setting::WEB_TITLE) . ' | Tạo đơn hàng bằng excel thành công');
+
+            });
+        }
+        catch(\Exception $e)
+        {
+
+        }
     }
 }
