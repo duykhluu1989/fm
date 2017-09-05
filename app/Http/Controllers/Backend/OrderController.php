@@ -412,7 +412,7 @@ class OrderController extends Controller
     {
         $order = Order::find($id);
 
-        if(empty($order) || $order->payment == Order::NOT_PAYMENT_DB || $order->status != Order::STATUS_COMPLETED_DB)
+        if(empty($order) || $order->payment != Order::NOT_PAYMENT_DB || $order->status != Order::STATUS_COMPLETED_DB)
             return view('backend.errors.404');
 
         $order->payment = Order::PROCESSING_PAYMENT_DB;
@@ -461,13 +461,82 @@ class OrderController extends Controller
     {
         $order = Order::find($id);
 
-        if(empty($order) || $order->payment == Order::PROCESSING_PAYMENT_DB || $order->status != Order::STATUS_COMPLETED_DB)
+        if(empty($order) || $order->payment != Order::PROCESSING_PAYMENT_DB || $order->status != Order::STATUS_COMPLETED_DB)
             return view('backend.errors.404');
 
         $order->payment = Order::PAYMENT_DB;
         $order->save();
 
         return redirect()->action('Backend\OrderController@detailOrder', ['id' => $id])->with('messageSuccess', 'Xác Nhận Đối Soát Thành Công');
+    }
+
+    public function uploadCompletePaymentOrder(Request $request)
+    {
+        $inputs = $request->all();
+
+        $validator = Validator::make($inputs, [
+            'file' => 'required|file|mimes:' . implode(',', Utility::getValidExcelExt()),
+        ]);
+
+        if($validator->passes())
+        {
+            $excelData = Excel::load($inputs['file']->getPathname())->noHeading()->toArray();
+
+            if(count($excelData) < 2)
+            {
+                if($request->headers->has('referer'))
+                    return redirect($request->headers->get('referer'))->with('messageError', 'File Excel Không Hợp Lệ');
+                else
+                    return redirect()->action('Backend\OrderController@adminOrder')->with('messageError', 'File Excel Không Hợp Lệ');
+            }
+
+            $doColumn = null;
+
+            $i = 0;
+            foreach($excelData as $rowData)
+            {
+                if($i == 0)
+                {
+                    foreach($rowData as $column => $cellData)
+                    {
+                        if(Utility::removeWhitespace($cellData, '') == 'DO')
+                            $doColumn = $column;
+                    }
+
+                    if($doColumn === null)
+                    {
+                        if($request->headers->has('referer'))
+                            return redirect($request->headers->get('referer'))->with('messageError', 'File Excel Phải Có Column DO');
+                        else
+                            return redirect()->action('Backend\OrderController@adminOrder')->with('messageError', 'File Excel Phải Có Column DO');
+                    }
+                }
+                else
+                {
+                    $order = Order::where('do', $rowData[$doColumn])->first();
+
+                    if(!empty($order) && $order->payment == Order::PROCESSING_PAYMENT_DB && $order->status == Order::STATUS_COMPLETED_DB)
+                    {
+                        $order->payment = Order::PAYMENT_DB;
+                        $order->save();
+                    }
+                }
+
+                $i ++;
+            }
+
+            if($request->headers->has('referer'))
+                return redirect($request->headers->get('referer'))->with('messageSuccess', 'Xác Nhận Đối Soát Thành Công');
+            else
+                return redirect()->action('Backend\OrderController@adminOrder')->with('messageSuccess', 'Xác Nhận Đối Soát Thành Công');
+        }
+        else
+        {
+            if($request->headers->has('referer'))
+                return redirect($request->headers->get('referer'))->with('messageError', 'File Excel Không Hợp Lệ');
+            else
+                return redirect()->action('Backend\OrderController@adminOrder')->with('messageError', 'File Excel Không Hợp Lệ');
+        }
     }
 
     public function cancelOrder($id)

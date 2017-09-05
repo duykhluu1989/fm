@@ -50,6 +50,8 @@ Route::group(['namespace' => 'Backend'], function() {
 
         Route::get('order/{id}/completePayment', 'OrderController@completePaymentOrder');
 
+        Route::post('order/upload/completePayment', 'OrderController@uploadCompletePaymentOrder');
+
         Route::get('order/{id}/cancel', 'OrderController@cancelOrder');
 
         Route::get('order/controlCancel', 'OrderController@controlCancelOrder');

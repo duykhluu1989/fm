@@ -42,6 +42,10 @@
                         <div class="col-sm-3"><b>Email</b></div>
                         <div class="col-sm-9">{{ $order->user->email }}</div>
                     </div>
+                    <div class="row">
+                        <div class="col-sm-3"><b>Group</b></div>
+                        <div class="col-sm-9">{{ $order->user->group }}</div>
+                    </div>
                 </div>
             </div>
             <div class="row">
