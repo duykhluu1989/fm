@@ -63,7 +63,7 @@ class Setting extends Model
             [self::FACEBOOK_GRAPH_VERSION, 'Facebook Graph Version', self::TYPE_STRING_DB, 'v2.9', self::CATEGORY_SOCIAL_DB],
             [self::FACEBOOK_PAGE_URL, 'Facebook Page', self::TYPE_STRING_DB, '', self::CATEGORY_SOCIAL_DB],
 
-            [self::ORDER_STATUS_LIST, 'Order Status List', self::TYPE_JSON_DB, json_decode(Order::getOrderStatus()), self::CATEGORY_LABEL_DB],
+            [self::ORDER_STATUS_LIST, 'Order Status List', self::TYPE_JSON_DB, json_encode(Order::getOrderStatus()), self::CATEGORY_LABEL_DB],
         ];
 
         foreach($coreSettings as $coreSetting)
