@@ -366,7 +366,7 @@ class UserController extends Controller
     public function adminUserCustomer(Request $request)
     {
         $dataProvider = User::with('customerInformation')
-            ->select('id', 'username', 'name', 'email', 'status', 'phone')
+            ->select('id', 'username', 'name', 'email', 'status', 'phone', 'attachment')
             ->orderBy('id', 'desc');
 
         $inputs = $request->all();
@@ -395,11 +395,21 @@ class UserController extends Controller
                 else
                     $dataProvider->whereNull('api_key');
             }
+
+            if(isset($inputs['attachment']) && $inputs['attachment'] !== '')
+                $dataProvider->where('attachment', $inputs['attachment']);
         }
 
         $dataProvider = $dataProvider->paginate(GridView::ROWS_PER_PAGE);
 
         $columns = [
+            [
+                'title' => '',
+                'data' => function($row) {
+                    if($row->attachment == true)
+                        echo Html::i('', ['class' => 'fa fa-file-excel-o fa-fw']);
+                },
+            ],
             [
                 'title' => 'Tên Tài Khoản',
                 'data' => function($row) {
@@ -518,6 +528,15 @@ class UserController extends Controller
                 'name' => 'wholesale',
                 'type' => 'select',
                 'options' => Utility::getTrueFalse(),
+            ],
+            [
+                'title' => 'Attachment File',
+                'name' => 'attachment',
+                'type' => 'select',
+                'options' => [
+                    Utility::ACTIVE_DB => 'Có Attachment File',
+                    Utility::INACTIVE_DB => 'Không Có Attachment File',
+                ],
             ],
         ]);
         $gridView->setFilterValues($inputs);
