@@ -226,7 +226,7 @@
                 @if(isset($deliveryTrackingDetail['milestones']))
                     <div class="row">
                         <div class="col-sm-12">
-                            <h3>Collection</h3>
+                            <h3>Delivery</h3>
                             <div class="table-responsive no-padding">
                                 <table class="table table-striped table-hover table-condensed">
                                     <thead>
