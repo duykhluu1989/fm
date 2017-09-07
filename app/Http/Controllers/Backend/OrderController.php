@@ -427,7 +427,7 @@ class OrderController extends Controller
 
         $orders = Order::whereIn('id', explode(';', $ids))->get();
 
-        $exportData = [
+        $exportData[] = [
             'Order Number',
             'DO',
             'Code',
