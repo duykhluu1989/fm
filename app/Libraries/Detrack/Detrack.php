@@ -50,6 +50,7 @@ class Detrack
                 'pay_amt' => $order->total_cod_price,
                 'order_no' => $order->number,
                 'group_name' => $order->user->group,
+                'job_fee' => $order->shipping_price,
             ];
         }
 
@@ -154,6 +155,7 @@ class Detrack
                 'pay_amt' => $order->total_cod_price,
                 'order_no' => $order->number,
                 'group_name' => $order->user->group,
+                'job_fee' => $order->shipping_price,
             ];
         }
 
@@ -317,6 +319,7 @@ class Detrack
                 'instructions' => !empty($order->note) ? $order->note : '',
                 'order_no' => $order->number,
                 'group_name' => $order->user->group,
+                'job_fee' => $order->shipping_price,
             ];
         }
 
@@ -420,6 +423,7 @@ class Detrack
                 'instructions' => !empty($order->note) ? $order->note : '',
                 'order_no' => $order->number,
                 'group_name' => $order->user->group,
+                'job_fee' => $order->shipping_price,
             ];
         }
 
@@ -532,6 +536,12 @@ class Detrack
 
                     if($order->collection_status == Order::STATUS_COMPLETED_DB)
                     {
+                        if($order->shipping_price != $inputs['job_fee'])
+                        {
+                            $order->shipping_price = $inputs['job_fee'];
+                            $order->save();
+                        }
+
                         $successDos = $this->addDeliveries([$order]);
 
                         $countSuccessDo = count($successDos);
