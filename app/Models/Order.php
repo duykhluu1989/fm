@@ -9,6 +9,9 @@ class Order extends Model
 {
     const STATUS_INFO_RECEIVED_DB = 'info-received';
     const STATUS_PROCESSING_DB = 'processing';
+    const STATUS_PICKED_UP_DB = 'picked_up';
+    const STATUS_AT_WAREHOUSE_DB = 'at_warehouse';
+    const STATUS_OUT_FOR_DELIVERY_DB = 'out_for_delivery';
     const STATUS_SCHEDULED_DB = 'scheduled';
     const STATUS_PRE_JOB_DB = 'pre-job';
     const STATUS_HEADING_TO_DB = 'heading-to';
@@ -149,6 +152,9 @@ class Order extends Model
             $status = [
                 self::STATUS_INFO_RECEIVED_DB => self::STATUS_INFO_RECEIVED_DB,
                 self::STATUS_PROCESSING_DB => self::STATUS_PROCESSING_DB,
+                self::STATUS_PICKED_UP_DB => self::STATUS_PICKED_UP_DB,
+                self::STATUS_AT_WAREHOUSE_DB => self::STATUS_AT_WAREHOUSE_DB,
+                self::STATUS_OUT_FOR_DELIVERY_DB => self::STATUS_OUT_FOR_DELIVERY_DB,
                 self::STATUS_SCHEDULED_DB => self::STATUS_SCHEDULED_DB,
                 self::STATUS_PRE_JOB_DB => self::STATUS_PRE_JOB_DB,
                 self::STATUS_HEADING_TO_DB => self::STATUS_HEADING_TO_DB,
@@ -174,17 +180,20 @@ class Order extends Model
         $status = [
             self::STATUS_INFO_RECEIVED_DB => 1,
             self::STATUS_PROCESSING_DB => 2,
-            self::STATUS_SCHEDULED_DB => 3,
-            self::STATUS_PRE_JOB_DB => 4,
-            self::STATUS_HEADING_TO_DB => 5,
-            self::STATUS_CANCEL_HEADING_TO_DB => 6,
-            self::STATUS_ARRIVED_DB => 7,
-            self::STATUS_COMPLETED_DB => 8,
-            self::STATUS_PARTIALLY_COMPLETED_DB => 9,
-            self::STATUS_FAILED_DB => 10,
-            self::STATUS_RETURN_DB => 11,
-            self::STATUS_ON_HOLD_DB => 12,
-            self::STATUS_CANCELLED_DB => 13,
+            self::STATUS_PICKED_UP_DB => 3,
+            self::STATUS_AT_WAREHOUSE_DB => 4,
+            self::STATUS_OUT_FOR_DELIVERY_DB => 5,
+            self::STATUS_SCHEDULED_DB => 6,
+            self::STATUS_PRE_JOB_DB => 7,
+            self::STATUS_HEADING_TO_DB => 8,
+            self::STATUS_CANCEL_HEADING_TO_DB => 9,
+            self::STATUS_ARRIVED_DB => 10,
+            self::STATUS_COMPLETED_DB => 11,
+            self::STATUS_PARTIALLY_COMPLETED_DB => 12,
+            self::STATUS_FAILED_DB => 13,
+            self::STATUS_RETURN_DB => 14,
+            self::STATUS_ON_HOLD_DB => 15,
+            self::STATUS_CANCELLED_DB => 16,
         ];
 
         if($value !== null && isset($status[$value]))
@@ -198,6 +207,9 @@ class Order extends Model
         $status = [
             self::STATUS_INFO_RECEIVED_DB => 'warning',
             self::STATUS_PROCESSING_DB => 'warning',
+            self::STATUS_PICKED_UP_DB => 'primary',
+            self::STATUS_AT_WAREHOUSE_DB => 'primary',
+            self::STATUS_OUT_FOR_DELIVERY_DB => 'primary',
             self::STATUS_SCHEDULED_DB => 'primary',
             self::STATUS_PRE_JOB_DB => 'primary',
             self::STATUS_HEADING_TO_DB => 'primary',
