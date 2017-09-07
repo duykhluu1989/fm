@@ -536,10 +536,13 @@ class Detrack
 
                     if($order->collection_status == Order::STATUS_COMPLETED_DB)
                     {
-                        if($order->shipping_price != $inputs['job_fee'])
+                        if(isset($inputs['job_fee']))
                         {
-                            $order->shipping_price = $inputs['job_fee'];
-                            $order->save();
+                            if($order->shipping_price != $inputs['job_fee'])
+                            {
+                                $order->shipping_price = $inputs['job_fee'];
+                                $order->save();
+                            }
                         }
 
                         $successDos = $this->addDeliveries([$order]);

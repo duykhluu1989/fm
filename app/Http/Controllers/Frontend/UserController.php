@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Frontend;
 
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
@@ -697,7 +698,10 @@ class UserController extends Controller
 
         $orders = $builder->paginate(Utility::FRONTEND_ROWS_PER_PAGE);
 
-        $countReceiveOrder = Order::where('status', Order::STATUS_INFO_RECEIVED_DB)->count('id');
+        $countReceiveOrder = Order::where('status', Order::STATUS_INFO_RECEIVED_DB)
+            ->where('order.user_id', $user->id)
+            ->count('id');
+
         $countShippingOrder = Order::whereIn('status', [
             Order::STATUS_PROCESSING_DB,
             Order::STATUS_SCHEDULED_DB,
@@ -706,13 +710,22 @@ class UserController extends Controller
             Order::STATUS_CANCEL_HEADING_TO_DB,
             Order::STATUS_ARRIVED_DB,
             Order::STATUS_PARTIALLY_COMPLETED_DB,
-        ])->count('id');
+        ])->where('order.user_id', $user->id)
+            ->count('id');
+
         $countCompleteOrFailOrder = Order::whereIn('status', [
             Order::STATUS_COMPLETED_DB,
             Order::STATUS_FAILED_DB,
-        ])->count('id');
-        $countHoldOrder = Order::where('status', Order::STATUS_ON_HOLD_DB)->count('id');
-        $countReturnOrder = Order::where('status', Order::STATUS_RETURN_DB)->count('id');
+        ])->where('order.user_id', $user->id)
+            ->count('id');
+
+        $countHoldOrder = Order::where('status', Order::STATUS_ON_HOLD_DB)
+            ->where('order.user_id', $user->id)
+            ->count('id');
+
+        $countReturnOrder = Order::where('status', Order::STATUS_RETURN_DB)
+            ->where('order.user_id', $user->id)
+            ->count('id');
 
         return view('frontend.users.admin_order', [
             'orders' => $orders,
@@ -973,5 +986,49 @@ class UserController extends Controller
             'user' => $user,
             'orders' => $orders,
         ]);
+    }
+
+    public function exportOrder(Request $request)
+    {
+        $ids = $request->input('ids');
+
+        $orders = Order::whereIn('id', explode(';', $ids))->get();
+
+        $exportData[] = [
+            'Mã đơn hàng',
+            'DO',
+            'Khách hàng',
+            'Tiền thu hộ',
+            'Phí ship',
+            'Shipper',
+            'Trạng Thái',
+            'Đặt đơn hàng lúc',
+            'Hủy đơn hàng lúc',
+        ];
+
+        foreach($orders as $order)
+        {
+            $exportData[] = [
+                $order->number,
+                $order->do,
+                $order->receiverAddress->name,
+                Utility::formatNumber($order->cod_price),
+                Utility::formatNumber($order->shipping_price),
+                $order->shipper,
+                Order::getOrderStatus($order->status),
+                $order->created_at,
+                $order->cancelled_at,
+            ];
+        }
+
+        Excel::create('order', function($excel) use($exportData) {
+
+            $excel->sheet('sheet1', function($sheet) use($exportData) {
+
+                $sheet->fromArray($exportData, null, 'A1', true, false);
+
+            });
+
+        })->export('xlsx');
     }
 }

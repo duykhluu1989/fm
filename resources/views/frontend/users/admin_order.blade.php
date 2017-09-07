@@ -72,7 +72,7 @@
                                     </div>
                                     <hr>
                                     <button type="submit" class="btn btnTimDH2"><i class="fa fa-search fa-lg" aria-hidden="true"></i> TÌM ĐƠN HÀNG</button>
-                                    <a href="javascript:void(0)" class="btn btninDH"><i class="fa fa-print fa-lg" aria-hidden="true"></i> IN ĐƠN HÀNG ĐÃ CHỌN</a>
+                                    <a href="javascript:void(0)" id="ExportOrderButton" class="btn btninDH"><i class="fa fa-print fa-lg" aria-hidden="true"></i> IN ĐƠN HÀNG ĐÃ CHỌN</a>
                                 </div>
                             </div>
                         </form>
@@ -105,7 +105,7 @@
                                     <td>{{ \App\Libraries\Helpers\Utility::formatNumber($order->cod_price) }}</td>
                                     <td>{{ \App\Libraries\Helpers\Utility::formatNumber($order->shipping_price) }}</td>
                                     <td>{{ $order->shipper }}</td>
-                                    <td><span class="label label-{{ \App\Models\Order::getOrderStatusLabel($order->status ) }}">{{ \App\Models\Order::getOrderStatus($order->status) }}</span></td>
+                                    <td><span class="label label-{{ \App\Models\Order::getOrderStatusLabel($order->status) }}">{{ \App\Models\Order::getOrderStatus($order->status) }}</span></td>
                                     <td>{{ $order->created_at }}</td>
                                     <td>{{ $order->cancelled_at }}</td>
                                 </tr>
@@ -154,7 +154,6 @@
                                 </ul>
                             </div>
                         </div>
-                        <a href="javascript:void(0)" class="btn btninDH"><i class="fa fa-print fa-lg" aria-hidden="true"></i> IN ĐƠN HÀNG</a>
                     </div>
                 </div>
             </div>
@@ -202,6 +201,23 @@
 
                 $('.GridViewCheckBoxAll').first().prop('checked', $(this).prop('checked'));
             }
+        });
+
+        $('#ExportOrderButton').click(function() {
+            var ids = '';
+
+            $('.GridViewCheckBox:checked').each(function() {
+                if($(this).val() != '')
+                {
+                    if(ids != '')
+                        ids += ';' + $(this).val();
+                    else
+                        ids = $(this).val();
+                }
+            });
+
+            if(ids != '')
+                window.location = '{{ action('Frontend\UserController@exportOrder') }}?ids=' + ids;
         });
     </script>
 @endpush
