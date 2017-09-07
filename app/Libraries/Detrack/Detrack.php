@@ -247,7 +247,6 @@ class Detrack
     {
         try
         {
-            //if(isset($inputs['json']) && isset($inputs['key']) && $inputs['key'] == $this->web_hook_key)
             if(isset($inputs['json']))
             {
                 $deliveryTrackingData = json_decode($inputs['json'], true);
@@ -289,7 +288,7 @@ class Detrack
                         if(app()->environment() != 'production')
                             curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
 
-                        $result = curl_exec($curl);
+                        curl_exec($curl);
                         curl_close($curl);
                     }
                 }
@@ -516,7 +515,6 @@ class Detrack
     {
         try
         {
-            //if(isset($inputs['json']) && isset($inputs['key']) && $inputs['key'] == $this->web_hook_key)
             if(isset($inputs['json']))
             {
                 $collectionTrackingData = json_decode($inputs['json'], true);
@@ -538,11 +536,11 @@ class Detrack
 
                     if($order->collection_status == Order::STATUS_COMPLETED_DB)
                     {
-                        /*if($order->shipping_price != $inputs['job_fee'])
+                        if($order->shipping_price != $inputs['job_fee'])
                         {
                             $order->shipping_price = $inputs['job_fee'];
                             $order->save();
-                        }*/
+                        }
 
                         $successDos = $this->addDeliveries([$order]);
 

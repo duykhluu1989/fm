@@ -124,6 +124,10 @@
                         <div class="col-sm-9">{{ $order->do }}</div>
                     </div>
                     <div class="row">
+                        <div class="col-sm-3"><b>User DO</b></div>
+                        <div class="col-sm-9">{{ $order->user_do }}</div>
+                    </div>
+                    <div class="row">
                         <div class="col-sm-3"><b>Trạng Thái</b></div>
                         <div class="col-sm-9"><span class="label label-{{ \App\Models\Order::getOrderStatusLabel($order->status ) }}">{{ \App\Models\Order::getOrderStatus($order->status) }}</span></div>
                     </div>
@@ -178,6 +182,18 @@
                     <div class="row">
                         <div class="col-sm-3"><b>Đối Soát</b></div>
                         <div class="col-sm-9">{{ \App\Models\Order::getOrderPayment($order->payment) }}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-3"><b>Thời Gian Đối Soát</b></div>
+                        <div class="col-sm-9">{{ $order->payment_completed_at }}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-3"><b>Transaction Code</b></div>
+                        <div class="col-sm-9">{{ $order->payment_code }}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-3"><b>Transaction Note</b></div>
+                        <div class="col-sm-9">{{ $order->payment_note }}</div>
                     </div>
                 </div>
             </div>

@@ -26,7 +26,7 @@ class OrderController extends Controller
             $query->select('id', 'username');
         }, 'senderAddress' => function($query) {
             $query->select('id', 'order_id', 'address', 'province', 'district', 'ward');
-        }])->select('order.id', 'order.user_id', 'order.number', 'order.created_at', 'order.cancelled_at', 'order.status', 'order.cod_price', 'order.shipper', 'order.do', 'order.shipping_price', 'order.source', 'order.prepay')
+        }])->select('order.id', 'order.user_id', 'order.number', 'order.created_at', 'order.cancelled_at', 'order.status', 'order.cod_price', 'order.shipper', 'order.do', 'order.shipping_price', 'order.source', 'order.prepay', 'order.payment')
             ->orderBy('order.id', 'desc');
 
         $inputs = $request->all();
@@ -153,6 +153,8 @@ class OrderController extends Controller
                 'title' => 'Trạng Thái',
                 'data' => function($row) {
                     echo Html::span(Order::getOrderStatus($row->status), ['class' => 'label label-' . Order::getOrderStatusLabel($row->status)]);
+                    echo '<br />';
+                    echo Order::getOrderPayment($row->payment);
                 },
             ],
             [
@@ -745,7 +747,7 @@ class OrderController extends Controller
                     $collectionTrackingDetail['cartons'],
                     '',
                     $collectionTrackingDetail['envelopes'],
-                    '',
+                    isset($collectionTrackingDetail['job_fee']) ? $collectionTrackingDetail['job_fee'] : '',
                     $collectionTrackingDetail['detrack_no'],
                     $collectionTrackingDetail['status'],
                     $collectionTrackingDetail['time'],
@@ -775,7 +777,7 @@ class OrderController extends Controller
                     '',
                     '',
                     '',
-                    $collectionTrackingDetail['pallets'],
+                    isset($collectionTrackingDetail['pallets']) ? $collectionTrackingDetail['pallets'] : '',
                     '',
                     '',
                     '',
@@ -829,7 +831,7 @@ class OrderController extends Controller
                     $deliveryTrackingDetail['cartons'],
                     '',
                     $deliveryTrackingDetail['envelopes'],
-                    '',
+                    isset($deliveryTrackingDetail['job_fee']) ? $deliveryTrackingDetail['job_fee'] : '',
                     $deliveryTrackingDetail['detrack_no'],
                     $deliveryTrackingDetail['status'],
                     $deliveryTrackingDetail['time'],
@@ -859,7 +861,7 @@ class OrderController extends Controller
                     '',
                     '',
                     '',
-                    $deliveryTrackingDetail['pallets'],
+                    isset($deliveryTrackingDetail['pallets']) ? $deliveryTrackingDetail['pallets'] : '',
                     '',
                     '',
                     '',

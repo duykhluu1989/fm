@@ -640,7 +640,7 @@ class UserController extends Controller
 
         $builder = Order::with(['receiverAddress' => function($query) {
             $query->select('order_id', 'name');
-        }])->select('order.id', 'order.number', 'order.status', 'order.shipper', 'order.created_at', 'order.cancelled_at', 'order.cod_price', 'order.shipping_price')
+        }])->select('order.id', 'order.number', 'order.do', 'order.status', 'order.shipper', 'order.created_at', 'order.cancelled_at', 'order.cod_price', 'order.shipping_price')
             ->where('order.user_id', $user->id)
             ->orderBy('order.id', 'desc');
 

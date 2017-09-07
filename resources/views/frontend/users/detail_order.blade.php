@@ -91,6 +91,10 @@
                                     <div class="col-sm-9">{{ $order->number }}</div>
                                 </div>
                                 <div class="row">
+                                    <div class="col-sm-3"><b>DO</b></div>
+                                    <div class="col-sm-9">{{ $order->do }}</div>
+                                </div>
+                                <div class="row">
                                     <div class="col-sm-3"><b>Trạng thái</b></div>
                                     <div class="col-sm-9"><span class="label label-{{ \App\Models\Order::getOrderStatusLabel($order->status ) }}">{{  \App\Models\Order::getOrderStatus($order->status) }}</span></div>
                                 </div>

@@ -205,8 +205,8 @@ class Utility
     public static function getValidExcelExt($extensionDot = false)
     {
         if($extensionDot == true)
-            return ['.xls', '.xlsx', '.XLS', '.XLSX'];
+            return ['.xls', '.xlsx', '.XLS', '.XLSX', '.pdf', '.PDF'];
 
-        return ['xls', 'xlsx', 'XLS', 'XLSX'];
+        return ['xls', 'xlsx', 'XLS', 'XLSX', 'pdf', 'PDF'];
     }
 }
