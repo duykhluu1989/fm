@@ -247,7 +247,8 @@ class Detrack
     {
         try
         {
-            if(isset($inputs['json']) && isset($inputs['key']) && $inputs['key'] == $this->web_hook_key)
+            //if(isset($inputs['json']) && isset($inputs['key']) && $inputs['key'] == $this->web_hook_key)
+            if(isset($inputs['json']))
             {
                 $deliveryTrackingData = json_decode($inputs['json'], true);
 
@@ -515,7 +516,8 @@ class Detrack
     {
         try
         {
-            if(isset($inputs['json']) && isset($inputs['key']) && $inputs['key'] == $this->web_hook_key)
+            //if(isset($inputs['json']) && isset($inputs['key']) && $inputs['key'] == $this->web_hook_key)
+            if(isset($inputs['json']))
             {
                 $collectionTrackingData = json_decode($inputs['json'], true);
 
