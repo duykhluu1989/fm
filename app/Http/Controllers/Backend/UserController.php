@@ -883,7 +883,7 @@ class UserController extends Controller
                             if($user->prepay == Utility::ACTIVE_DB && !empty($inputData[OrderExcel::IMPORT_PREPAY_COLUMN_LABEL]))
                                 $order->prepay = Utility::ACTIVE_DB;
 
-                            $order->generateDo(!empty($senderProvince) ? $senderProvince : null);
+                            $order->generateDo(!empty($senderProvince) ? $senderProvince : Area::select('id', 'name')->where('type', Area::TYPE_PROVINCE_DB)->find($userAddresses[0]->province_id));
 
                             $order->date = date('Y-m-d');
                             $order->source = Order::SOURCE_EXCEL_DB;
