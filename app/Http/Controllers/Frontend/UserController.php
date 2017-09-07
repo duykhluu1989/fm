@@ -689,7 +689,7 @@ class UserController extends Controller
                 $builder->where('order.created_at', '>=', $inputs['created_at_from']);
 
             if(!empty($inputs['created_at_to']))
-                $builder->where('order.created_at', '<=', '23:59:59 ' . $inputs['created_at_to']);
+                $builder->where('order.created_at', '<=', $inputs['created_at_to'] . ' 23:59:59');
 
             if(isset($inputs['shipping_payment']) && $inputs['shipping_payment'] !== '')
                 $builder->where('order.shipping_payment', $inputs['shipping_payment']);
