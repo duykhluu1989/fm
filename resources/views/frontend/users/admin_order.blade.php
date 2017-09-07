@@ -21,19 +21,6 @@
                             <div class="row">
                                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                                     <div class="form-group">
-                                        <label>Trạng thái đơn hàng</label>
-                                        <select name="status" class="form-control">
-                                            <option value="">Chọn trạng thái đơn hàng</option>
-                                            @foreach(\App\Models\Order::getOrderStatus() as $value)
-                                                @if(request()->get('status') !== null && request()->get('status') == $value)
-                                                    <option selected="selected" value="{{ $value }}">{{ $value }}</option>
-                                                @else
-                                                    <option value="{{ $value }}">{{ $value }}</option>
-                                                @endif
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
                                         <label>Mã đơn hàng</label>
                                         <input type="text" name="number" class="form-control" value="{{ request()->get('number') }}" placeholder="Nếu nhiều mã đơn hàng cách nhau bởi dấu phẩy" />
                                     </div>

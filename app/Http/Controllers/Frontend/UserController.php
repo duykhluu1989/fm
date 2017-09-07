@@ -648,9 +648,6 @@ class UserController extends Controller
 
         if(count($inputs) > 0)
         {
-            if(!empty($inputs['status']))
-                $builder->where('order.status', $inputs['status']);
-
             if(!empty($inputs['number']))
             {
                 $numbers = explode(',', $inputs['number']);

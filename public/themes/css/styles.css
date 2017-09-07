@@ -96,6 +96,9 @@ ul.list_menuTop li a {
   color: #393E46;
   padding: 15px 10px;
 }
+ul.list_menuTop ul.dropdown-menu li:after {
+  content: ' ';
+}
 ul.list_menuTop li:hover a {
   border-radius: 0;
   color: #333;
