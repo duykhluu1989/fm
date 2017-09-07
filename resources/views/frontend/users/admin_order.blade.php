@@ -38,11 +38,11 @@
                                         <div class="row">
                                             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                                                 <label>Thời gian tạo đơn hàng</label>
-                                                <input type="text" name="created_at_from" class="form-control datetime" value="{{ request()->get('created_at_from') }}" placeholder="Từ" />
+                                                <input type="text" name="created_at_from" class="i_calendar form-control DatePicker" value="{{ request()->get('created_at_from') }}" placeholder="Từ" />
                                             </div>
                                             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                                                 <label>&nbsp;</label>
-                                                <input type="text" name="created_at_to" class="form-control datetime" value="{{ request()->get('created_at_to') }}" placeholder="Đến" />
+                                                <input type="text" name="created_at_to" class="i_calendar form-control DatePicker" value="{{ request()->get('created_at_to') }}" placeholder="Đến" />
                                             </div>
                                         </div>
                                     </div>
