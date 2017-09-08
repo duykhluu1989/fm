@@ -145,7 +145,7 @@ class Order extends Model
     {
         $setting = Setting::where('code', Setting::ORDER_STATUS_LIST)->first();
 
-        if(!empty($setting))
+        if(!empty($setting) && !empty($setting->value))
             $status = json_decode($setting->value, true);
         else
         {
