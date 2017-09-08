@@ -30,7 +30,7 @@ class ElFinderController extends Controller
                     'path'          => $path,
                     'URL'           => url(self::FILE_BROWSER_PATH),
                     'uploadDeny'    => ['all'],
-                    'uploadAllow'   => ['image'],
+                    'uploadAllow'   => ['image', 'application/pdf', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
                     'uploadOrder'   => ['deny', 'allow'],
                     'accessControl' => 'Barryvdh\Elfinder\Elfinder::checkAccess',
                 ]
@@ -85,7 +85,7 @@ class ElFinderController extends Controller
                     'path'          => $path,
                     'URL'           => url(User::ORDER_UPLOAD_PATH . '/' . $id),
                     'uploadDeny'    => ['all'],
-                    'uploadAllow'   => ['image'],
+                    'uploadAllow'   => ['image', 'application/pdf', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
                     'uploadOrder'   => ['deny', 'allow'],
                     'accessControl' => 'Barryvdh\Elfinder\Elfinder::checkAccess',
                 ]
