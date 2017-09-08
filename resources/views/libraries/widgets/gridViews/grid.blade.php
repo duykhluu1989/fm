@@ -179,7 +179,18 @@
                     });
 
                     if(ids != '')
-                        window.location = $(this).val() + '?ids=' + ids;
+                    {
+                        if($(this).hasClass('TargetNewAndRefresh'))
+                        {
+                            window.open($(this).val() + '?ids=' + ids);
+
+                            setTimeout(function() {
+                                location.reload();
+                            }, 1000);
+                        }
+                        else
+                            window.location = $(this).val() + '?ids=' + ids;
+                    }
                 }
             });
 
@@ -189,7 +200,18 @@
                     var queries = $('#FilterForm').serialize();
 
                     if(queries != '')
-                        window.location = $(this).val() + '?' + queries;
+                    {
+                        if($(this).hasClass('TargetNewAndRefresh'))
+                        {
+                            window.open($(this).val()  + '?' + queries);
+
+                            setTimeout(function() {
+                                location.reload();
+                            }, 1000);
+                        }
+                        else
+                            window.location = $(this).val() + '?' + queries;
+                    }
                 }
             });
         </script>
