@@ -51,6 +51,7 @@ class Detrack
                 'order_no' => $order->number,
                 'group_name' => $order->user->group,
                 'job_fee' => $order->shipping_price,
+                'j_fee' => $order->shipping_price,
             ];
         }
 
@@ -156,6 +157,7 @@ class Detrack
                 'order_no' => $order->number,
                 'group_name' => $order->user->group,
                 'job_fee' => $order->shipping_price,
+                'j_fee' => $order->shipping_price,
             ];
         }
 
@@ -320,6 +322,7 @@ class Detrack
                 'order_no' => $order->number,
                 'group_name' => $order->user->group,
                 'job_fee' => $order->shipping_price,
+                'j_fee' => $order->shipping_price,
             ];
         }
 
@@ -424,6 +427,7 @@ class Detrack
                 'order_no' => $order->number,
                 'group_name' => $order->user->group,
                 'job_fee' => $order->shipping_price,
+                'j_fee' => $order->shipping_price,
             ];
         }
 
