@@ -536,11 +536,11 @@ class Detrack
 
                     if($order->collection_status == Order::STATUS_COMPLETED_DB)
                     {
-                        if(isset($inputs['job_fee']))
+                        if(!empty($inputs['j_fee']))
                         {
-                            if($order->shipping_price != $inputs['job_fee'])
+                            if($order->shipping_price != $inputs['j_fee'])
                             {
-                                $order->shipping_price = $inputs['job_fee'];
+                                $order->shipping_price = $inputs['j_fee'];
                                 $order->save();
                             }
                         }
