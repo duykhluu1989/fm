@@ -813,7 +813,7 @@ class UserController extends Controller
                 'receiver_district' => 'required|integer|min:1',
                 'receiver_ward' => 'required|integer|min:1',
                 'weight' => 'nullable|numeric|min:0.1',
-                'cod_price' => 'nullable|integer|min:1',
+                'cod_price' => 'nullable|integer|min:0',
                 'note' => 'nullable|max:255',
             ]);
 

@@ -302,7 +302,7 @@ class OrderController extends Controller
                 'receiver_district' => 'required|integer|min:1',
                 'receiver_ward' => 'required|integer|min:1',
                 'weight' => 'nullable|numeric|min:0.1',
-                'cod_price' => 'nullable|integer|min:1',
+                'cod_price' => 'nullable|integer|min:0',
                 'note' => 'nullable|max:255',
             ]);
 
@@ -726,7 +726,23 @@ class OrderController extends Controller
 
             $result = Discount::calculateDiscountShippingPrice($inputs['discount_code'], $inputs['shipping_price'], $user, (isset($inputs['edit']) ? true : false));
 
-            return $result;
+            if(isset($inputs['edit']))
+                return $result;
+
+            if($result['status'] == 'error')
+            {
+                return json_encode([
+                    'status' => 'error',
+                    'message' => $result['message'],
+                ]);
+            }
+            else
+            {
+                return json_encode([
+                    'status' => 'success',
+                    'discount' => $result['discountPrice'],
+                ]);
+            }
         }
         else
             return '';
