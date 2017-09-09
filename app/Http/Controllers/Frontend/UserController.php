@@ -1008,6 +1008,7 @@ class UserController extends Controller
             'Phí ship',
             'Shipper',
             'Trạng Thái',
+            'Đối soát',
             'Đặt đơn hàng lúc',
             'Hủy đơn hàng lúc',
         ];
@@ -1022,6 +1023,7 @@ class UserController extends Controller
                 Utility::formatNumber($order->shipping_price),
                 $order->shipper,
                 Order::getOrderStatus($order->status),
+                Order::getOrderPayment($order->payment),
                 $order->created_at,
                 $order->cancelled_at,
             ];
