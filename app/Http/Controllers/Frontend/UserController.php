@@ -384,7 +384,7 @@ class UserController extends Controller
 
             $orders = Order::with(['receiverAddress' => function($query) {
                 $query->select('order_id', 'name');
-            }])->select('id', 'number', 'status', 'shipper', 'created_at', 'cancelled_at', 'cod_price', 'shipping_price')
+            }])->select('id', 'number', 'do', 'status', 'shipper', 'created_at', 'cancelled_at', 'cod_price', 'shipping_price', 'payment')
                 ->where('user_id', $user->id)
                 ->where(function($query) use($keyword) {
                     $query->where('number', 'like', $keyword . '%')
@@ -653,6 +653,12 @@ class UserController extends Controller
             {
                 $numbers = explode(',', $inputs['number']);
                 $builder->whereIn('order.number', $numbers);
+            }
+
+            if(!empty($inputs['do']))
+            {
+                $numbers = explode(',', $inputs['do']);
+                $builder->whereIn('order.do', $numbers);
             }
 
             if(!empty($inputs['phone']))

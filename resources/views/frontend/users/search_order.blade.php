@@ -19,12 +19,15 @@
                             <thead>
                             <tr>
                                 <th>Mã đơn hàng</th>
+                                <th>DO</th>
                                 <th>Khách hàng</th>
                                 <th>Tiền thu hộ</th>
                                 <th>Phí ship</th>
                                 <th>Shipper</th>
                                 <th>Trạng thái</th>
+                                <th>Đối soát</th>
                                 <th>Đặt đơn hàng lúc</th>
+                                <th>Hủy đơn hàng lúc</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -32,14 +35,17 @@
                             @foreach($orders as $order)
                                 <tr>
                                     <td>
-                                        <a class="label label-danger" href="{{ action('Frontend\UserController@detailOrder', ['id' => $order->id]) }}">{{ $order->number }}</a>
+                                        <a class="label label-{{ !empty($order->cancelled_at) ? 'danger' : 'success' }}" href="{{ action('Frontend\UserController@detailOrder', ['id' => $order->id]) }}">{{ $order->number }}</a>
                                     </td>
+                                    <td>{{ $order->do }}</td>
                                     <td>{{ $order->receiverAddress->name }}</td>
                                     <td>{{ \App\Libraries\Helpers\Utility::formatNumber($order->cod_price) }}</td>
                                     <td>{{ \App\Libraries\Helpers\Utility::formatNumber($order->shipping_price) }}</td>
                                     <td>{{ $order->shipper }}</td>
-                                    <td><span class="label label-{{ \App\Models\Order::getOrderStatusLabel($order->status ) }}">{{ $order->status }}</span></td>
+                                    <td><span class="label label-{{ \App\Models\Order::getOrderStatusLabel($order->status) }}">{{ \App\Models\Order::getOrderStatus($order->status) }}</span></td>
+                                    <td>{{ \App\Models\Order::getOrderPayment($order->payment) }}</td>
                                     <td>{{ $order->created_at }}</td>
+                                    <td>{{ $order->cancelled_at }}</td>
                                 </tr>
                             @endforeach
 

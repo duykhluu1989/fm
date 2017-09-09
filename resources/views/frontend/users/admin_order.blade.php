@@ -24,6 +24,10 @@
                                         <label>Mã đơn hàng</label>
                                         <input type="text" name="number" class="form-control" value="{{ request()->get('number') }}" placeholder="Nếu nhiều mã đơn hàng cách nhau bởi dấu phẩy" />
                                     </div>
+                                    <div class="form-group">
+                                        <label>DO</label>
+                                        <input type="text" name="do" class="form-control" value="{{ request()->get('do') }}" placeholder="Nếu nhiều DO cách nhau bởi dấu phẩy" />
+                                    </div>
                                 </div>
                                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                                     <div class="form-group">
