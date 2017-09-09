@@ -719,10 +719,12 @@ class UserController extends Controller
         ])->where('order.user_id', $user->id)
             ->count('id');
 
-        $countCompleteOrFailOrder = Order::whereIn('status', [
-            Order::STATUS_COMPLETED_DB,
-            Order::STATUS_FAILED_DB,
-        ])->where('order.user_id', $user->id)
+        $countCompleteOrder = Order::where('status', Order::STATUS_COMPLETED_DB)
+            ->where('order.user_id', $user->id)
+            ->count('id');
+
+        $countFailOrder = Order::where('status', Order::STATUS_COMPLETED_DB)
+            ->where('order.user_id', $user->id)
             ->count('id');
 
         $countHoldOrder = Order::where('status', Order::STATUS_ON_HOLD_DB)
@@ -737,7 +739,8 @@ class UserController extends Controller
             'orders' => $orders,
             'countReceiveOrder' => $countReceiveOrder,
             'countShippingOrder' => $countShippingOrder,
-            'countCompleteOrFailOrder' => $countCompleteOrFailOrder,
+            'countCompleteOrder' => $countCompleteOrder,
+            'countFailOrder' => $countFailOrder,
             'countHoldOrder' => $countHoldOrder,
             'countReturnOrder' => $countReturnOrder,
         ]);

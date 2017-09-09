@@ -15,7 +15,12 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <h4 class="title_user line-on-right">Danh sách đơn hàng</h4>
-                        <p class="quitrinh">Tiếp nhận đơn hàng <span>({{ \App\Libraries\Helpers\Utility::formatNumber($countReceiveOrder) }})</span> → Shipper đang giao <span>({{ \App\Libraries\Helpers\Utility::formatNumber($countShippingOrder) }})</span> → Đơn hàng thành công hoặc đơn hàng thất bại <span>({{ \App\Libraries\Helpers\Utility::formatNumber($countCompleteOrFailOrder) }})</span> → Đơn hàng đang giữ tại kho <span>({{ \App\Libraries\Helpers\Utility::formatNumber($countHoldOrder) }})</span> → Đơn hàng hoàn trả <span>({{ \App\Libraries\Helpers\Utility::formatNumber($countReturnOrder) }})</span> </p>
+                        <p class="quitrinh">Tiếp nhận đơn hàng <span>({{ \App\Libraries\Helpers\Utility::formatNumber($countReceiveOrder) }})</span>
+                            → Shipper đang giao <span>({{ \App\Libraries\Helpers\Utility::formatNumber($countShippingOrder) }})</span>
+                            → Đơn hàng thành công <span>({{ \App\Libraries\Helpers\Utility::formatNumber($countCompleteOrder) }})</span>
+                            → Đơn hàng thất bại <span>({{ \App\Libraries\Helpers\Utility::formatNumber($countFailOrder) }})</span>
+                            → Đơn hàng đang giữ tại kho <span>({{ \App\Libraries\Helpers\Utility::formatNumber($countHoldOrder) }})</span>
+                            → Đơn hàng hoàn trả <span>({{ \App\Libraries\Helpers\Utility::formatNumber($countReturnOrder) }})</span> </p>
                         <h4 class="title_user line-on-right">Tìm kiếm đơn hàng</h4>
                         <form class="frm_timkiemdonhang" action="{{ action('Frontend\UserController@adminOrder') }}" method="GET" role="form">
                             <div class="row">
