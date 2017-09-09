@@ -88,6 +88,7 @@
                                 <th>Phí ship</th>
                                 <th>Shipper</th>
                                 <th>Trạng thái</th>
+                                <th>Đối soát</th>
                                 <th>Đặt đơn hàng lúc</th>
                                 <th>Hủy đơn hàng lúc</th>
                             </tr>
@@ -106,6 +107,7 @@
                                     <td>{{ \App\Libraries\Helpers\Utility::formatNumber($order->shipping_price) }}</td>
                                     <td>{{ $order->shipper }}</td>
                                     <td><span class="label label-{{ \App\Models\Order::getOrderStatusLabel($order->status) }}">{{ \App\Models\Order::getOrderStatus($order->status) }}</span></td>
+                                    <td>{{ \App\Models\Order::getOrderPayment($order->payment) }}</td>
                                     <td>{{ $order->created_at }}</td>
                                     <td>{{ $order->cancelled_at }}</td>
                                 </tr>

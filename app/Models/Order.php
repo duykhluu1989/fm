@@ -60,7 +60,7 @@ class Order extends Model
         });
 
         self::saving(function(Order $order) {
-            if(empty($order->weight) && !empty($order->dimension))
+            if(!empty($order->dimension))
             {
                 $dimensions = explode('x', $order->dimension);
 
@@ -75,7 +75,15 @@ class Order extends Model
                         $volume = $volume * $d;
                 }
 
-                $order->weight = round($volume / 5000, 1);
+                $weightFromDimension = round($volume / 5000);
+
+                if(!empty($order->weight))
+                {
+                    if($weightFromDimension > $order->weight)
+                        $order->weight = $weightFromDimension;
+                }
+                else
+                    $order->weight = $weightFromDimension;
             }
         });
 

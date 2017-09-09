@@ -160,7 +160,7 @@
                         <div class="col-sm-9">{{ \App\Libraries\Helpers\Utility::formatNumber($order->shipping_price) }}</div>
                     </div>
                     <div class="row">
-                        <div class="col-sm-3"><b>Tổng Tiền Thu Hộ</b></div>
+                        <div class="col-sm-3"><b>Tổng Tiền</b></div>
                         <div class="col-sm-9">{{ \App\Libraries\Helpers\Utility::formatNumber($order->total_cod_price) }}</div>
                     </div>
                     <div class="row">

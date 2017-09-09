@@ -70,6 +70,9 @@ class OrderController extends Controller
 
             if(!empty($inputs['shipper']))
                 $dataProvider->where('order.shipper', 'like', '%' . $inputs['shipper'] . '%');
+
+            if(isset($inputs['payment']) && $inputs['payment'] !== '')
+                $dataProvider->where('order.payment', $inputs['payment']);
         }
 
         $dataProvider = $dataProvider->paginate(GridView::ROWS_PER_PAGE);
@@ -228,6 +231,12 @@ class OrderController extends Controller
                 'name' => 'prepay',
                 'type' => 'select',
                 'options' => Order::getOrderPrepay(),
+            ],
+            [
+                'title' => 'Đối Soát',
+                'name' => 'payment',
+                'type' => 'select',
+                'options' => Order::getOrderPayment(),
             ],
         ]);
         $gridView->setFilterValues($inputs);
