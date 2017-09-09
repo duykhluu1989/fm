@@ -306,7 +306,7 @@ class OrderController extends Controller
                 'note' => 'nullable|max:255',
             ]);
 
-            $validator->after(function($validator) use(&$inputs) {
+            $validator->after(function($validator) use(&$inputs, $order) {
                 if(!empty($inputs['dimension']))
                 {
                     $dimensions = explode('x', $inputs['dimension']);
@@ -319,6 +319,19 @@ class OrderController extends Controller
                         $dimension = trim($dimension);
                         if(empty($dimension) || !is_numeric($dimension) || $dimension < 1)
                             $validator->errors()->add('dimension', trans('validation.dimensions', ['attribute' => 'kích thước']));
+                    }
+                }
+
+                if(empty($order->discount) && !empty($inputs['discount_code']))
+                {
+                    $result = Discount::calculateDiscountShippingPrice($inputs['discount_code'], Order::calculateShippingPrice($inputs['receiver_district'], $inputs['weight'], $inputs['dimension']), $order->user);
+
+                    if($result['status'] == 'error')
+                        $validator->errors()->add('discount_code', $result['message']);
+                    else if($result['discountPrice'] > 0)
+                    {
+                        $inputs['discount'] = $result['discount'];
+                        $inputs['discount_price'] = $result['discountPrice'];
                     }
                 }
             });
@@ -334,13 +347,20 @@ class OrderController extends Controller
 
                     if(!empty($order->discount))
                     {
-                        $order->discount_shipping_price = Discount::calculateDiscountShippingPrice($order->discount->code, $order->shipping_price, true);
+                        $order->discount_shipping_price = Discount::calculateDiscountShippingPrice($order->discount->code, $order->shipping_price, $order->user, true);
                         $order->shipping_price = $order->shipping_price - $order->discount_shipping_price;
                     }
-                    else
+                    else if(isset($inputs['discount']))
                     {
-                        $order->discount_shipping_price = User::calculateDiscountShippingPrice($order->user, $order->shipping_price);
+                        $order->discount_id = $inputs['discount']->id;
+                        $order->discount_shipping_price = $inputs['discount_price'];
                         $order->shipping_price = $order->shipping_price - $order->discount_shipping_price;
+
+                        DB::statement('
+                            UPDATE `discount`
+                            SET `used_count` = `used_count` + 1
+                            WHERE `id` = ' . $order->discount_id
+                        );
                     }
 
                     $order->shipping_payment = $inputs['shipping_payment'];
@@ -697,11 +717,14 @@ class OrderController extends Controller
         $validator = Validator::make($inputs, [
             'shipping_price' => 'required|integer|min:1',
             'discount_code' => 'required',
+            'user_id' => 'required|integer|min:1',
         ]);
 
         if($validator->passes())
         {
-            $result = Discount::calculateDiscountShippingPrice($inputs['discount_code'], $inputs['shipping_price'], true);
+            $user = User::find($inputs['user_id']);
+
+            $result = Discount::calculateDiscountShippingPrice($inputs['discount_code'], $inputs['shipping_price'], $user, (isset($inputs['edit']) ? true : false));
 
             return $result;
         }

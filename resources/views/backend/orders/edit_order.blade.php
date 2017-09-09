@@ -136,10 +136,24 @@
                                 <span class="help-block">{{ $errors->first('cod_price') }}</span>
                             @endif
                         </div>
-                        <div class="form-group">
-                            <label>Mã giảm giá</label>
-                            <input type="text" class="form-control" id="OrderDiscountCodeInput" value="{{ !empty($order->discount) ? $order->discount->code : '' }}" readonly="readonly" />
-                        </div>
+
+                        @if(!empty($order->discount))
+                            <div class="form-group">
+                                <label>Mã giảm giá</label>
+                                <input type="text" class="form-control" id="OrderDiscountCodeInput" value="{{ $order->discount->code }}" readonly="readonly" />
+                            </div>
+                        @else
+                            <div class="form-group">
+                                <label>Mã giảm giá</label>
+                                <input type="text" class="form-control" id="OrderDiscountCodeInput" name="discount_code" value="{{ old('discount_code') }}" />
+                            </div>
+                            @if($errors->has('discount_code'))
+                                <span class="has-error">
+                                    <span class="help-block">* {{ $errors->first('discount_code') }}</span>
+                                </span>
+                            @endif
+                        @endif
+
                         <div class="form-group">
                             <label>Được giảm giá</label>
                             <input type="text" class="form-control" id="OrderDiscountShippingPriceInput" name="discount_shipping_price" value="{{ old('discount_shipping_price', \App\Libraries\Helpers\Utility::formatNumber($order->discount_shipping_price)) }}" readonly="readonly" />
@@ -386,29 +400,33 @@
             changeArea($(this), $('#ReceiverDistrict'), '{{ \App\Models\Area::TYPE_DISTRICT_DB }}', true);
             $('#ReceiverWard').html('<option value=""></option>');
 
-            calculateShippingPrice($('#ReceiverDistrict'), $('#OrderWeightInput'), $('#OrderDimensionInput'), $('#OrderShippingPriceInput'));
+            calculateShippingPrice($('#ReceiverDistrict'), $('#OrderWeightInput'), $('#OrderDimensionInput'), $('#OrderShippingPriceInput'), $('#OrderDiscountCodeInput'), $('#OrderDiscountShippingPriceInput'));
         });
 
         $('#ReceiverDistrict').change(function() {
             changeArea($(this), $('#ReceiverWard'), '{{ \App\Models\Area::TYPE_WARD_DB }}', true);
 
-            calculateShippingPrice($('#ReceiverDistrict'), $('#OrderWeightInput'), $('#OrderDimensionInput'), $('#OrderShippingPriceInput'));
+            calculateShippingPrice($('#ReceiverDistrict'), $('#OrderWeightInput'), $('#OrderDimensionInput'), $('#OrderShippingPriceInput'), $('#OrderDiscountCodeInput'), $('#OrderDiscountShippingPriceInput'));
         });
 
         $('#OrderWeightInput').change(function() {
-            calculateShippingPrice($('#ReceiverDistrict'), $('#OrderWeightInput'), $('#OrderDimensionInput'), $('#OrderShippingPriceInput'));
+            calculateShippingPrice($('#ReceiverDistrict'), $('#OrderWeightInput'), $('#OrderDimensionInput'), $('#OrderShippingPriceInput'), $('#OrderDiscountCodeInput'), $('#OrderDiscountShippingPriceInput'));
         });
 
         $('#OrderDimensionInput').change(function() {
-            calculateShippingPrice($('#ReceiverDistrict'), $('#OrderWeightInput'), $('#OrderDimensionInput'), $('#OrderShippingPriceInput'));
+            calculateShippingPrice($('#ReceiverDistrict'), $('#OrderWeightInput'), $('#OrderDimensionInput'), $('#OrderShippingPriceInput'), $('#OrderDiscountCodeInput'), $('#OrderDiscountShippingPriceInput'));
         });
 
         $('#OrderCodPriceInput').change(function() {
-            calculateShippingPrice($('#ReceiverDistrict'), $('#OrderWeightInput'), $('#OrderDimensionInput'), $('#OrderShippingPriceInput'));
+            calculateShippingPrice($('#ReceiverDistrict'), $('#OrderWeightInput'), $('#OrderDimensionInput'), $('#OrderShippingPriceInput'), $('#OrderDiscountCodeInput'), $('#OrderDiscountShippingPriceInput'));
         });
 
         $('input[type="radio"][name="shipping_payment"]').change(function() {
-            calculateShippingPrice($('#ReceiverDistrict'), $('#OrderWeightInput'), $('#OrderDimensionInput'), $('#OrderShippingPriceInput'));
+            calculateShippingPrice($('#ReceiverDistrict'), $('#OrderWeightInput'), $('#OrderDimensionInput'), $('#OrderShippingPriceInput'), $('#OrderDiscountCodeInput'), $('#OrderDiscountShippingPriceInput'));
+        });
+
+        $('#OrderDiscountCodeInput').change(function() {
+            calculateDiscountShippingPrice($(this), $('#OrderDiscountShippingPriceInput'), $('#OrderShippingPriceInput'));
         });
 
         function changeArea(elem, updateElem, type, receiver)
@@ -442,7 +460,7 @@
             }
         }
 
-        function calculateShippingPrice(districtElem, weightElem, dimensionElem, shippingPriceElem)
+        function calculateShippingPrice(districtElem, weightElem, dimensionElem, shippingPriceElem, discountCodeElem, discountShippingPriceElem)
         {
             if(districtElem.val() != '')
             {
@@ -452,40 +470,78 @@
                     data: 'register_district=' + districtElem.val() + '&weight=' + weightElem.val() + '&dimension=' + dimensionElem.val(),
                     success: function(result) {
                         if(result)
-                            shippingPriceElem.val(formatNumber(result, '.'));
-                        else
-                            shippingPriceElem.val('');
-
-                        var discountCodeElem = $('#OrderDiscountCodeInput');
-                        var discountShippingPriceElem = $('#OrderDiscountShippingPriceInput');
-
-                        if(discountCodeElem.val() != '')
                         {
-                            $.ajax({
-                                url: '{{ action('Backend\OrderController@calculateDiscountShippingPrice') }}',
-                                type: 'get',
-                                data: 'discount_code=' + discountCodeElem.val() + '&shipping_price=' + shippingPriceElem.val(),
-                                success: function(result) {
-                                    if(result > 0)
-                                    {
-                                        discountShippingPriceElem.val(formatNumber(result, '.'));
+                            if(discountCodeElem)
+                            {
+                                if(discountCodeElem.val() != '')
+                                {
+                                    var shippingPrice = result;
 
-                                        shippingPriceElem.val(formatNumber((parseInt(shippingPriceElem.val().split('.').join('')) - parseInt(result)).toString(), '.'));
-                                    }
-                                    else
-                                        discountShippingPriceElem.val('');
+                                    $.ajax({
+                                        url: '{{ action('Backend\OrderController@calculateDiscountShippingPrice') }}',
+                                        type: 'get',
+                                        data: 'discount_code=' + discountCodeElem.val() + '&shipping_price=' + shippingPrice + '&user_id=<?php echo $order->user_id; ?>' + '<?php echo !empty($order->discount) ? '&edit=1': '' ;?>',
+                                        success: function(result) {
+                                            if(result)
+                                            {
+                                                result = JSON.parse(result);
+
+                                                if(result['status'] != 'error')
+                                                {
+                                                    if(result['discount'] > 0)
+                                                    {
+                                                        discountShippingPriceElem.val(formatNumber(result['discount'].toString(), '.'));
+                                                        shippingPriceElem.val(formatNumber((parseInt(shippingPrice) - parseInt(result['discount'])).toString(), '.'));
+                                                    }
+                                                    else
+                                                    {
+                                                        discountShippingPriceElem.val('');
+                                                        shippingPriceElem.val(formatNumber(shippingPrice, '.'));
+                                                    }
+                                                }
+                                            }
+                                            else
+                                            {
+                                                discountShippingPriceElem.val('');
+                                                shippingPriceElem.val(formatNumber(shippingPrice, '.'));
+                                            }
+
+                                            calculateTotalCodPrice($('#OrderCodPriceInput'), $('#OrderTotalCodPriceInput'), $('#OrderShippingPriceInput'), $('input[type="radio"][name="shipping_payment"]:checked').val());
+                                        }
+                                    });
+                                }
+                                else
+                                {
+                                    shippingPriceElem.val(formatNumber(result, '.'));
 
                                     calculateTotalCodPrice($('#OrderCodPriceInput'), $('#OrderTotalCodPriceInput'), $('#OrderShippingPriceInput'), $('input[type="radio"][name="shipping_payment"]:checked').val());
                                 }
-                            });
+                            }
+                            else
+                            {
+                                if(discountShippingPriceElem.val() != '')
+                                    shippingPriceElem.val(formatNumber((parseInt(result) - parseInt(discountShippingPriceElem.val().split('.').join(''))).toString(), '.'));
+                                else
+                                    shippingPriceElem.val(formatNumber(result, '.'));
+
+                                calculateTotalCodPrice($('#OrderCodPriceInput'), $('#OrderTotalCodPriceInput'), $('#OrderShippingPriceInput'), $('input[type="radio"][name="shipping_payment"]:checked').val());
+                            }
                         }
                         else
+                        {
+                            shippingPriceElem.val('');
+
                             calculateTotalCodPrice($('#OrderCodPriceInput'), $('#OrderTotalCodPriceInput'), $('#OrderShippingPriceInput'), $('input[type="radio"][name="shipping_payment"]:checked').val());
+                        }
                     }
                 });
             }
             else
+            {
                 shippingPriceElem.val('');
+
+                calculateTotalCodPrice($('#OrderCodPriceInput'), $('#OrderTotalCodPriceInput'), $('#OrderShippingPriceInput'), $('input[type="radio"][name="shipping_payment"]:checked').val());
+            }
         }
 
         function calculateTotalCodPrice(codPriceElem, totalCodPriceElem, shippingPriceElem, shippingPaymentVal)
@@ -500,6 +556,52 @@
                     totalCodPriceElem.val(shippingPriceElem.val());
                 else
                     totalCodPriceElem.val(codPriceElem.val());
+            }
+        }
+
+        function calculateDiscountShippingPrice(discountCodeElem, discountShippingPriceElem, shippingPriceElem)
+        {
+            if(discountCodeElem.val() != '' && shippingPriceElem.val() != '')
+            {
+                var shippingPrice;
+
+                if(discountShippingPriceElem.val() != '')
+                    shippingPrice = parseInt(shippingPriceElem.val().split('.').join('')) + parseInt(discountShippingPriceElem.val().split('.').join(''));
+                else
+                    shippingPrice = shippingPriceElem.val();
+
+                $.ajax({
+                    url: '{{ action('Backend\OrderController@calculateDiscountShippingPrice') }}',
+                    type: 'get',
+                    data: 'discount_code=' + discountCodeElem.val() + '&shipping_price=' + shippingPrice + '&user_id=<?php echo $order->user_id; ?>' + '<?php echo !empty($order->discount) ? '&edit=1': '' ;?>',
+                    success: function(result) {
+                        result = JSON.parse(result);
+
+                        if(result['status'] == 'error')
+                        {
+                            swal({
+                                title: result['message'],
+                                type: 'error',
+                                confirmButtonClass: 'btn-success'
+                            });
+                        }
+                        else
+                        {
+                            if(result['discount'] > 0)
+                                discountShippingPriceElem.val(formatNumber(result['discount'].toString(), '.'));
+                            else
+                                discountShippingPriceElem.val('');
+
+                            calculateShippingPrice($('#ReceiverDistrict'), $('#OrderWeightInput'), $('#OrderDimensionInput'), $('#OrderShippingPriceInput'), null, discountShippingPriceElem);
+                        }
+                    }
+                });
+            }
+            else
+            {
+                discountShippingPriceElem.val('');
+
+                calculateShippingPrice($('#ReceiverDistrict'), $('#OrderWeightInput'), $('#OrderDimensionInput'), $('#OrderShippingPriceInput'), null, discountShippingPriceElem);
             }
         }
     </script>

@@ -69,7 +69,7 @@ class Discount extends Model
         return null;
     }
 
-    public static function calculateDiscountShippingPrice($code, $shippingPrice, $edit = false)
+    public static function calculateDiscountShippingPrice($code, $shippingPrice, $user = null, $edit = false)
     {
         if($edit == true)
         {
@@ -118,7 +118,8 @@ class Discount extends Model
         if(!empty($discount->usage_limit) && $discount->used_count >= $discount->usage_limit)
             return $result;
 
-        $user = auth()->user();
+        if($user === null)
+            $user = auth()->user();
 
         if(!empty($discount->usage_unique) && !empty($user))
         {

@@ -761,7 +761,7 @@ class UserController extends Controller
 
                         $rowValidator = Validator::make($inputData, $rules);
 
-                        $rowValidator->after(function($rowValidator) use(&$inputData, $receiverDistrict) {
+                        $rowValidator->after(function($rowValidator) use(&$inputData, $user, $receiverDistrict) {
                             if(!empty($inputData[OrderExcel::IMPORT_DIMENSION_COLUMN_LABEL]))
                             {
                                 $dimensions = explode('x', $inputData[OrderExcel::IMPORT_DIMENSION_COLUMN_LABEL]);
@@ -779,7 +779,7 @@ class UserController extends Controller
 
                             if(!empty($inputData[OrderExcel::IMPORT_DISCOUNT_CODE_COLUMN_LABEL]))
                             {
-                                $result = Discount::calculateDiscountShippingPrice($inputData[OrderExcel::IMPORT_DISCOUNT_CODE_COLUMN_LABEL], Order::calculateShippingPrice((!empty($receiverDistrict) ? $receiverDistrict->id : null), $inputData[OrderExcel::IMPORT_WEIGHT_COLUMN_LABEL], $inputData[OrderExcel::IMPORT_DIMENSION_COLUMN_LABEL]));
+                                $result = Discount::calculateDiscountShippingPrice($inputData[OrderExcel::IMPORT_DISCOUNT_CODE_COLUMN_LABEL], Order::calculateShippingPrice((!empty($receiverDistrict) ? $receiverDistrict->id : null), $inputData[OrderExcel::IMPORT_WEIGHT_COLUMN_LABEL], $inputData[OrderExcel::IMPORT_DIMENSION_COLUMN_LABEL]), $user);
 
                                 if($result['status'] == 'error')
                                     $rowValidator->errors()->add('discount_code', $result['message']);
