@@ -625,9 +625,7 @@
                 containerElem.find('.ReceiverWard').first().html('<option value=""></option>');
                 containerElem.find('.OrderShippingPriceInput').first();
 
-                resetDiscount(containerElem);
-
-                calculateShippingPrice(containerElem.find('.ReceiverDistrict').first(), containerElem.find('.OrderWeightInput').first(), containerElem.find('.OrderDimensionInput').first(), containerElem.find('.OrderShippingPriceInput').first(), containerElem.find('.OrderDiscountShippingPriceInput').first(), containerElem);
+                calculateShippingPrice(containerElem.find('.ReceiverDistrict').first(), containerElem.find('.OrderWeightInput').first(), containerElem.find('.OrderDimensionInput').first(), containerElem.find('.OrderShippingPriceInput').first(), containerElem.find('.OrderDiscountCodeInput').first(), containerElem.find('.OrderDiscountShippingPriceInput').first(), containerElem);
             }
             else if($(this).hasClass('ReceiverDistrict'))
             {
@@ -635,9 +633,7 @@
 
                 changeArea($(this), containerElem.find('.ReceiverWard').first(), '{{ \App\Models\Area::TYPE_WARD_DB }}', true);
 
-                resetDiscount(containerElem);
-
-                calculateShippingPrice(containerElem.find('.ReceiverDistrict').first(), containerElem.find('.OrderWeightInput').first(), containerElem.find('.OrderDimensionInput').first(), containerElem.find('.OrderShippingPriceInput').first(), containerElem.find('.OrderDiscountShippingPriceInput').first(), containerElem);
+                calculateShippingPrice(containerElem.find('.ReceiverDistrict').first(), containerElem.find('.OrderWeightInput').first(), containerElem.find('.OrderDimensionInput').first(), containerElem.find('.OrderShippingPriceInput').first(), containerElem.find('.OrderDiscountCodeInput').first(), containerElem.find('.OrderDiscountShippingPriceInput').first(), containerElem);
             }
             else if($(this).hasClass('RegisterUserAddress'))
             {
@@ -671,17 +667,13 @@
             {
                 containerElem = $(this).closest('.OrderFormDiv');
 
-                resetDiscount(containerElem);
-
-                calculateShippingPrice(containerElem.find('.ReceiverDistrict').first(), containerElem.find('.OrderWeightInput').first(), containerElem.find('.OrderDimensionInput').first(), containerElem.find('.OrderShippingPriceInput').first(), containerElem.find('.OrderDiscountShippingPriceInput').first(), containerElem);
+                calculateShippingPrice(containerElem.find('.ReceiverDistrict').first(), containerElem.find('.OrderWeightInput').first(), containerElem.find('.OrderDimensionInput').first(), containerElem.find('.OrderShippingPriceInput').first(), containerElem.find('.OrderDiscountCodeInput').first(), containerElem.find('.OrderDiscountShippingPriceInput').first(), containerElem);
             }
             else if($(this).hasClass('OrderDimensionInput'))
             {
                 containerElem = $(this).closest('.OrderFormDiv');
 
-                resetDiscount(containerElem);
-
-                calculateShippingPrice(containerElem.find('.ReceiverDistrict').first(), containerElem.find('.OrderWeightInput').first(), containerElem.find('.OrderDimensionInput').first(), containerElem.find('.OrderShippingPriceInput').first(), containerElem.find('.OrderDiscountShippingPriceInput').first(), containerElem);
+                calculateShippingPrice(containerElem.find('.ReceiverDistrict').first(), containerElem.find('.OrderWeightInput').first(), containerElem.find('.OrderDimensionInput').first(), containerElem.find('.OrderShippingPriceInput').first(), containerElem.find('.OrderDiscountCodeInput').first(), containerElem.find('.OrderDiscountShippingPriceInput').first(), containerElem);
             }
             else if($(this).hasClass('OrderCodPriceInput'))
             {
@@ -737,7 +729,7 @@
             }
         }
 
-        function calculateShippingPrice(districtElem, weightElem, dimensionElem, shippingPriceElem, discountShippingPriceElem, containerElem)
+        function calculateShippingPrice(districtElem, weightElem, dimensionElem, shippingPriceElem, discountCodeElem, discountShippingPriceElem, containerElem)
         {
             if(districtElem.val() != '')
             {
@@ -748,20 +740,77 @@
                     success: function(result) {
                         if(result)
                         {
-                            if(discountShippingPriceElem.val() != '')
-                                shippingPriceElem.val(formatNumber((parseInt(result) - parseInt(discountShippingPriceElem.val().split('.').join(''))).toString(), '.'));
+                            if(discountCodeElem)
+                            {
+                                if(discountCodeElem.val() != '')
+                                {
+                                    var shippingPrice = result;
+
+                                    $.ajax({
+                                        url: '{{ action('Frontend\OrderController@calculateDiscountShippingPrice') }}',
+                                        type: 'get',
+                                        data: 'discount_code=' + discountCodeElem.val() + '&shipping_price=' + shippingPrice,
+                                        success: function(result) {
+                                            if(result)
+                                            {
+                                                result = JSON.parse(result);
+
+                                                if(result['status'] != 'error')
+                                                {
+                                                    if(result['discount'] > 0)
+                                                    {
+                                                        discountShippingPriceElem.val(formatNumber(result['discount'].toString(), '.'));
+                                                        shippingPriceElem.val(formatNumber((parseInt(shippingPrice) - parseInt(result['discount'])).toString(), '.'));
+                                                    }
+                                                    else
+                                                    {
+                                                        discountShippingPriceElem.val('');
+                                                        shippingPriceElem.val(formatNumber(shippingPrice, '.'));
+                                                    }
+                                                }
+                                            }
+                                            else
+                                            {
+                                                discountShippingPriceElem.val('');
+                                                shippingPriceElem.val(formatNumber(shippingPrice, '.'));
+                                            }
+
+                                            calculateTotalCodPrice(containerElem.find('.OrderCodPriceInput').first(), containerElem.find('.OrderTotalCodPriceInput').first(), containerElem.find('.OrderShippingPriceInput').first(), containerElem.find('input[type="radio"]:checked').first().val());
+                                        }
+                                    });
+                                }
+                                else
+                                {
+                                    shippingPriceElem.val(formatNumber(result, '.'));
+
+                                    calculateTotalCodPrice(containerElem.find('.OrderCodPriceInput').first(), containerElem.find('.OrderTotalCodPriceInput').first(), containerElem.find('.OrderShippingPriceInput').first(), containerElem.find('input[type="radio"]:checked').first().val());
+                                }
+                            }
                             else
-                                shippingPriceElem.val(formatNumber(result, '.'));
+                            {
+                                if(discountShippingPriceElem.val() != '')
+                                    shippingPriceElem.val(formatNumber((parseInt(result) - parseInt(discountShippingPriceElem.val().split('.').join(''))).toString(), '.'));
+                                else
+                                    shippingPriceElem.val(formatNumber(result, '.'));
+
+                                calculateTotalCodPrice(containerElem.find('.OrderCodPriceInput').first(), containerElem.find('.OrderTotalCodPriceInput').first(), containerElem.find('.OrderShippingPriceInput').first(), containerElem.find('input[type="radio"]:checked').first().val());
+                            }
                         }
                         else
+                        {
                             shippingPriceElem.val('');
 
-                        calculateTotalCodPrice(containerElem.find('.OrderCodPriceInput').first(), containerElem.find('.OrderTotalCodPriceInput').first(), containerElem.find('.OrderShippingPriceInput').first(), containerElem.find('input[type="radio"]:checked').first().val());
+                            calculateTotalCodPrice(containerElem.find('.OrderCodPriceInput').first(), containerElem.find('.OrderTotalCodPriceInput').first(), containerElem.find('.OrderShippingPriceInput').first(), containerElem.find('input[type="radio"]:checked').first().val());
+                        }
                     }
                 });
             }
             else
+            {
                 shippingPriceElem.val('');
+
+                calculateTotalCodPrice(containerElem.find('.OrderCodPriceInput').first(), containerElem.find('.OrderTotalCodPriceInput').first(), containerElem.find('.OrderShippingPriceInput').first(), containerElem.find('input[type="radio"]:checked').first().val());
+            }
         }
 
         function calculateTotalCodPrice(codPriceElem, totalCodPriceElem, shippingPriceElem, shippingPaymentVal)
@@ -783,10 +832,17 @@
         {
             if(discountCodeElem.val() != '' && shippingPriceElem.val() != '')
             {
+                var shippingPrice;
+
+                if(discountShippingPriceElem.val() != '')
+                    shippingPrice = parseInt(shippingPriceElem.val().split('.').join('')) + parseInt(discountShippingPriceElem.val().split('.').join(''));
+                else
+                    shippingPrice = shippingPriceElem.val();
+
                 $.ajax({
                     url: '{{ action('Frontend\OrderController@calculateDiscountShippingPrice') }}',
                     type: 'get',
-                    data: 'discount_code=' + discountCodeElem.val() + '&shipping_price=' + shippingPriceElem.val(),
+                    data: 'discount_code=' + discountCodeElem.val() + '&shipping_price=' + shippingPrice,
                     success: function(result) {
                         result = JSON.parse(result);
 
@@ -805,7 +861,7 @@
                             else
                                 discountShippingPriceElem.val('');
 
-                            calculateShippingPrice(containerElem.find('.ReceiverDistrict').first(), containerElem.find('.OrderWeightInput').first(), containerElem.find('.OrderDimensionInput').first(), containerElem.find('.OrderShippingPriceInput').first(), discountShippingPriceElem, containerElem);
+                            calculateShippingPrice(containerElem.find('.ReceiverDistrict').first(), containerElem.find('.OrderWeightInput').first(), containerElem.find('.OrderDimensionInput').first(), containerElem.find('.OrderShippingPriceInput').first(), null, discountShippingPriceElem, containerElem);
                         }
                     }
                 });
@@ -814,14 +870,8 @@
             {
                 discountShippingPriceElem.val('');
 
-                calculateShippingPrice(containerElem.find('.ReceiverDistrict').first(), containerElem.find('.OrderWeightInput').first(), containerElem.find('.OrderDimensionInput').first(), containerElem.find('.OrderShippingPriceInput').first(), discountShippingPriceElem, containerElem);
+                calculateShippingPrice(containerElem.find('.ReceiverDistrict').first(), containerElem.find('.OrderWeightInput').first(), containerElem.find('.OrderDimensionInput').first(), containerElem.find('.OrderShippingPriceInput').first(), null, discountShippingPriceElem, containerElem);
             }
-        }
-
-        function resetDiscount(containerElem)
-        {
-            containerElem.find('.OrderDiscountCodeInput').first().val('');
-            containerElem.find('.OrderDiscountShippingPriceInput').first().val('');
         }
     </script>
 @endpush
