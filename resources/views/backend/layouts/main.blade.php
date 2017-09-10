@@ -28,6 +28,32 @@
             </a>
             <div class="navbar-custom-menu">
                 <ul class="nav navbar-nav">
+                    <li class="dropdown notifications-menu">
+                        <?php
+                        $countUserAttachment = \App\Models\User::where('attachment', \App\Libraries\Helpers\Utility::ACTIVE_DB)->count('id');
+                        $totalNotify = $countUserAttachment;
+                        ?>
+
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+                            <i class="fa fa-bell-o"></i>
+                            @if($totalNotify > 0)
+                                <span class="label label-warning">{{ $totalNotify }}</span>
+                            @endif
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <ul class="menu">
+                                    @if($countUserAttachment > 0)
+                                        <li>
+                                            <a href="{{ action('Backend\UserController@adminUserCustomer') }}">
+                                                <i class="fa fa-file-excel-o text-yellow"></i> {{ $countUserAttachment . ' khách hàng đang có attachment file' }}
+                                            </a>
+                                        </li>
+                                    @endif
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
                     <li class="dropdown user user-menu">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                             <i class="fa fa-user fa-fw"></i>

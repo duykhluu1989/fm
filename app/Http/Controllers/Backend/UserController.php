@@ -732,7 +732,7 @@ class UserController extends Controller
 
                 $password = null;
 
-                $popupOrderNumber = '';
+                $popupDos = '';
                 $placedOrders = array();
 
                 try
@@ -938,10 +938,10 @@ class UserController extends Controller
 
                             $order->setRelation('receiverAddress', $receiverAddress);
 
-                            if($popupOrderNumber == '')
-                                $popupOrderNumber = $order->number;
+                            if($popupDos == '')
+                                $popupDos = $order->number;
                             else
-                                $popupOrderNumber .= ', ' . $order->number;
+                                $popupDos .= ', ' . $order->number;
 
                             $placedOrders[] = $order;
                         }
@@ -997,7 +997,7 @@ class UserController extends Controller
                         }
                     }
 
-                    return redirect()->action('Backend\UserController@editUser', ['id' => $user->id])->with('messageSuccess', 'Đặt Đơn Hàng Thành Công, Mã Đơn Hàng: ' . $popupOrderNumber);
+                    return redirect()->action('Backend\UserController@editUser', ['id' => $user->id])->with('messageSuccess', 'Đặt Đơn Hàng Thành Công, Mã Đơn Hàng: ' . $popupDos);
                 }
                 catch(\Exception $e)
                 {
