@@ -1,6 +1,6 @@
 @extends('frontend.layouts.main')
 
-@section('page_heading', 'Sửa đơn hàng ' . $order->number)
+@section('page_heading', 'Sửa đơn hàng ' . (empty($order->user_do) ? $order->do : $order->user_do))
 
 @section('section')
 
@@ -14,7 +14,7 @@
             <div class="container">
                 <div class="row">
                     <div class="col-lg-12">
-                        <h2 class="title_sub">SỬA ĐƠN HÀNG {{ $order->number }}</h2>
+                        <h2 class="title_sub">SỬA ĐƠN HÀNG {{ (empty($order->user_do) ? $order->do : $order->user_do) }}</h2>
                         <div class="row">
                             <div class="col-lg-12">
                                 <form class="frm_donDH" action="{{ action('Frontend\UserController@editOrder', ['id' => $order->id]) }}" method="POST" role="form">

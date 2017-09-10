@@ -650,14 +650,10 @@ class UserController extends Controller
         {
             if(!empty($inputs['do']))
             {
-                $numbers = explode(',', $inputs['do']);
-                $builder->whereIn('order.do', $numbers);
-            }
-
-            if(!empty($inputs['user_do']))
-            {
-                $numbers = explode(',', $inputs['user_do']);
-                $builder->whereIn('order.user_do', $numbers);
+                $dos = explode(',', $inputs['do']);
+                $builder->where(function($query) use($dos) {
+                    $query->whereIn('order.do', $dos)->orWhereIn('order.user_do', $dos);
+                });
             }
 
             if(!empty($inputs['phone']))
@@ -1023,7 +1019,6 @@ class UserController extends Controller
 
         $exportData[] = [
             'Mã đơn hàng',
-            'DO',
             'Khách hàng',
             'Tiền thu hộ',
             'Phí ship',
@@ -1037,8 +1032,7 @@ class UserController extends Controller
         foreach($orders as $order)
         {
             $exportData[] = [
-                $order->do,
-                $order->user_do,
+                (empty($order->user_do) ? $order->do : $order->user_do),
                 $order->receiverAddress->name,
                 Utility::formatNumber($order->cod_price),
                 Utility::formatNumber($order->shipping_price),

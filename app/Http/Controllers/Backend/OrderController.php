@@ -79,7 +79,7 @@ class OrderController extends Controller
 
         $columns = [
             [
-                'title' => 'Mã',
+                'title' => 'DO',
                 'data' => function($row) {
                     if(empty($row->cancelled_at))
                     {
@@ -97,7 +97,7 @@ class OrderController extends Controller
                 },
             ],
             [
-                'title' => 'DO',
+                'title' => 'User DO',
                 'data' => 'user_do',
             ],
             [
@@ -186,12 +186,12 @@ class OrderController extends Controller
                 'type' => 'date',
             ],
             [
-                'title' => 'Mã',
+                'title' => 'DO',
                 'name' => 'do',
                 'type' => 'input',
             ],
             [
-                'title' => 'DO',
+                'title' => 'User DO',
                 'name' => 'user_do',
                 'type' => 'input',
             ],
@@ -459,7 +459,6 @@ class OrderController extends Controller
         $orders = Order::whereIn('id', explode(';', $ids))->get();
 
         $exportData[] = [
-            'Order Number',
             'DO',
             'Code',
             'Note',
@@ -474,7 +473,6 @@ class OrderController extends Controller
 
                 $exportData[] = [
                     $order->do,
-                    $order->user_do,
                     '',
                     '',
                 ];
@@ -536,7 +534,7 @@ class OrderController extends Controller
                 {
                     foreach($rowData as $column => $cellData)
                     {
-                        if(Utility::removeWhitespace($cellData, '') == 'Order Number')
+                        if(Utility::removeWhitespace($cellData, '') == 'DO')
                             $doColumn = $column;
                         else if(Utility::removeWhitespace($cellData, '') == 'Code')
                             $codeColumn = $column;
@@ -547,9 +545,9 @@ class OrderController extends Controller
                     if($doColumn === null || $codeColumn === null || $noteColumn === null)
                     {
                         if($request->headers->has('referer'))
-                            return redirect($request->headers->get('referer'))->with('messageError', 'File Excel Phải Có Column Order Number');
+                            return redirect($request->headers->get('referer'))->with('messageError', 'File Excel Phải Có Column DO');
                         else
-                            return redirect()->action('Backend\OrderController@adminOrder')->with('messageError', 'File Excel Phải Có Column Order Number');
+                            return redirect()->action('Backend\OrderController@adminOrder')->with('messageError', 'File Excel Phải Có Column DO');
                     }
                 }
                 else

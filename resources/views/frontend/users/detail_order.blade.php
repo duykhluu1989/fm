@@ -1,6 +1,6 @@
 @extends('frontend.layouts.main')
 
-@section('page_heading', 'Chi tiết đơn hàng ' . $order->do)
+@section('page_heading', 'Chi tiết đơn hàng ' . (empty($order->user_do) ? $order->do : $order->user_do))
 
 @section('section')
 
@@ -14,7 +14,7 @@
             <div class="container">
                 <div class="row">
                     <div class="col-lg-12">
-                        <h4 class="title_user line-on-right">Chi tiết đơn hàng {{ $order->do }}</h4>
+                        <h4 class="title_user line-on-right">Chi tiết đơn hàng {{ (empty($order->user_do) ? $order->do : $order->user_do) }}</h4>
 
                         @if(\App\Models\Order::getOrderStatusOrder($order->status) <= \App\Models\Order::getOrderStatusOrder(\App\Models\Order::STATUS_INFO_RECEIVED_DB))
 
@@ -88,15 +88,17 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-3"><b>Mã đơn hàng</b></div>
-                                    <div class="col-sm-9">{{ $order->do }}</div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-sm-3"><b>DO</b></div>
-                                    <div class="col-sm-9">{{ $order->user_do }}</div>
+                                    <div class="col-sm-9">
+                                        @if(empty($order->user_do))
+                                            {{ $order->do }}
+                                        @else
+                                            {{ $order->user_do }}
+                                        @endif
+                                    </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-3"><b>Trạng thái</b></div>
-                                    <div class="col-sm-9"><span class="label label-{{ \App\Models\Order::getOrderStatusLabel($order->status ) }}">{{  \App\Models\Order::getOrderStatus($order->status) }}</span></div>
+                                    <div class="col-sm-9"><span class="label label-{{ \App\Models\Order::getOrderStatusLabel($order->status ) }}">{{ \App\Models\Order::getOrderStatus($order->status) }}</span></div>
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-3"><b>Trọng lượng (kg)</b></div>

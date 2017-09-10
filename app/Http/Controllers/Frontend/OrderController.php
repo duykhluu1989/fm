@@ -238,7 +238,7 @@ class OrderController extends Controller
                         $userAddress->save();
                     }
 
-                    $popupOrderNumber = '';
+                    $popupDos = '';
                     $placedOrders = array();
 
                     foreach($inputs['receiver_name'] as $k => $v)
@@ -375,10 +375,10 @@ class OrderController extends Controller
 
                         $order->setRelation('receiverAddress', $receiverAddress);
 
-                        if($popupOrderNumber == '')
-                            $popupOrderNumber = $order->do;
+                        if($popupDos == '')
+                            $popupDos = $order->do;
                         else
-                            $popupOrderNumber .= ', ' . $order->do;
+                            $popupDos .= ', ' . $order->do;
 
                         $placedOrders[] = $order;
                     }
@@ -410,7 +410,7 @@ class OrderController extends Controller
                         }
                     }
 
-                    return redirect()->action('Frontend\OrderController@placeOrder')->with('messageSuccess', 'Đặt đơn hàng thành công, mã đơn hàng: ' . $popupOrderNumber);
+                    return redirect()->action('Frontend\OrderController@placeOrder')->with('messageSuccess', 'Đặt đơn hàng thành công, mã đơn hàng: ' . $popupDos);
                 }
                 catch(\Exception $e)
                 {

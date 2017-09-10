@@ -116,11 +116,11 @@
                         <div class="col-sm-9">{{ \App\Models\Order::getOrderSource($order->source) }}</div>
                     </div>
                     <div class="row">
-                        <div class="col-sm-3"><b>Mã Đơn Hàng</b></div>
+                        <div class="col-sm-3"><b>DO</b></div>
                         <div class="col-sm-9">{{ $order->do }}</div>
                     </div>
                     <div class="row">
-                        <div class="col-sm-3"><b>DO</b></div>
+                        <div class="col-sm-3"><b>User DO</b></div>
                         <div class="col-sm-9">{{ $order->user_do }}</div>
                     </div>
                     <div class="row">

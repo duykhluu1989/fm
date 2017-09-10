@@ -91,7 +91,6 @@
                             <tr>
                                 <th><input type="checkbox" class="GridViewCheckBoxAll" /></th>
                                 <th>Mã đơn hàng</th>
-                                <th>DO</th>
                                 <th>Khách hàng</th>
                                 <th>Tiền thu hộ</th>
                                 <th>Phí ship</th>
@@ -108,9 +107,14 @@
                                 <tr>
                                     <td><input type="checkbox" class="GridViewCheckBox" value="{{ $order->id }}" /></td>
                                     <td>
-                                        <a class="label label-{{ !empty($order->cancelled_at) ? 'danger' : 'success' }}" href="{{ action('Frontend\UserController@detailOrder', ['id' => $order->id]) }}">{{ $order->do }}</a>
+                                        <a class="label label-{{ !empty($order->cancelled_at) ? 'danger' : 'success' }}" href="{{ action('Frontend\UserController@detailOrder', ['id' => $order->id]) }}">
+                                            @if(empty($order->user_do))
+                                                {{ $order->do }}
+                                            @else
+                                                {{ $order->user_do }}
+                                            @endif
+                                        </a>
                                     </td>
-                                    <td>{{ $order->user_do }}</td>
                                     <td>{{ $order->receiverAddress->name }}</td>
                                     <td>{{ \App\Libraries\Helpers\Utility::formatNumber($order->cod_price) }}</td>
                                     <td>{{ \App\Libraries\Helpers\Utility::formatNumber($order->shipping_price) }}</td>
