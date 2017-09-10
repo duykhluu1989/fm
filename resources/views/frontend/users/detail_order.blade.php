@@ -1,6 +1,6 @@
 @extends('frontend.layouts.main')
 
-@section('page_heading', 'Chi tiết đơn hàng ' . $order->number)
+@section('page_heading', 'Chi tiết đơn hàng ' . $order->do)
 
 @section('section')
 
@@ -14,7 +14,7 @@
             <div class="container">
                 <div class="row">
                     <div class="col-lg-12">
-                        <h4 class="title_user line-on-right">Chi tiết đơn hàng {{ $order->number }}</h4>
+                        <h4 class="title_user line-on-right">Chi tiết đơn hàng {{ $order->do }}</h4>
 
                         @if(\App\Models\Order::getOrderStatusOrder($order->status) <= \App\Models\Order::getOrderStatusOrder(\App\Models\Order::STATUS_INFO_RECEIVED_DB))
 
@@ -88,11 +88,11 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-3"><b>Mã đơn hàng</b></div>
-                                    <div class="col-sm-9">{{ $order->number }}</div>
+                                    <div class="col-sm-9">{{ $order->do }}</div>
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-3"><b>DO</b></div>
-                                    <div class="col-sm-9">{{ $order->do }}</div>
+                                    <div class="col-sm-9">{{ $order->user_do }}</div>
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-3"><b>Trạng thái</b></div>

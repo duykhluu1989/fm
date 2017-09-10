@@ -27,11 +27,11 @@
                                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                                     <div class="form-group">
                                         <label>Mã đơn hàng</label>
-                                        <input type="text" name="number" class="form-control" value="{{ request()->get('number') }}" placeholder="Nếu nhiều mã đơn hàng cách nhau bởi dấu phẩy" />
+                                        <input type="text" name="do" class="form-control" value="{{ request()->get('do') }}" placeholder="Nếu nhiều mã đơn hàng cách nhau bởi dấu phẩy" />
                                     </div>
                                     <div class="form-group">
                                         <label>DO</label>
-                                        <input type="text" name="do" class="form-control" value="{{ request()->get('do') }}" placeholder="Nếu nhiều DO cách nhau bởi dấu phẩy" />
+                                        <input type="text" name="user_do" class="form-control" value="{{ request()->get('user_do') }}" placeholder="Nếu nhiều DO cách nhau bởi dấu phẩy" />
                                     </div>
                                 </div>
                                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
@@ -108,9 +108,9 @@
                                 <tr>
                                     <td><input type="checkbox" class="GridViewCheckBox" value="{{ $order->id }}" /></td>
                                     <td>
-                                        <a class="label label-{{ !empty($order->cancelled_at) ? 'danger' : 'success' }}" href="{{ action('Frontend\UserController@detailOrder', ['id' => $order->id]) }}">{{ $order->number }}</a>
+                                        <a class="label label-{{ !empty($order->cancelled_at) ? 'danger' : 'success' }}" href="{{ action('Frontend\UserController@detailOrder', ['id' => $order->id]) }}">{{ $order->do }}</a>
                                     </td>
-                                    <td>{{ $order->do }}</td>
+                                    <td>{{ $order->user_do }}</td>
                                     <td>{{ $order->receiverAddress->name }}</td>
                                     <td>{{ \App\Libraries\Helpers\Utility::formatNumber($order->cod_price) }}</td>
                                     <td>{{ \App\Libraries\Helpers\Utility::formatNumber($order->shipping_price) }}</td>

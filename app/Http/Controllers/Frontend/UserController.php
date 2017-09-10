@@ -384,11 +384,10 @@ class UserController extends Controller
 
             $orders = Order::with(['receiverAddress' => function($query) {
                 $query->select('order_id', 'name');
-            }])->select('id', 'number', 'do', 'status', 'shipper', 'created_at', 'cancelled_at', 'cod_price', 'shipping_price', 'payment')
+            }])->select('id', 'do', 'user_do', 'status', 'shipper', 'created_at', 'cancelled_at', 'cod_price', 'shipping_price', 'payment')
                 ->where('user_id', $user->id)
                 ->where(function($query) use($keyword) {
-                    $query->where('number', 'like', $keyword . '%')
-                        ->orWhere('do', 'like', $keyword . '%')
+                    $query->where('do', 'like', $keyword . '%')
                         ->orWhere('user_do', 'like', $keyword . '%');
                 })
                 ->orderBy('id', 'desc')
@@ -641,7 +640,7 @@ class UserController extends Controller
 
         $builder = Order::with(['receiverAddress' => function($query) {
             $query->select('order_id', 'name');
-        }])->select('order.id', 'order.number', 'order.do', 'order.status', 'order.shipper', 'order.created_at', 'order.cancelled_at', 'order.cod_price', 'order.shipping_price', 'order.payment')
+        }])->select('order.id', 'order.do', 'order.user_do', 'order.status', 'order.shipper', 'order.created_at', 'order.cancelled_at', 'order.cod_price', 'order.shipping_price', 'order.payment')
             ->where('order.user_id', $user->id)
             ->orderBy('order.id', 'desc');
 
@@ -649,16 +648,16 @@ class UserController extends Controller
 
         if(count($inputs) > 0)
         {
-            if(!empty($inputs['number']))
-            {
-                $numbers = explode(',', $inputs['number']);
-                $builder->whereIn('order.number', $numbers);
-            }
-
             if(!empty($inputs['do']))
             {
                 $numbers = explode(',', $inputs['do']);
                 $builder->whereIn('order.do', $numbers);
+            }
+
+            if(!empty($inputs['user_do']))
+            {
+                $numbers = explode(',', $inputs['user_do']);
+                $builder->whereIn('order.user_do', $numbers);
             }
 
             if(!empty($inputs['phone']))
@@ -756,8 +755,7 @@ class UserController extends Controller
             $query->select('order_id', 'name', 'phone', 'address', 'province', 'district', 'ward');
         }, 'discount' => function($query) {
             $query->select('id', 'code');
-        }])->select('id', 'number', 'created_at', 'cancelled_at', 'cod_price', 'shipping_price', 'total_cod_price', 'shipping_payment', 'note', 'shipper', 'status', 'weight', 'dimension', 'prepay', 'payment', 'discount_id', 'discount_shipping_price')
-            ->where('user_id', $user->id)
+        }])->where('user_id', $user->id)
             ->where('id', $id)
             ->first();
 
@@ -1039,8 +1037,8 @@ class UserController extends Controller
         foreach($orders as $order)
         {
             $exportData[] = [
-                $order->number,
                 $order->do,
+                $order->user_do,
                 $order->receiverAddress->name,
                 Utility::formatNumber($order->cod_price),
                 Utility::formatNumber($order->shipping_price),

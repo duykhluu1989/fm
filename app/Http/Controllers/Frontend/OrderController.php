@@ -376,9 +376,9 @@ class OrderController extends Controller
                         $order->setRelation('receiverAddress', $receiverAddress);
 
                         if($popupOrderNumber == '')
-                            $popupOrderNumber = $order->number;
+                            $popupOrderNumber = $order->do;
                         else
-                            $popupOrderNumber .= ', ' . $order->number;
+                            $popupOrderNumber .= ', ' . $order->do;
 
                         $placedOrders[] = $order;
                     }

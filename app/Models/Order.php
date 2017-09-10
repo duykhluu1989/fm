@@ -54,11 +54,6 @@ class Order extends Model
     {
         parent::boot();
 
-        self::created(function(Order $order) {
-            $order->number = self::ORDER_NUMBER_PREFIX + $order->id;
-            $order->save();
-        });
-
         self::saving(function(Order $order) {
             if(!empty($order->dimension))
             {

@@ -48,9 +48,7 @@ class Detrack
                 'notify_url' => action('Api\DeliveryController@handleDeliveryNotification'),
                 'instructions' => !empty($order->note) ? $order->note : '',
                 'pay_amt' => $order->total_cod_price,
-                'order_no' => $order->number,
                 'group_name' => $order->user->group,
-                'job_fee' => $order->shipping_price,
                 'j_fee' => $order->shipping_price,
             ];
         }
@@ -154,9 +152,7 @@ class Detrack
                 'notify_url' => action('Api\DeliveryController@handleDeliveryNotification'),
                 'instructions' => !empty($order->note) ? $order->note : '',
                 'pay_amt' => $order->total_cod_price,
-                'order_no' => $order->number,
                 'group_name' => $order->user->group,
-                'job_fee' => $order->shipping_price,
                 'j_fee' => $order->shipping_price,
             ];
         }
@@ -319,9 +315,7 @@ class Detrack
                 'phone' => $order->senderAddress->phone,
                 'notify_url' => action('Api\CollectionController@handleCollectionNotification'),
                 'instructions' => !empty($order->note) ? $order->note : '',
-                'order_no' => $order->number,
                 'group_name' => $order->user->group,
-                'job_fee' => $order->shipping_price,
                 'j_fee' => $order->shipping_price,
             ];
         }
@@ -424,9 +418,7 @@ class Detrack
                 'phone' => $order->senderAddress->phone,
                 'notify_url' => action('Api\CollectionController@handleCollectionNotification'),
                 'instructions' => !empty($order->note) ? $order->note : '',
-                'order_no' => $order->number,
                 'group_name' => $order->user->group,
-                'job_fee' => $order->shipping_price,
                 'j_fee' => $order->shipping_price,
             ];
         }
