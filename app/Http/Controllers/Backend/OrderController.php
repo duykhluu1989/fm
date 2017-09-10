@@ -26,7 +26,7 @@ class OrderController extends Controller
             $query->select('id', 'username');
         }, 'senderAddress' => function($query) {
             $query->select('id', 'order_id', 'address', 'province', 'district', 'ward');
-        }])->select('order.id', 'order.user_id', 'order.number', 'order.created_at', 'order.cancelled_at', 'order.status', 'order.cod_price', 'order.shipper', 'order.do', 'order.shipping_price', 'order.source', 'order.prepay', 'order.payment')
+        }])->select('order.id', 'order.user_id', 'order.do', 'order.user_do', 'order.created_at', 'order.cancelled_at', 'order.status', 'order.cod_price', 'order.shipper', 'order.do', 'order.shipping_price', 'order.source', 'order.prepay', 'order.payment')
             ->orderBy('order.id', 'desc');
 
         $inputs = $request->all();
@@ -39,8 +39,8 @@ class OrderController extends Controller
             if(!empty($inputs['created_at_to']))
                 $dataProvider->where('order.created_at', '<=', $inputs['created_at_to'] . ' 23:59:59');
 
-            if(!empty($inputs['number']))
-                $dataProvider->where('order.number', 'like', '%' . $inputs['number'] . '%');
+            if(!empty($inputs['user_do']))
+                $dataProvider->where('order.user_do', 'like', '%' . $inputs['user_do'] . '%');
 
             if(!empty($inputs['do']))
                 $dataProvider->where('order.do', 'like', '%' . $inputs['do'] . '%');
@@ -83,13 +83,13 @@ class OrderController extends Controller
                 'data' => function($row) {
                     if(empty($row->cancelled_at))
                     {
-                        echo Html::a($row->number, [
+                        echo Html::a($row->do, [
                             'href' => action('Backend\OrderController@detailOrder', ['id' => $row->id]),
                         ]);
                     }
                     else
                     {
-                        echo Html::a($row->number, [
+                        echo Html::a($row->do, [
                             'href' => action('Backend\OrderController@detailOrder', ['id' => $row->id]),
                             'class' => 'text-danger',
                         ]);
@@ -98,7 +98,7 @@ class OrderController extends Controller
             ],
             [
                 'title' => 'DO',
-                'data' => 'do',
+                'data' => 'user_do',
             ],
             [
                 'title' => 'Khách Hàng',
@@ -187,12 +187,12 @@ class OrderController extends Controller
             ],
             [
                 'title' => 'Mã',
-                'name' => 'number',
+                'name' => 'do',
                 'type' => 'input',
             ],
             [
                 'title' => 'DO',
-                'name' => 'do',
+                'name' => 'user_do',
                 'type' => 'input',
             ],
             [
@@ -473,8 +473,8 @@ class OrderController extends Controller
                 $order->save();
 
                 $exportData[] = [
-                    $order->number,
                     $order->do,
+                    $order->user_do,
                     '',
                     '',
                 ];
@@ -536,7 +536,7 @@ class OrderController extends Controller
                 {
                     foreach($rowData as $column => $cellData)
                     {
-                        if(Utility::removeWhitespace($cellData, '') == 'DO')
+                        if(Utility::removeWhitespace($cellData, '') == 'Order Number')
                             $doColumn = $column;
                         else if(Utility::removeWhitespace($cellData, '') == 'Code')
                             $codeColumn = $column;
@@ -547,9 +547,9 @@ class OrderController extends Controller
                     if($doColumn === null || $codeColumn === null || $noteColumn === null)
                     {
                         if($request->headers->has('referer'))
-                            return redirect($request->headers->get('referer'))->with('messageError', 'File Excel Phải Có Column DO');
+                            return redirect($request->headers->get('referer'))->with('messageError', 'File Excel Phải Có Column Order Number');
                         else
-                            return redirect()->action('Backend\OrderController@adminOrder')->with('messageError', 'File Excel Phải Có Column DO');
+                            return redirect()->action('Backend\OrderController@adminOrder')->with('messageError', 'File Excel Phải Có Column Order Number');
                     }
                 }
                 else

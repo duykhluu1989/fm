@@ -1,6 +1,6 @@
 @extends('backend.layouts.main')
 
-@section('page_heading', 'Sửa Đơn Hàng - ' . $order->number)
+@section('page_heading', 'Sửa Đơn Hàng - ' . $order->do)
 
 @section('section')
 

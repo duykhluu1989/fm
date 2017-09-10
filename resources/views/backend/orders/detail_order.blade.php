@@ -1,6 +1,6 @@
 @extends('backend.layouts.main')
 
-@section('page_heading', 'Chi Tiết Đơn Hàng - ' . $order->number)
+@section('page_heading', 'Chi Tiết Đơn Hàng - ' . $order->do)
 
 @section('section')
 
@@ -117,11 +117,11 @@
                     </div>
                     <div class="row">
                         <div class="col-sm-3"><b>Mã Đơn Hàng</b></div>
-                        <div class="col-sm-9">{{ $order->number }}</div>
+                        <div class="col-sm-9">{{ $order->do }}</div>
                     </div>
                     <div class="row">
                         <div class="col-sm-3"><b>DO</b></div>
-                        <div class="col-sm-9">{{ $order->do }}</div>
+                        <div class="col-sm-9">{{ $order->user_do }}</div>
                     </div>
                     <div class="row">
                         <div class="col-sm-3"><b>User DO</b></div>
