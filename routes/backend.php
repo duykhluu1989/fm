@@ -64,6 +64,12 @@ Route::group(['namespace' => 'Backend'], function() {
 
         Route::get('area/export', 'AreaController@exportArea');
 
+        Route::get('shippingPriceRule', 'ShippingPriceRuleController@adminShippingPriceRule');
+
+        Route::match(['get', 'post'], 'shippingPriceRule/create', 'ShippingPriceRuleController@createShippingPriceRule');
+
+        Route::match(['get', 'post'], 'shippingPriceRule/{id}/edit', 'ShippingPriceRuleController@editShippingPriceRule');
+
         Route::get('discount', 'DiscountController@adminDiscount');
 
         Route::match(['get', 'post'], 'discount/create', 'DiscountController@createDiscount');

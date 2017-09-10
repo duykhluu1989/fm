@@ -12,8 +12,16 @@
                     </li>
                 </ul>
             </li>
-            <li class="{{ (request()->is('admin/area*') ? 'active' : '') }}">
-                <a href="{{ action('Backend\AreaController@adminArea') }}"><i class="fa fa-truck"></i><span>Khu Vực Giao Hàng</span></a>
+            <li class="treeview{{ (request()->is('admin/user*') ? ' active' : '') }}">
+                <a href="#"><i class="fa fa-truck"></i><span>Giao Hàng</span></a>
+                <ul class="treeview-menu">
+                    <li class="{{ (request()->is('admin/area*') ? 'active' : '') }}">
+                        <a href="{{ action('Backend\AreaController@adminArea') }}">Khu Vực Giao Hàng</a>
+                    </li>
+                    <li class="{{ (request()->is('admin/shippingPriceRule*') ? 'active' : '') }}">
+                        <a href="{{ action('Backend\ShippingPriceRuleController@adminShippingPriceRule') }}">Shipping Price Rule</a>
+                    </li>
+                </ul>
             </li>
             <li class="{{ (request()->is('admin/discount*') ? 'active' : '') }}">
                 <a href="{{ action('Backend\DiscountController@adminDiscount') }}"><i class="fa fa-tags"></i><span>Mã Giảm Giá</span></a>
