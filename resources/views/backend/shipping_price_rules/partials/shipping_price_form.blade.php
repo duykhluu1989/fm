@@ -98,21 +98,38 @@
             <div class="col-sm-12">
                 <div class="form-group{{ $errors->has('usernames') ? ' has-error': '' }}">
                     <label>Áp Dụng Cho Khu Vực</label>
+                    <?php
+                    $districts = array();
+                    foreach($rule->shippingPriceRuleAreas as $shippingPriceRuleArea)
+                        $districts[] = $shippingPriceRuleArea->area_id;
+                    $districts = old('districts', $districts);
+                    ?>
                     <div class="row">
                         <div class="col-sm-6">
                             <div class="no-padding" style="max-height: 500px;overflow: scroll">
                                 <table class="table table-bordered table-striped table-hover table-condensed">
                                     <thead>
                                     <tr>
-                                        <th><input type="checkbox" /></th>
+                                        <th><input type="checkbox" class="ApplyProvinceCheckBoxAll" /></th>
                                         <th>Tỉnh / Thành Phố</th>
                                     </tr>
                                     </thead>
                                     <tbody>
 
                                     @foreach($provinces as $province)
+                                        <?php
+                                        $fullProvince = true;
+                                        foreach($province->childrenAreas as $childArea)
+                                        {
+                                            if(in_array($childArea->id, $districts) == false)
+                                            {
+                                                $fullProvince = false;
+                                                break;
+                                            }
+                                        }
+                                        ?>
                                         <tr>
-                                            <td><input type="checkbox" /></td>
+                                            <td><input type="checkbox" class="ApplyProvinceCheckBox" id="ApplyProvinceCheckBox_{{ $province->id }}"<?php echo ($fullProvince == true ? ' checked="checked"' : ''); ?> data-province-id="{{ $province->id }}" /></td>
                                             <td class="ApplyProvinceItem" data-province-id="{{ $province->id }}">{{ $province->name }}</td>
                                         </tr>
                                     @endforeach
@@ -128,7 +145,7 @@
                                     <table class="table table-bordered table-striped table-hover table-condensed hidden ApplyDistrictTable" id="ApplyDistrictTable_{{ $province->id }}">
                                         <thead>
                                         <tr>
-                                            <th><input type="checkbox" /></th>
+                                            <th></th>
                                             <th>Quận / Huyện</th>
                                         </tr>
                                         </thead>
@@ -136,7 +153,7 @@
 
                                         @foreach($province->childrenAreas as $childArea)
                                             <tr>
-                                                <td><input type="checkbox" /></td>
+                                                <td><input type="checkbox" class="ApplyDistrictCheckBox ApplyDistrictInProvinceCheckBox_{{ $province->id }}"<?php echo (in_array($childArea->id, $districts) ? ' checked="checked"' : ''); ?> name="districts[]" value="{{ $childArea->id }}" data-province-id="{{ $province->id }}" /></td>
                                                 <td>{{ $childArea->name }}</td>
                                             </tr>
                                         @endforeach
@@ -246,6 +263,80 @@
                 }
                 else
                     $('#ApplyDistrictTable_' + provinceId).addClass('CurrentApplyDistrictTable').removeClass('hidden');
+            }
+        });
+
+        $('.ApplyProvinceCheckBoxAll').click(function() {
+            $('.ApplyProvinceCheckBox').prop('checked', $(this).prop('checked'));
+        });
+
+        $('.ApplyProvinceCheckBox').click(function() {
+            var provinceId = $(this).data('province-id');
+
+            if($(this).prop('checked'))
+            {
+                var allChecked = true;
+
+                $('.ApplyProvinceCheckBox').each(function() {
+                    if(!$(this).prop('checked'))
+                    {
+                        allChecked = false;
+                        return false;
+                    }
+                });
+
+                if(allChecked)
+                    $('.ApplyProvinceCheckBoxAll').first().prop('checked', $(this).prop('checked'));
+            }
+            else
+            {
+                var noneChecked = true;
+
+                $('.ApplyProvinceCheckBox').each(function() {
+                    if($(this).prop('checked'))
+                    {
+                        noneChecked = false;
+                        return false;
+                    }
+                });
+
+                $('.ApplyProvinceCheckBoxAll').first().prop('checked', $(this).prop('checked'));
+            }
+
+            $('.ApplyDistrictInProvinceCheckBox_' + provinceId).prop('checked', $(this).prop('checked'));
+        });
+
+        $('.ApplyDistrictCheckBox').click(function() {
+            var provinceId = $(this).data('province-id');
+
+            if($(this).prop('checked'))
+            {
+                var allChecked = true;
+
+                $('.ApplyDistrictInProvinceCheckBox_' + provinceId).each(function() {
+                    if(!$(this).prop('checked'))
+                    {
+                        allChecked = false;
+                        return false;
+                    }
+                });
+
+                if(allChecked)
+                    $('#ApplyProvinceCheckBox_' + provinceId).prop('checked', $(this).prop('checked'));
+            }
+            else
+            {
+                var noneChecked = true;
+
+                $('.ApplyDistrictInProvinceCheckBox_' + provinceId).each(function() {
+                    if($(this).prop('checked'))
+                    {
+                        noneChecked = false;
+                        return false;
+                    }
+                });
+
+                $('#ApplyProvinceCheckBox_' + provinceId).prop('checked', $(this).prop('checked'));
             }
         });
     </script>

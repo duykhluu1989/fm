@@ -19,7 +19,9 @@ class ShippingPriceRuleController extends Controller
 {
     public function adminShippingPriceRule(Request $request)
     {
-        $dataProvider = ShippingPriceRule::select('shipping_price_rule.*');
+        $dataProvider = ShippingPriceRule::with(['shippingPriceRuleUsers.user' => function($query) {
+            $query->select('id', 'username');
+        }])->select('shipping_price_rule.*');
 
         $inputs = $request->all();
 
@@ -27,6 +29,13 @@ class ShippingPriceRuleController extends Controller
         {
             if(!empty($inputs['name']))
                 $dataProvider->where('shipping_price_rule.name', 'like', '%' . $inputs['name'] . '%');
+
+            if(!empty($inputs['username']))
+            {
+                $dataProvider->join('shipping_price_rule_user', 'shipping_price_rule.id', '=', 'shipping_price_rule_user.shipping_price_rule_id')
+                    ->join('user', 'shipping_price_rule_user.user_id', '=', 'user.id')
+                    ->where('user.username', 'like', '%' . $inputs['username'] . '%');
+            }
         }
 
         $dataProvider = $dataProvider->paginate(GridView::ROWS_PER_PAGE);
@@ -59,13 +68,26 @@ class ShippingPriceRuleController extends Controller
                     }
                 },
             ],
+            [
+                'title' => 'Áp Dụng Cho Khách Hàng',
+                'data' => function($row) {
+                    foreach($row->shippingPriceRuleUsers as $shippingPriceRuleUser)
+                        echo $shippingPriceRuleUser->user->username . '<br />';
+                },
+            ],
         ];
 
         $gridView = new GridView($dataProvider, $columns);
+        $gridView->setCheckbox();
         $gridView->setFilters([
             [
                 'title' => 'Tên',
                 'name' => 'name',
+                'type' => 'input',
+            ],
+            [
+                'title' => 'Khách Hàng',
+                'name' => 'username',
                 'type' => 'input',
             ],
         ]);
@@ -241,15 +263,45 @@ class ShippingPriceRuleController extends Controller
                             $shippingPriceRuleUser->delete();
                     }
 
+                    if(isset($inputs['districts']))
+                    {
+                        foreach($rule->shippingPriceRuleAreas as $shippingPriceRuleArea)
+                        {
+                            $key = array_search($shippingPriceRuleArea->area_id, $inputs['districts']);
+
+                            if($key !== false)
+                                unset($inputs['districts'][$key]);
+                            else
+                                $shippingPriceRuleArea->delete();
+                        }
+
+                        foreach($inputs['districts'] as $districtId)
+                        {
+                            $shippingPriceRuleArea = new ShippingPriceRuleArea();
+                            $shippingPriceRuleArea->shipping_price_rule_id = $rule->id;
+                            $shippingPriceRuleArea->area_id = $districtId;
+                            $shippingPriceRuleArea->save();
+                        }
+                    }
+                    else
+                    {
+                        foreach($rule->shippingPriceRuleAreas as $shippingPriceRuleArea)
+                            $shippingPriceRuleArea->delete();
+                    }
+
                     DB::commit();
+
+                    return redirect()->action('Backend\ShippingPriceRuleController@editShippingPriceRule', ['id' => $rule->id])->with('messageSuccess', 'Thành Công');
                 }
                 catch(\Exception $e)
                 {
                     DB::rollBack();
+
+                    if($create == true)
+                        return redirect()->action('Backend\ShippingPriceRuleController@createShippingPriceRule')->withInput()->with('messageError', $e->getMessage());
+                    else
+                        return redirect()->action('Backend\ShippingPriceRuleController@editShippingPriceRule', ['id' => $rule->id])->withInput()->with('messageError', $e->getMessage());
                 }
-
-
-                return redirect()->action('Backend\ShippingPriceRuleController@editShippingPriceRule', ['id' => $rule->id])->with('messageSuccess', 'Thành Công');
             }
             else
             {
