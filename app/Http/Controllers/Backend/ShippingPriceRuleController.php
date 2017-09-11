@@ -14,7 +14,7 @@ class ShippingPriceRuleController extends Controller
 {
     public function adminShippingPriceRule(Request $request)
     {
-        $dataProvider = ShippingPriceRule::select('shipping_price_rule.name', 'shipping_price_rule.rule');
+        $dataProvider = ShippingPriceRule::select('shipping_price_rule.*');
 
         $inputs = $request->all();
 
@@ -80,12 +80,92 @@ class ShippingPriceRuleController extends Controller
             $inputs = $request->all();
 
             $validator = Validator::make($inputs, [
-
+                'name' => 'required|unique:shipping_price_rule,name' . ($create == true ? '' : (',' . $rule->id)),
+                'rule' => 'required|array',
             ]);
+
+            $validator->after(function($validator) use(&$inputs) {
+                if(isset($inputs['rule']['weight']) && is_array($inputs['rule']['weight']))
+                {
+                    $details = array();
+
+                    $countWeight = count($inputs['rule']['weight']);
+                    $lastWeight = 0;
+                    $lastPrice = 0;
+
+                    foreach($inputs['rule']['weight'] as $key => $weight)
+                    {
+                        if($key != $countWeight - 1)
+                        {
+                            if(empty($weight) || !is_numeric($weight) || $weight < 0.1)
+                                $validator->errors()->add('rule', trans('validation.in', ['attribute' => 'rule']));
+                            else
+                            {
+                                if($weight < $lastWeight)
+                                    $validator->errors()->add('rule', trans('validation.in', ['attribute' => 'rule']));
+                                else
+                                    $lastWeight = $weight;
+
+                                if(isset($inputs['rule']['price'][$key]))
+                                {
+                                    $price = implode('', explode('.', $inputs['rule']['price'][$key]));
+
+                                    if(empty($price) || !is_numeric($price) || $price < 1)
+                                        $validator->errors()->add('rule', trans('validation.in', ['attribute' => 'rule']));
+                                    else
+                                    {
+                                        if($price < $lastPrice)
+                                            $validator->errors()->add('rule', trans('validation.in', ['attribute' => 'rule']));
+                                        else
+                                        {
+                                            $lastPrice = $price;
+
+                                            $details[] = [
+                                                'weight' => $weight,
+                                                'price' => $price
+                                            ];
+                                        }
+                                    }
+                                }
+                                else
+                                    $validator->errors()->add('rule', trans('validation.in', ['attribute' => 'rule']));
+                            }
+                        }
+                        else
+                        {
+                            if(!empty($weight))
+                                $validator->errors()->add('rule', trans('validation.in', ['attribute' => 'rule']));
+                            else
+                            {
+                                if(isset($inputs['rule']['price'][$key]))
+                                {
+                                    $price = implode('', explode('.', $inputs['rule']['price'][$key]));
+
+                                    if(empty($price) || !is_numeric($price) || $price < 1)
+                                        $validator->errors()->add('rule', trans('validation.in', ['attribute' => 'rule']));
+                                    else
+                                    {
+                                        $details[] = [
+                                            'weight' => $weight,
+                                            'price' => $price
+                                        ];
+                                    }
+                                }
+                                else
+                                    $validator->errors()->add('rule', trans('validation.in', ['attribute' => 'rule']));
+                            }
+                        }
+                    }
+
+                    $inputs['details'] = json_encode($details);
+                }
+            });
 
             if($validator->passes())
             {
-
+                $rule->name = $inputs['name'];
+                $rule->rule = $inputs['details'];
+                $rule->save();
 
                 return redirect()->action('Backend\ShippingPriceRuleController@editShippingPriceRule', ['id' => $rule->id])->with('messageSuccess', 'Thành Công');
             }
