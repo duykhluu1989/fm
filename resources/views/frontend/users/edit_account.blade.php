@@ -397,7 +397,6 @@
                             </div>
 
                             <a href="javascript:void(0)" id="AddMoreUserAddressButton" class="btn btnThemDD"><i class="fa fa-plus" aria-hidden="true"></i> THÊM ĐỊA ĐIỂM LẤY HÀNG - KHO HÀNG</a>
-                            <button type="submit" class="btn btnLuuTT"><i class="fa fa-floppy-o" aria-hidden="true"></i> LƯU ĐỊA CHỈ</button>
                         </form>
                     </div>
                 </div>
