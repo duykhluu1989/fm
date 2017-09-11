@@ -304,7 +304,7 @@ class Order extends Model
         $this->do .= (100000 + $count + 1);
     }
 
-    public static function calculateShippingPrice($districtId = null, $weight = null, $dimension = null)
+    public static function calculateShippingPrice($districtId = null, $weight = null, $dimension = null, $user = null)
     {
         $shippingPrice = 0;
 
@@ -356,31 +356,55 @@ class Order extends Model
         else
             $netWeight = $weightFromDimension;
 
-        if(!empty($districtId))
+        if(!empty($districtId) && !empty($user))
         {
-            $district = Area::with(['parentArea' => function($query) {
-                $query->select('id', 'shipping_price');
-            }])->select('parent_id', 'shipping_price')
-                ->where('status', Utility::ACTIVE_DB)
-                ->find($districtId);
+            $rule = ShippingPriceRule::select('shipping_price_rule.*')
+                ->join('shipping_price_rule_area', 'shipping_price_rule.id', '=', 'shipping_price_rule_area.shipping_price_rule_id')
+                ->join('shipping_price_rule_user', 'shipping_price_rule.id', '=', 'shipping_price_rule_user.shipping_price_rule_id')
+                ->where('shipping_price_rule_area.area_id', $districtId)
+                ->where('shipping_price_rule_user.user_id', $user->id)
+                ->first();
+        }
 
-            if(!empty($district))
+        if(empty($rule) && !empty($districtId))
+        {
+            $rule = ShippingPriceRule::select('shipping_price_rule.*')
+                ->join('shipping_price_rule_area', 'shipping_price_rule.id', '=', 'shipping_price_rule_area.shipping_price_rule_id')
+                ->leftJoin('shipping_price_rule_user', 'shipping_price_rule.id', '=', 'shipping_price_rule_user.shipping_price_rule_id')
+                ->where('shipping_price_rule_area.area_id', $districtId)
+                ->whereNull('shipping_price_rule_user.shipping_price_rule_id')
+                ->first();
+        }
+
+        if(!empty($rule))
+        {
+            $details = json_decode($rule->rule, true);
+
+            $lastWeight = 0;
+            $lastPrice = 0;
+            foreach($details as $detail)
             {
-                if(!empty($district->shipping_price))
+                if(!empty($detail['weight']))
                 {
-                    $shippingPrice += $district->shipping_price;
-                    $netWeight -= 3;
+                    $lastWeight = $detail['weight'];
+                    $lastPrice = $detail['price'];
+
+                    if($netWeight <= $detail['weight'])
+                    {
+                        $shippingPrice = $detail['price'];
+                        break;
+                    }
                 }
-                else if(!empty($district->parentArea) && !empty($district->parentArea->shipping_price))
+                else
                 {
-                    $shippingPrice += $district->parentArea->shipping_price;
-                    $netWeight -= 3;
+                    $shippingPrice += $lastPrice;
+                    $netWeight -= $lastWeight;
+
+                    if($netWeight > 0)
+                        $shippingPrice += ($netWeight * $detail['price'] * 2);
                 }
             }
         }
-
-        if($netWeight > 0)
-            $shippingPrice += ($netWeight * 4000);
 
         return $shippingPrice;
     }

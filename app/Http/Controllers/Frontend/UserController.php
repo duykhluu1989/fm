@@ -856,7 +856,7 @@ class UserController extends Controller
                     DB::beginTransaction();
 
                     $order->cod_price = (!empty($inputs['cod_price']) ? $inputs['cod_price'] : 0);
-                    $order->shipping_price = Order::calculateShippingPrice($inputs['receiver_district'], $inputs['weight'], $inputs['dimension']);
+                    $order->shipping_price = Order::calculateShippingPrice($inputs['receiver_district'], $inputs['weight'], $inputs['dimension'], $user);
 
                     if(!empty($order->discount))
                     {

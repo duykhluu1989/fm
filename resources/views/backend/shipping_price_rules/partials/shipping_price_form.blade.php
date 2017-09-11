@@ -267,7 +267,12 @@
         });
 
         $('.ApplyProvinceCheckBoxAll').click(function() {
-            $('.ApplyProvinceCheckBox').prop('checked', $(this).prop('checked'));
+            var checked = $(this).prop('checked');
+
+            $('.ApplyProvinceCheckBox').each(function() {
+                if($(this).prop('checked') != checked)
+                    $(this).trigger('click');
+            });
         });
 
         $('.ApplyProvinceCheckBox').click(function() {
@@ -289,19 +294,7 @@
                     $('.ApplyProvinceCheckBoxAll').first().prop('checked', $(this).prop('checked'));
             }
             else
-            {
-                var noneChecked = true;
-
-                $('.ApplyProvinceCheckBox').each(function() {
-                    if($(this).prop('checked'))
-                    {
-                        noneChecked = false;
-                        return false;
-                    }
-                });
-
                 $('.ApplyProvinceCheckBoxAll').first().prop('checked', $(this).prop('checked'));
-            }
 
             $('.ApplyDistrictInProvinceCheckBox_' + provinceId).prop('checked', $(this).prop('checked'));
         });
@@ -325,19 +318,7 @@
                     $('#ApplyProvinceCheckBox_' + provinceId).prop('checked', $(this).prop('checked'));
             }
             else
-            {
-                var noneChecked = true;
-
-                $('.ApplyDistrictInProvinceCheckBox_' + provinceId).each(function() {
-                    if($(this).prop('checked'))
-                    {
-                        noneChecked = false;
-                        return false;
-                    }
-                });
-
                 $('#ApplyProvinceCheckBox_' + provinceId).prop('checked', $(this).prop('checked'));
-            }
         });
     </script>
 @endpush

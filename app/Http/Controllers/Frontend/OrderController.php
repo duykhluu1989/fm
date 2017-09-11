@@ -136,7 +136,7 @@ class OrderController extends Controller
 
             $validator = Validator::make($inputs, $rules);
 
-            $validator->after(function($validator) use(&$inputs) {
+            $validator->after(function($validator) use(&$inputs, $user) {
                 if(isset($inputs['dimension']) && is_array($inputs['dimension']))
                 {
                     foreach($inputs['dimension'] as $key => $dimension)
@@ -164,7 +164,7 @@ class OrderController extends Controller
                     {
                         if(!empty($discountCode))
                         {
-                            $result = Discount::calculateDiscountShippingPrice($discountCode, Order::calculateShippingPrice($inputs['receiver_district'][$key], $inputs['weight'][$key], $inputs['dimension'][$key]));
+                            $result = Discount::calculateDiscountShippingPrice($discountCode, Order::calculateShippingPrice($inputs['receiver_district'][$key], $inputs['weight'][$key], $inputs['dimension'][$key]), $user);
 
                             if($result['status'] == 'error')
                                 $validator->errors()->add('discount_code.' . $key, $result['message']);
@@ -262,7 +262,7 @@ class OrderController extends Controller
                         else
                             $order->discount_shipping_price = 0;
 
-                        $order->shipping_price = Order::calculateShippingPrice($inputs['receiver_district'][$k], $inputs['weight'][$k], $inputs['dimension'][$k]) - $order->discount_shipping_price;
+                        $order->shipping_price = Order::calculateShippingPrice($inputs['receiver_district'][$k], $inputs['weight'][$k], $inputs['dimension'][$k], $user) - $order->discount_shipping_price;
                         $order->shipping_payment = $inputs['shipping_payment'][$k];
 
                         if($order->shipping_payment == Order::SHIPPING_PAYMENT_RECEIVER_DB)
@@ -520,7 +520,7 @@ class OrderController extends Controller
         });
 
         if($validator->passes())
-            return Order::calculateShippingPrice($inputs['register_district'], $inputs['weight'], $inputs['dimension']);
+            return Order::calculateShippingPrice($inputs['register_district'], $inputs['weight'], $inputs['dimension'], auth()->user());
         else
             return '';
     }
