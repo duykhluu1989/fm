@@ -12,7 +12,7 @@
                     </li>
                 </ul>
             </li>
-            <li class="treeview{{ (request()->is('admin/user*') ? ' active' : '') }}">
+            <li class="treeview{{ ((request()->is('admin/area*') || request()->is('admin/shippingPriceRule*')) ? ' active' : '') }}">
                 <a href="#"><i class="fa fa-truck"></i><span>Giao Hàng</span></a>
                 <ul class="treeview-menu">
                     <li class="{{ (request()->is('admin/area*') ? 'active' : '') }}">
