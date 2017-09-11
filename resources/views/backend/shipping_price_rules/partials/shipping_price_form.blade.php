@@ -98,6 +98,56 @@
             <div class="col-sm-12">
                 <div class="form-group{{ $errors->has('usernames') ? ' has-error': '' }}">
                     <label>Áp Dụng Cho Khu Vực</label>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="no-padding" style="max-height: 500px;overflow: scroll">
+                                <table class="table table-bordered table-striped table-hover table-condensed">
+                                    <thead>
+                                    <tr>
+                                        <th><input type="checkbox" /></th>
+                                        <th>Tỉnh / Thành Phố</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+
+                                    @foreach($provinces as $province)
+                                        <tr>
+                                            <td><input type="checkbox" /></td>
+                                            <td class="ApplyProvinceItem" data-province-id="{{ $province->id }}">{{ $province->name }}</td>
+                                        </tr>
+                                    @endforeach
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="no-padding" style="max-height: 500px;overflow: scroll">
+
+                                @foreach($provinces as $province)
+                                    <table class="table table-bordered table-striped table-hover table-condensed hidden ApplyDistrictTable" id="ApplyDistrictTable_{{ $province->id }}">
+                                        <thead>
+                                        <tr>
+                                            <th><input type="checkbox" /></th>
+                                            <th>Quận / Huyện</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+
+                                        @foreach($province->childrenAreas as $childArea)
+                                            <tr>
+                                                <td><input type="checkbox" /></td>
+                                                <td>{{ $childArea->name }}</td>
+                                            </tr>
+                                        @endforeach
+
+                                        </tbody>
+                                    </table>
+                                @endforeach
+
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -168,6 +218,34 @@
                         }
                     });
                 }
+            }
+        });
+
+        $('.ApplyProvinceItem').click(function() {
+            if($(this).hasClass('danger') == false)
+            {
+                var currentProvince = $('.ApplyProvinceItem.danger');
+
+                if(currentProvince.length > 0)
+                    currentProvince.removeClass('danger');
+
+                $(this).addClass('danger');
+
+                var provinceId = $(this).data('province-id');
+
+                var currentDistrictTable = $('.CurrentApplyDistrictTable');
+
+                if(currentDistrictTable.length > 0)
+                {
+                    if(currentDistrictTable.prop('id') != ('ApplyDistrictTable_' + provinceId))
+                    {
+                        currentDistrictTable.addClass('hidden').removeClass('CurrentApplyDistrictTable');
+
+                        $('#ApplyDistrictTable_' + provinceId).addClass('CurrentApplyDistrictTable').removeClass('hidden');
+                    }
+                }
+                else
+                    $('#ApplyDistrictTable_' + provinceId).addClass('CurrentApplyDistrictTable').removeClass('hidden');
             }
         });
     </script>

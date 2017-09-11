@@ -261,7 +261,7 @@ class ShippingPriceRuleController extends Controller
         }
 
         $provinces = Area::with(['childrenAreas' => function($query) {
-            $query->select('id', 'name');
+            $query->select('id', 'parent_id', 'name');
         }])->select('id', 'name')
             ->where('type', Area::TYPE_PROVINCE_DB)
             ->get();
