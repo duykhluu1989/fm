@@ -779,7 +779,7 @@ class UserController extends Controller
 
                             if(!empty($inputData[OrderExcel::IMPORT_DISCOUNT_CODE_COLUMN_LABEL]))
                             {
-                                $result = Discount::calculateDiscountShippingPrice($inputData[OrderExcel::IMPORT_DISCOUNT_CODE_COLUMN_LABEL], Order::calculateShippingPrice((!empty($receiverDistrict) ? $receiverDistrict->id : null), $inputData[OrderExcel::IMPORT_WEIGHT_COLUMN_LABEL], $inputData[OrderExcel::IMPORT_DIMENSION_COLUMN_LABEL]), $user);
+                                $result = Discount::calculateDiscountShippingPrice($inputData[OrderExcel::IMPORT_DISCOUNT_CODE_COLUMN_LABEL], Order::calculateShippingPrice((!empty($receiverDistrict) ? $receiverDistrict->id : null), $inputData[OrderExcel::IMPORT_WEIGHT_COLUMN_LABEL], $inputData[OrderExcel::IMPORT_DIMENSION_COLUMN_LABEL], $user), $user);
 
                                 if($result['status'] == 'error')
                                     $rowValidator->errors()->add('discount_code', $result['message']);
@@ -866,7 +866,7 @@ class UserController extends Controller
                             else
                                 $order->discount_shipping_price = 0;
 
-                            $order->shipping_price = Order::calculateShippingPrice((!empty($receiverDistrict) ? $receiverDistrict->id : null), $inputData[OrderExcel::IMPORT_WEIGHT_COLUMN_LABEL], $inputData[OrderExcel::IMPORT_DIMENSION_COLUMN_LABEL]) - $order->discount_shipping_price;
+                            $order->shipping_price = Order::calculateShippingPrice((!empty($receiverDistrict) ? $receiverDistrict->id : null), $inputData[OrderExcel::IMPORT_WEIGHT_COLUMN_LABEL], $inputData[OrderExcel::IMPORT_DIMENSION_COLUMN_LABEL], $user) - $order->discount_shipping_price;
                             $order->shipping_payment = (!empty($inputData[OrderExcel::IMPORT_PAY_SHIPPING_COLUMN_LABEL]) ? Order::SHIPPING_PAYMENT_RECEIVER_DB : Order::SHIPPING_PAYMENT_SENDER_DB);
 
                             if($order->shipping_payment == Order::SHIPPING_PAYMENT_RECEIVER_DB)

@@ -467,7 +467,7 @@
                 $.ajax({
                     url: '{{ action('Backend\OrderController@calculateShippingPrice') }}',
                     type: 'get',
-                    data: 'register_district=' + districtElem.val() + '&weight=' + weightElem.val() + '&dimension=' + dimensionElem.val(),
+                    data: 'register_district=' + districtElem.val() + '&weight=' + weightElem.val() + '&dimension=' + dimensionElem.val() + '&user_id=<?php echo $order->user_id; ?>',
                     success: function(result) {
                         if(result)
                         {

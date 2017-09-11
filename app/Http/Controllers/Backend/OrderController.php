@@ -324,7 +324,7 @@ class OrderController extends Controller
 
                 if(empty($order->discount) && !empty($inputs['discount_code']))
                 {
-                    $result = Discount::calculateDiscountShippingPrice($inputs['discount_code'], Order::calculateShippingPrice($inputs['receiver_district'], $inputs['weight'], $inputs['dimension']), $order->user);
+                    $result = Discount::calculateDiscountShippingPrice($inputs['discount_code'], Order::calculateShippingPrice($inputs['receiver_district'], $inputs['weight'], $inputs['dimension'], $order->user), $order->user);
 
                     if($result['status'] == 'error')
                         $validator->errors()->add('discount_code', $result['message']);
@@ -343,7 +343,7 @@ class OrderController extends Controller
                     DB::beginTransaction();
 
                     $order->cod_price = (!empty($inputs['cod_price']) ? $inputs['cod_price'] : 0);
-                    $order->shipping_price = Order::calculateShippingPrice($inputs['receiver_district'], $inputs['weight'], $inputs['dimension']);
+                    $order->shipping_price = Order::calculateShippingPrice($inputs['receiver_district'], $inputs['weight'], $inputs['dimension'], $order->user);
 
                     if(!empty($order->discount))
                     {
@@ -677,6 +677,7 @@ class OrderController extends Controller
         $validator = Validator::make($inputs, [
             'register_district' => 'required',
             'weight' => 'nullable|integer|min:1',
+            'user_id' => 'required|integer|min:1',
         ]);
 
         $validator->after(function($validator) use(&$inputs) {
@@ -697,7 +698,7 @@ class OrderController extends Controller
         });
 
         if($validator->passes())
-            return Order::calculateShippingPrice($inputs['register_district'], $inputs['weight'], $inputs['dimension']);
+            return Order::calculateShippingPrice($inputs['register_district'], $inputs['weight'], $inputs['dimension'], User::find($inputs['user_id']));
         else
             return '';
     }
