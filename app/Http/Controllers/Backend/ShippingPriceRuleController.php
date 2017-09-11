@@ -35,6 +35,25 @@ class ShippingPriceRuleController extends Controller
                     ]);
                 },
             ],
+            [
+                'title' => 'Rule',
+                'data' => function($row) {
+                    $details = json_decode($row->rule, true);
+
+                    $lastWeight = 0;
+
+                    foreach($details as $detail)
+                    {
+                        if(!empty($detail['weight']))
+                        {
+                            echo '<b>' . $lastWeight . ' kg ' . ' - ' . $detail['weight'] . ' kg:</b> ' . Utility::formatNumber($detail['price']) . '<br />';
+                            $lastWeight = $detail['weight'];
+                        }
+                        else
+                            echo '<b>Mỗi 0.5 kg tiếp theo:</b> ' . Utility::formatNumber($detail['price']) . '<br />';
+                    }
+                },
+            ],
         ];
 
         $gridView = new GridView($dataProvider, $columns);
@@ -101,7 +120,7 @@ class ShippingPriceRuleController extends Controller
                                 $validator->errors()->add('rule', trans('validation.in', ['attribute' => 'rule']));
                             else
                             {
-                                if($weight < $lastWeight)
+                                if($weight <= $lastWeight)
                                     $validator->errors()->add('rule', trans('validation.in', ['attribute' => 'rule']));
                                 else
                                     $lastWeight = $weight;
@@ -114,7 +133,7 @@ class ShippingPriceRuleController extends Controller
                                         $validator->errors()->add('rule', trans('validation.in', ['attribute' => 'rule']));
                                     else
                                     {
-                                        if($price < $lastPrice)
+                                        if($price <= $lastPrice)
                                             $validator->errors()->add('rule', trans('validation.in', ['attribute' => 'rule']));
                                         else
                                         {
