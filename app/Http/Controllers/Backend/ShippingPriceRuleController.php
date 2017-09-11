@@ -12,6 +12,7 @@ use App\Libraries\Widgets\GridView;
 use App\Models\ShippingPriceRule;
 use App\Models\ShippingPriceRuleUser;
 use App\Models\ShippingPriceRuleArea;
+use App\Models\Area;
 use App\Models\User;
 
 class ShippingPriceRuleController extends Controller
@@ -259,16 +260,24 @@ class ShippingPriceRuleController extends Controller
             }
         }
 
+        $provinces = Area::with(['childrenAreas' => function($query) {
+            $query->select('id', 'name');
+        }])->select('id', 'name')
+            ->where('type', Area::TYPE_PROVINCE_DB)
+            ->get();
+
         if($create == true)
         {
             return view('backend.shipping_price_rules.create_shipping_price_rule', [
                 'rule' => $rule,
+                'provinces' => $provinces,
             ]);
         }
         else
         {
             return view('backend.shipping_price_rules.edit_shipping_price_rule', [
                 'rule' => $rule,
+                'provinces' => $provinces,
             ]);
         }
     }

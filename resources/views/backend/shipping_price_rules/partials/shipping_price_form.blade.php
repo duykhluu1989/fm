@@ -95,6 +95,11 @@
                     @endif
                 </div>
             </div>
+            <div class="col-sm-12">
+                <div class="form-group{{ $errors->has('usernames') ? ' has-error': '' }}">
+                    <label>Áp Dụng Cho Khu Vực</label>
+                </div>
+            </div>
         </div>
     </div>
     <div class="box-footer">
