@@ -50,6 +50,7 @@ class Detrack
                 'pay_amt' => $order->total_cod_price,
                 'group_name' => $order->user->group,
                 'j_fee' => $order->shipping_price,
+                'job_fee' => $order->shipping_price,
             ];
         }
 
@@ -154,6 +155,7 @@ class Detrack
                 'pay_amt' => $order->total_cod_price,
                 'group_name' => $order->user->group,
                 'j_fee' => $order->shipping_price,
+                'job_fee' => $order->shipping_price,
             ];
         }
 
@@ -317,6 +319,7 @@ class Detrack
                 'instructions' => !empty($order->note) ? $order->note : '',
                 'group_name' => $order->user->group,
                 'j_fee' => $order->shipping_price,
+                'job_fee' => $order->shipping_price,
             ];
         }
 
@@ -420,6 +423,7 @@ class Detrack
                 'instructions' => !empty($order->note) ? $order->note : '',
                 'group_name' => $order->user->group,
                 'j_fee' => $order->shipping_price,
+                'job_fee' => $order->shipping_price,
             ];
         }
 

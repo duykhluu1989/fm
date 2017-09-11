@@ -32,6 +32,7 @@
                             </tr>
                             </thead>
                             <tbody id="ListWeightPriceRule">
+
                             @if(empty(old('rule')))
                                 <?php
                                 $details = array();
@@ -75,6 +76,25 @@
                     </div>
                 </div>
             </div>
+            <div class="col-sm-12">
+                <div class="form-group{{ $errors->has('usernames') ? ' has-error': '' }}">
+                    <label>Áp Dụng Cho Khách Hàng <i>(ngăn cách nhiều khách hàng bằng dấu ; chấm phẩy)</i></label>
+                    <?php
+                    $usernames = '';
+                    foreach($rule->shippingPriceRuleUsers as $shippingPriceRuleUser)
+                    {
+                        if($usernames == '')
+                            $usernames = $shippingPriceRuleUser->user->username;
+                        else
+                            $usernames .= ';' . $shippingPriceRuleUser->user->username;
+                    }
+                    ?>
+                    <input type="text" class="form-control" id="UsernamesInput" name="usernames" value="{{ old('usernames', $usernames) }}" />
+                    @if($errors->has('usernames'))
+                        <span class="help-block">{{ $errors->first('usernames') }}</span>
+                    @endif
+                </div>
+            </div>
         </div>
     </div>
     <div class="box-footer">
@@ -84,7 +104,13 @@
 </div>
 {{ csrf_field() }}
 
+@push('stylesheets')
+    <link rel="stylesheet" href="{{ asset('assets/css/jquery.tag-editor.css') }}">
+@endpush
+
 @push('scripts')
+    <script src="{{ asset('assets/js/jquery.caret.min.js') }}"></script>
+    <script src="{{ asset('assets/js/jquery.tag-editor.min.js') }}"></script>
     <script type="text/javascript">
         $('#NewWeightPriceRuleButton').click(function() {
             $('#ListWeightPriceRule').append('' +
@@ -108,6 +134,36 @@
         }).on('keyup', 'input', function() {
             if($(this).hasClass('InputForNumber'))
                 $(this).val(formatNumber($(this).val(), '.'));
+        });
+
+        $('#UsernamesInput').tagEditor({
+            delimiter: ';',
+            sortable: false,
+            autocomplete: {
+                minLength: 3,
+                delay: 1000,
+                source: function(request, response) {
+                    $.ajax({
+                        url: '{{ action('Backend\UserController@autoCompleteUser') }}',
+                        type: 'post',
+                        data: '_token=' + $('input[name="_token"]').first().val() + '&term=' + request.term,
+                        success: function(result) {
+                            if(result)
+                            {
+                                result = JSON.parse(result);
+
+                                var users = [];
+
+                                result.forEach(function(elem) {
+                                    users.push(elem.username);
+                                });
+
+                                response(users);
+                            }
+                        }
+                    });
+                }
+            }
         });
     </script>
 @endpush

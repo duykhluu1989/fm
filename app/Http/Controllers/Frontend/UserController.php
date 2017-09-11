@@ -699,12 +699,19 @@ class UserController extends Controller
 
         $orders = $builder->paginate(Utility::FRONTEND_ROWS_PER_PAGE);
 
-        $countReceiveOrder = Order::where('status', Order::STATUS_INFO_RECEIVED_DB)
+        $countReceiveOrder = Order::whereIn('status', [
+            Order::STATUS_INFO_RECEIVED_DB,
+            Order::STATUS_PROCESSING_DB,
+        ])->where('order.user_id', $user->id)
+            ->count('id');
+
+        $countPickedOrder = Order::where('status', Order::STATUS_PICKED_UP_DB)
             ->where('order.user_id', $user->id)
             ->count('id');
 
         $countShippingOrder = Order::whereIn('status', [
-            Order::STATUS_PROCESSING_DB,
+            Order::STATUS_AT_WAREHOUSE_DB,
+            Order::STATUS_OUT_FOR_DELIVERY_DB,
             Order::STATUS_SCHEDULED_DB,
             Order::STATUS_PRE_JOB_DB,
             Order::STATUS_HEADING_TO_DB,
@@ -718,7 +725,7 @@ class UserController extends Controller
             ->where('order.user_id', $user->id)
             ->count('id');
 
-        $countFailOrder = Order::where('status', Order::STATUS_COMPLETED_DB)
+        $countFailOrder = Order::where('status', Order::STATUS_FAILED_DB)
             ->where('order.user_id', $user->id)
             ->count('id');
 
@@ -733,6 +740,7 @@ class UserController extends Controller
         return view('frontend.users.admin_order', [
             'orders' => $orders,
             'countReceiveOrder' => $countReceiveOrder,
+            'countPickedOrder' => $countPickedOrder,
             'countShippingOrder' => $countShippingOrder,
             'countCompleteOrder' => $countCompleteOrder,
             'countFailOrder' => $countFailOrder,

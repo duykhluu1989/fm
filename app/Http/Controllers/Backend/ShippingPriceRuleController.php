@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Backend;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -9,6 +10,9 @@ use App\Libraries\Helpers\Utility;
 use App\Libraries\Helpers\Html;
 use App\Libraries\Widgets\GridView;
 use App\Models\ShippingPriceRule;
+use App\Models\ShippingPriceRuleUser;
+use App\Models\ShippingPriceRuleArea;
+use App\Models\User;
 
 class ShippingPriceRuleController extends Controller
 {
@@ -84,7 +88,9 @@ class ShippingPriceRuleController extends Controller
     {
         Utility::setBackUrlCookie($request, '/admin/shippingPriceRule?');
 
-        $rule = ShippingPriceRule::find($id);
+        $rule = ShippingPriceRule::with(['shippingPriceRuleUsers.user' => function($query) {
+            $query->select('id', 'username');
+        }, 'shippingPriceRuleAreas'])->find($id);
 
         if(empty($rule))
             return view('backend.errors.404');
@@ -178,13 +184,69 @@ class ShippingPriceRuleController extends Controller
 
                     $inputs['details'] = json_encode($details);
                 }
+
+                if(!empty($inputs['usernames']))
+                {
+                    $usernames = explode(';', $inputs['usernames']);
+
+                    foreach($usernames as $username)
+                    {
+                        $user = User::select('id')->where('username', $username)->first();
+
+                        if(empty($user))
+                            $validator->errors()->add('rule', 'Khách hàng ' . $username . ' không tồn tại');
+                        else
+                        {
+                            if(!isset($inputs['user_ids']) || !in_array($user->id, $inputs['user_ids']))
+                                $inputs['user_ids'][] = $user->id;
+                        }
+                    }
+                }
             });
 
             if($validator->passes())
             {
-                $rule->name = $inputs['name'];
-                $rule->rule = $inputs['details'];
-                $rule->save();
+                try
+                {
+                    DB::beginTransaction();
+
+                    $rule->name = $inputs['name'];
+                    $rule->rule = $inputs['details'];
+                    $rule->save();
+
+                    if(isset($inputs['user_ids']))
+                    {
+                        foreach($rule->shippingPriceRuleUsers as $shippingPriceRuleUser)
+                        {
+                            $key = array_search($shippingPriceRuleUser->user_id, $inputs['user_ids']);
+
+                            if($key !== false)
+                                unset($inputs['user_ids'][$key]);
+                            else
+                                $shippingPriceRuleUser->delete();
+                        }
+
+                        foreach($inputs['user_ids'] as $userId)
+                        {
+                            $shippingPriceRuleUser = new ShippingPriceRuleUser();
+                            $shippingPriceRuleUser->shipping_price_rule_id = $rule->id;
+                            $shippingPriceRuleUser->user_id = $userId;
+                            $shippingPriceRuleUser->save();
+                        }
+                    }
+                    else
+                    {
+                        foreach($rule->shippingPriceRuleUsers as $shippingPriceRuleUser)
+                            $shippingPriceRuleUser->delete();
+                    }
+
+                    DB::commit();
+                }
+                catch(\Exception $e)
+                {
+                    DB::rollBack();
+                }
+
 
                 return redirect()->action('Backend\ShippingPriceRuleController@editShippingPriceRule', ['id' => $rule->id])->with('messageSuccess', 'Thành Công');
             }
