@@ -118,9 +118,7 @@ class DeliveryController extends Controller
                         $order->created_at = date('Y-m-d H:i:s');
                         $order->cod_price = (!empty($data['pay_amt']) && is_numeric($data['pay_amt']) && $data['pay_amt'] > 0) ? $data['pay_amt'] : 0;
                         $order->weight = (!empty($data['wt']) && is_numeric($data['wt']) && $data['wt'] > 0) ? $data['wt'] : 0;
-                        $order->shipping_price = Order::calculateShippingPrice((!empty($receiverDistrict) ? $receiverDistrict->id : null), $order->weight, $user);
-                        $order->discount_shipping_price = User::calculateDiscountShippingPrice($user, $order->shipping_price);
-                        $order->shipping_price = $order->shipping_price - $order->discount_shipping_price;
+                        $order->shipping_price = Order::calculateShippingPrice((!empty($receiverDistrict) ? $receiverDistrict->id : null), $order->weight, null, $user);
                         $order->shipping_payment = Order::SHIPPING_PAYMENT_SENDER_DB;
                         $order->total_cod_price = $order->cod_price;
                         $order->note = !empty($data['instructions']) ? $data['instructions'] : '';
@@ -440,9 +438,7 @@ class DeliveryController extends Controller
 
                             $order->cod_price = (!empty($data['pay_amt']) && is_numeric($data['pay_amt']) && $data['pay_amt'] > 0) ? $data['pay_amt'] : $order->cod_price;
                             $order->weight = (!empty($data['wt']) && is_numeric($data['wt']) && $data['wt'] > 0) ? $data['wt'] : $order->weight;
-                            $order->shipping_price = Order::calculateShippingPrice((!empty($receiverDistrict) ? $receiverDistrict->id : (!empty($order->receiverAddress->district_id) ? $order->receiverAddress->district_id : null)), $order->weight, $user);
-                            $order->discount_shipping_price = User::calculateDiscountShippingPrice($user, $order->shipping_price);
-                            $order->shipping_price = $order->shipping_price - $order->discount_shipping_price;
+                            $order->shipping_price = Order::calculateShippingPrice((!empty($receiverDistrict) ? $receiverDistrict->id : (!empty($order->receiverAddress->district_id) ? $order->receiverAddress->district_id : null)), $order->weight, null, $user);
                             $order->shipping_payment = Order::SHIPPING_PAYMENT_SENDER_DB;
                             $order->total_cod_price = $order->cod_price;
                             $order->weight = (!empty($data['wt']) && is_numeric($data['wt']) && $data['wt'] > 0) ? $data['wt'] : $order->weight;

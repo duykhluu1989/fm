@@ -68,24 +68,4 @@ class User extends Authenticatable
 
         return null;
     }
-
-    public static function calculateDiscountShippingPrice($user, $shippingPrice)
-    {
-        if($user->discount_type !== null && $user->discount_type !== '')
-        {
-            if($user->discount_type == Discount::TYPE_FIX_AMOUNT_DB)
-            {
-                $discountPrice = $user->discount_value;
-
-                if($discountPrice > $shippingPrice)
-                    $discountPrice = $shippingPrice;
-            }
-            else
-                $discountPrice = round($shippingPrice * $user->discount_value / 100);
-
-            return $discountPrice;
-        }
-
-        return 0;
-    }
 }

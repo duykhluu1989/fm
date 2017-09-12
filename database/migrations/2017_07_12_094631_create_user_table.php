@@ -25,8 +25,6 @@ class CreateUserTable extends Migration
             $table->string('bank_holder', 255)->nullable();
             $table->string('bank_number', 20)->nullable();
             $table->unsignedTinyInteger('prepay')->default(0);
-            $table->unsignedTinyInteger('discount_type')->nullable();
-            $table->double('discount_value')->unsigned()->nullable();
             $table->string('login_token', 1000)->nullable();
             $table->text('prepay_contract')->nullable();
             $table->string('group', 255)->nullable();
