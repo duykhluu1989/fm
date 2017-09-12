@@ -289,7 +289,7 @@ class OrderController extends Controller
     public function editOrder(Request $request, $id)
     {
         $order = Order::with(['senderAddress', 'receiverAddress', 'user' => function($query) {
-            $query->select('id', 'prepay', 'discount_type', 'discount_value');
+            $query->select('id', 'prepay');
         }, 'user.userAddresses', 'discount' => function($query) {
             $query->select('id', 'code');
         }])->find($id);
