@@ -98,6 +98,10 @@
         @endif
 
         <div class="form-group">
+            <label>Mã đơn hàng</label>
+            <input type="text" class="form-control OrderUserDoInput" name="user_do[{{ $countOrder }}]" />
+        </div>
+        <div class="form-group">
             <label>Trọng lượng gói hàng (kg)</label>
             <input type="text" class="form-control OrderWeightInput" name="weight[{{ $countOrder }}]" />
         </div>

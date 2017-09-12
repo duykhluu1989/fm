@@ -332,6 +332,15 @@
                                                     @endif
 
                                                     <div class="form-group">
+                                                        <label>Mã đơn hàng</label>
+                                                        <input type="text" class="form-control OrderUserDoInput" name="user_do[{{ $k }}]" value="{{ old('user_do.' . $k) }}" />
+                                                        @if($errors->has('user_do.' . $k))
+                                                            <span class="has-error">
+                                                                <span class="help-block">* {{ $errors->first('user_do.' . $k) }}</span>
+                                                            </span>
+                                                        @endif
+                                                    </div>
+                                                    <div class="form-group">
                                                         <label>Trọng lượng gói hàng (kg)</label>
                                                         <input type="text" class="form-control OrderWeightInput" name="weight[{{ $k }}]" value="{{ old('weight.' . $k) }}" />
                                                         @if($errors->has('weight.' . $k))

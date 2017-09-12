@@ -72,6 +72,7 @@ class OrderController extends Controller
                         'weight.' . $k => 'nullable|numeric|min:0.1',
                         'cod_price.' . $k => 'nullable|integer|min:1',
                         'note.' . $k => 'nullable|max:255',
+                        'user_do.' . $k => 'nullable|alpha_num',
                     ]);
                 }
 
@@ -173,6 +174,28 @@ class OrderController extends Controller
                                 $inputs['discount'][$key] = $result['discount'];
                                 $inputs['discount_price'][$key] = $result['discountPrice'];
                             }
+                        }
+                    }
+                }
+
+                if(isset($inputs['user_do']) && is_array($inputs['user_do']))
+                {
+                    $countUserDoValues = array_count_values($inputs['user_do']);
+
+                    foreach($inputs['user_do'] as $key => $userDo)
+                    {
+                        if(!empty($userDo))
+                        {
+                            if(!empty($user))
+                            {
+                                $validOrder = Order::select('id', 'created_at')->where('user_id', $user->id)->where('user_do', $userDo)->first();
+
+                                if(!empty($validOrder))
+                                    $validator->errors()->add('user_do.' . $key, trans('validation.unique', ['attribute' => 'mã đơn hàng']));
+                            }
+
+                            if($countUserDoValues[$userDo] > 1)
+                                $validator->errors()->add('user_do.' . $key, trans('validation.distinct', ['attribute' => 'mã đơn hàng']));
                         }
                     }
                 }
@@ -294,6 +317,7 @@ class OrderController extends Controller
                             }
                         }
 
+                        $order->user_do = $inputs['user_do'][$k];
                         $order->date = date('Y-m-d');
                         $order->save();
 
@@ -376,9 +400,9 @@ class OrderController extends Controller
                         $order->setRelation('receiverAddress', $receiverAddress);
 
                         if($popupDos == '')
-                            $popupDos = $order->do;
+                            $popupDos = (empty($order->user_do) ? $order->do : $order->user_do);
                         else
-                            $popupDos .= ', ' . $order->do;
+                            $popupDos .= ', ' . (empty($order->user_do) ? $order->do : $order->user_do);
 
                         $placedOrders[] = $order;
                     }
