@@ -26,7 +26,7 @@ class OrderController extends Controller
             $query->select('id', 'username');
         }, 'senderAddress' => function($query) {
             $query->select('id', 'order_id', 'address', 'province', 'district', 'ward');
-        }])->select('order.id', 'order.user_id', 'order.do', 'order.user_do', 'order.created_at', 'order.cancelled_at', 'order.status', 'order.cod_price', 'order.shipper', 'order.do', 'order.shipping_price', 'order.source', 'order.prepay', 'order.payment')
+        }])->select('order.id', 'order.user_id', 'order.do', 'order.user_do', 'order.created_at', 'order.cancelled_at', 'order.status', 'order.cod_price', 'order.shipper', 'order.do', 'order.shipping_price', 'order.source', 'order.prepay', 'order.payment', 'order.discount_shipping_price')
             ->orderBy('order.id', 'desc');
 
         $inputs = $request->all();
@@ -73,6 +73,18 @@ class OrderController extends Controller
 
             if(isset($inputs['payment']) && $inputs['payment'] !== '')
                 $dataProvider->where('order.payment', $inputs['payment']);
+
+            if(isset($inputs['shipping_price_rule']) && $inputs['shipping_price_rule'] !== '')
+            {
+                if($inputs['shipping_price_rule'] == Utility::ACTIVE_DB)
+                {
+                    $dataProvider->where(function($query) {
+                        $query->where('order.shipping_price', '<>', 0)->orWhere('order.discount_shipping_price', '<>', 0);
+                    });
+                }
+                else
+                    $dataProvider->where('order.shipping_price', 0)->where('order.discount_shipping_price', 0);
+            }
         }
 
         $dataProvider = $dataProvider->paginate(GridView::ROWS_PER_PAGE);
@@ -94,6 +106,9 @@ class OrderController extends Controller
                             'class' => 'text-danger',
                         ]);
                     }
+
+                    if(empty($row->shipping_price) && empty($row->discount_shipping_price))
+                        echo '<br />' . Html::i('', ['class' => 'fa fa-question-circle fa-fw']);
                 },
             ],
             [
@@ -237,6 +252,15 @@ class OrderController extends Controller
                 'name' => 'payment',
                 'type' => 'select',
                 'options' => Order::getOrderPayment(),
+            ],
+            [
+                'title' => 'Tính Phí Ship',
+                'name' => 'shipping_price_rule',
+                'type' => 'select',
+                'options' => [
+                    Utility::ACTIVE_DB => 'Tính Được Phí Ship',
+                    Utility::INACTIVE_DB => 'Không Tính Được Phí Ship',
+                ],
             ],
         ]);
         $gridView->setFilterValues($inputs);

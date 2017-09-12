@@ -30,8 +30,9 @@
                 <ul class="nav navbar-nav">
                     <li class="dropdown notifications-menu">
                         <?php
+                        $countOrderNoShippingPrice = \App\Models\Order::where('shipping_price', 0)->where('discount_shipping_price', 0)->count('id');
                         $countUserAttachment = \App\Models\User::where('attachment', \App\Libraries\Helpers\Utility::ACTIVE_DB)->count('id');
-                        $totalNotify = $countUserAttachment;
+                        $totalNotify = $countOrderNoShippingPrice + $countUserAttachment;
                         ?>
 
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
@@ -43,6 +44,13 @@
                         <ul class="dropdown-menu">
                             <li>
                                 <ul class="menu">
+                                    @if($countOrderNoShippingPrice > 0)
+                                        <li>
+                                            <a href="{{ action('Backend\OrderController@adminOrder') }}">
+                                                <i class="fa fa-question-circle text-yellow"></i> {{ $countOrderNoShippingPrice . ' đơn hàng không tính được phí ship' }}
+                                            </a>
+                                        </li>
+                                    @endif
                                     @if($countUserAttachment > 0)
                                         <li>
                                             <a href="{{ action('Backend\UserController@adminUserCustomer') }}">
