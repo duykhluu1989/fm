@@ -4,6 +4,7 @@ namespace App\Libraries\Helpers;
 
 class OrderExcel
 {
+    const IMPORT_USER_DO_COLUMN_LABEL = 'USER_DO';
     const IMPORT_SENDER_NAME_COLUMN_LABEL = 'SENDER_NAME';
     const IMPORT_SENDER_PHONE_COLUMN_LABEL = 'SENDER_PHONE';
     const IMPORT_SENDER_EMAIL_COLUMN_LABEL = 'SENDER_EMAIL';
@@ -32,6 +33,7 @@ class OrderExcel
     public static function getImportColumnLabel()
     {
         return [
+            self::IMPORT_USER_DO_COLUMN_LABEL,
             self::IMPORT_SENDER_NAME_COLUMN_LABEL,
             self::IMPORT_SENDER_PHONE_COLUMN_LABEL,
             self::IMPORT_SENDER_EMAIL_COLUMN_LABEL,
@@ -62,6 +64,7 @@ class OrderExcel
     public static function getImportColumnDescription()
     {
         return [
+            'Mã đơn hàng',
             'Tên người gửi',
             'Số điện thoại người gửi',
             'Email (để trống nếu đã đăng nhập tài khoản)',

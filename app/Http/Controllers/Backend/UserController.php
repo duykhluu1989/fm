@@ -647,6 +647,7 @@ class UserController extends Controller
                 $rules = array();
 
                 $rules = array_merge($rules, [
+                    OrderExcel::IMPORT_USER_DO_COLUMN_LABEL => 'nullable|alpha_num',
                     OrderExcel::IMPORT_RECEIVER_NAME_COLUMN_LABEL => 'required|string|max:255',
                     OrderExcel::IMPORT_RECEIVER_PHONE_COLUMN_LABEL => [
                         'required',
@@ -765,6 +766,14 @@ class UserController extends Controller
                                     $inputData['discount_price'] = $result['discountPrice'];
                                 }
                             }
+
+                            if(!empty($inputData[OrderExcel::IMPORT_USER_DO_COLUMN_LABEL]))
+                            {
+                                $validOrder = Order::select('id', 'created_at')->where('user_id', $user->id)->where('user_do', $inputData[OrderExcel::IMPORT_USER_DO_COLUMN_LABEL])->first();
+
+                                if(!empty($validOrder))
+                                    $rowValidator->errors()->add('user_do', trans('validation.unique', ['attribute' => 'mã đơn hàng']));
+                            }
                         });
 
                         if($rowValidator->passes())
@@ -861,6 +870,7 @@ class UserController extends Controller
 
                             $order->generateDo(!empty($senderProvince) ? $senderProvince : Area::select('id', 'name')->where('type', Area::TYPE_PROVINCE_DB)->find($userAddresses[0]->province_id));
 
+                            $order->user_do = $inputData[OrderExcel::IMPORT_USER_DO_COLUMN_LABEL];
                             $order->date = date('Y-m-d');
                             $order->source = Order::SOURCE_EXCEL_DB;
                             $order->save();
