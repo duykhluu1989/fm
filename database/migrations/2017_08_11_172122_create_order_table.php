@@ -43,6 +43,7 @@ class CreateOrderTable extends Migration
             $table->string('payment_code', 255)->nullable();
             $table->string('payment_note', 255)->nullable();
             $table->dateTime('payment_completed_at')->nullable();
+            $table->double('return_price')->unsigned()->nullable();
         });
     }
 

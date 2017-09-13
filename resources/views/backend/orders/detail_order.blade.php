@@ -12,9 +12,9 @@
                 @elseif($order->payment == \App\Models\Order::PROCESSING_PAYMENT_DB)
                     <a href="{{ action('Backend\OrderController@completePaymentOrder', ['id' => $order->id]) }}" class="btn btn-primary Confirmation">Xác Nhận Đối Soát</a>
                 @endif
-            @endif
-
-            @if(\App\Models\Order::getOrderStatusOrder($order->status) <= \App\Models\Order::getOrderStatusOrder(\App\Models\Order::STATUS_INFO_RECEIVED_DB))
+            @elseif($order->status == \App\Models\Order::STATUS_RETURN_DB)
+                <button class="btn btn-primary" id="OpenReturnPriceModalButton">Phí Return</button>
+            @elseif(\App\Models\Order::getOrderStatusOrder($order->status) <= \App\Models\Order::getOrderStatusOrder(\App\Models\Order::STATUS_INFO_RECEIVED_DB))
                 <a href="{{ action('Backend\OrderController@editOrder', ['id' => $order->id]) }}" class="btn btn-primary">Sửa Đơn Hàng</a>
 
                 <a href="{{ action('Backend\OrderController@cancelOrder', ['id' => $order->id]) }}" class="btn btn-primary pull-right Confirmation">Hủy</a>
@@ -160,6 +160,10 @@
                         <div class="col-sm-9">{{ \App\Libraries\Helpers\Utility::formatNumber($order->total_cod_price) }}</div>
                     </div>
                     <div class="row">
+                        <div class="col-sm-3"><b>Phí Return</b></div>
+                        <div class="col-sm-9">{{ !empty($order->return_price) ? \App\Libraries\Helpers\Utility::formatNumber($order->return_price) : '' }}</div>
+                    </div>
+                    <div class="row">
                         <div class="col-sm-3"><b>Shipper Lấy Hàng</b></div>
                         <div class="col-sm-9">{{ $order->collection_shipper }}</div>
                     </div>
@@ -269,22 +273,44 @@
             @endif
         </div>
         <div class="box-footer">
-            @if($order->status == \App\Models\Order::STATUS_COMPLETED_DB)
-                @if($order->payment == \App\Models\Order::NOT_PAYMENT_DB)
-                    <a href="{{ action('Backend\OrderController@paymentOrder', ['id' => $order->id]) }}" class="btn btn-primary Confirmation">Tiến Hành Đối Soát</a>
-                @elseif($order->payment == \App\Models\Order::PROCESSING_PAYMENT_DB)
-                    <a href="{{ action('Backend\OrderController@completePaymentOrder', ['id' => $order->id]) }}" class="btn btn-primary Confirmation">Xác Nhận Đối Soát</a>
-                @endif
-            @endif
-
-            @if(\App\Models\Order::getOrderStatusOrder($order->status) <= \App\Models\Order::getOrderStatusOrder(\App\Models\Order::STATUS_INFO_RECEIVED_DB))
-                <a href="{{ action('Backend\OrderController@editOrder', ['id' => $order->id]) }}" class="btn btn-primary">Sửa Đơn Hàng</a>
-
-                <a href="{{ action('Backend\OrderController@cancelOrder', ['id' => $order->id]) }}" class="btn btn-primary pull-right Confirmation">Hủy</a>
-            @endif
-
             <a href="{{ \App\Libraries\Helpers\Utility::getBackUrlCookie(action('Backend\OrderController@adminOrder')) }}" class="btn btn-default">Quay Lại</a>
         </div>
     </div>
 
+    @if($order->status == \App\Models\Order::STATUS_RETURN_DB)
+        <div class="modal fade" tabindex="-1" role="dialog" id="ReturnPriceModal">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content box">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">Phí Return</h4>
+                    </div>
+                    <form action="{{ action('Backend\OrderController@returnPriceOrder', ['id' => $order->id]) }}" method="post">
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>Phí <i>(bắt buộc)</i></label>
+                                <input type="text" class="form-control InputForNumber" name="return_price" value="{{ !empty($order->return_price) ? \App\Libraries\Helpers\Utility::formatNumber($order->return_price) : '' }}" required="required" />
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Hủy</button>
+                            <button type="submit" class="btn btn-primary">Xác Nhận</button>
+                        </div>
+                        {{ csrf_field() }}
+                    </form>
+                </div>
+            </div>
+        </div>
+    @endif
+
 @stop
+
+@if($order->status == \App\Models\Order::STATUS_RETURN_DB)
+    @push('scripts')
+        <script type="text/javascript">
+            $('#OpenReturnPriceModalButton').click(function() {
+                $('#ReturnPriceModal').modal('show');
+            });
+        </script>
+    @endpush
+@endif

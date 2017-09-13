@@ -132,6 +132,14 @@
                                     <div class="col-sm-3"><b>Tổng tiền</b></div>
                                     <div class="col-sm-9">{{ \App\Libraries\Helpers\Utility::formatNumber($order->total_cod_price) }}</div>
                                 </div>
+
+                                @if(!empty($order->return_price))
+                                    <div class="row">
+                                        <div class="col-sm-3"><b>Phí Return</b></div>
+                                        <div class="col-sm-9">{{  \App\Libraries\Helpers\Utility::formatNumber($order->return_price) }}</div>
+                                    </div>
+                                @endif
+
                                 <div class="row">
                                     <div class="col-sm-3"><b>Shipper</b></div>
                                     <div class="col-sm-9">{{ $order->shipper }}</div>

@@ -861,6 +861,7 @@ class OrderController extends Controller
                     $collectionTrackingDetail['pick_up_postal_code'],
                     '',
                     $collectionTrackingDetail['pod_date_time'],
+                    '',
                 ];
             }
             else
@@ -945,6 +946,7 @@ class OrderController extends Controller
                     $deliveryTrackingDetail['pick_up_postal_code'],
                     '',
                     $deliveryTrackingDetail['pod_date_time'],
+                    $order->return_price,
                 ];
             }
             else
@@ -966,5 +968,31 @@ class OrderController extends Controller
             });
 
         })->export('xlsx');
+    }
+
+    public function returnPriceOrder(Request $request, $id)
+    {
+        $order = Order::find($id);
+
+        if(empty($order) || $order->status != Order::STATUS_RETURN_DB)
+            return view('backend.errors.404');
+
+        $inputs = $request->all();
+
+        $inputs['return_price'] = implode('', explode('.', $inputs['return_price']));
+
+        $validator = Validator::make($inputs, [
+            'return_price' => 'required|numeric|min:1',
+        ]);
+
+        if($validator->passes())
+        {
+            $order->return_price = $inputs['return_price'];
+            $order->save();
+
+            return redirect()->action('Backend\OrderController@detailOrder', ['id' => $id])->with('messageSuccess', 'Thành Công');
+        }
+        else
+            return redirect()->action('Backend\OrderController@detailOrder', ['id' => $id])->with('messageError', $validator->errors()->first());
     }
 }

@@ -187,6 +187,7 @@ class OrderExcel
             'Pick up zip code',
             'Pick up zone',
             'POD at',
+            'Return Fee',
         ];
     }
 }
