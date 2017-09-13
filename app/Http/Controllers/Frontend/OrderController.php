@@ -180,8 +180,6 @@ class OrderController extends Controller
 
                 if(isset($inputs['user_do']) && is_array($inputs['user_do']))
                 {
-                    $countUserDoValues = array_count_values($inputs['user_do']);
-
                     foreach($inputs['user_do'] as $key => $userDo)
                     {
                         if(!empty($userDo))
@@ -194,7 +192,10 @@ class OrderController extends Controller
                                     $validator->errors()->add('user_do.' . $key, trans('validation.unique', ['attribute' => 'mã đơn hàng']));
                             }
 
-                            if($countUserDoValues[$userDo] > 1)
+                            $temp = $inputs['user_do'];
+                            unset($temp[$key]);
+
+                            if(in_array($userDo, $temp))
                                 $validator->errors()->add('user_do.' . $key, trans('validation.distinct', ['attribute' => 'mã đơn hàng']));
                         }
                     }
