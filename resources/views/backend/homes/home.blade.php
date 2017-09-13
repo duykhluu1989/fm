@@ -84,7 +84,7 @@
                 <div class="col-sm-4 col-xs-6">
                     <div class="description-block">
                         <span class="description-text text-green">Tổng Khối Lượng</span>
-                        <h5 class="description-header">{{ \App\Libraries\Helpers\Utility::formatNumber($orders->weight) }}</h5>
+                        <h5 class="description-header">{{ $orders->weight }}</h5>
                     </div>
                 </div>
                 <div class="col-sm-4 col-xs-6">
@@ -119,7 +119,7 @@
                         <h4>Hoàn Thành: <b>{{ \App\Libraries\Helpers\Utility::formatNumber($orderByDistrict->complete) }}</b></h4>
                         <h4>Không Giao Được: <b>{{ \App\Libraries\Helpers\Utility::formatNumber($orderByDistrict->fail) }}</b></h4>
                         <h4>Hủy: <b>{{ \App\Libraries\Helpers\Utility::formatNumber($orderByDistrict->cancel) }}</b></h4>
-                        <h4>Tổng Khối Lượng: <b>{{ \App\Libraries\Helpers\Utility::formatNumber($orderByDistrict->weight) }}</b></h4>
+                        <h4>Tổng Khối Lượng: <b>{{ $orderByDistrict->weight }}</b></h4>
                         <h4>Tổng Thu Hộ: <b>{{ \App\Libraries\Helpers\Utility::formatNumber($orderByDistrict->cod_price) }}</b></h4>
                         <h4>Tổng Phí Ship: <b>{{ \App\Libraries\Helpers\Utility::formatNumber($orderByDistrict->shipping_price) }}</b></h4>
                     </div>
@@ -146,7 +146,7 @@
                             <h4>Hoàn Thành: <b>{{ \App\Libraries\Helpers\Utility::formatNumber($orderByShipper->complete) }}</b></h4>
                             <h4>Không Giao Được: <b>{{ \App\Libraries\Helpers\Utility::formatNumber($orderByShipper->fail) }}</b></h4>
                             <h4>Hủy: <b>{{ \App\Libraries\Helpers\Utility::formatNumber($orderByShipper->cancel) }}</b></h4>
-                            <h4>Tổng Khối Lượng: <b>{{ \App\Libraries\Helpers\Utility::formatNumber($orderByShipper->weight) }}</b></h4>
+                            <h4>Tổng Khối Lượng: <b>{{ $orderByShipper->weight }}</b></h4>
                             <h4>Tổng Thu Hộ: <b>{{ \App\Libraries\Helpers\Utility::formatNumber($orderByShipper->cod_price) }}</b></h4>
                             <h4>Tổng Phí Ship: <b>{{ \App\Libraries\Helpers\Utility::formatNumber($orderByShipper->shipping_price) }}</b></h4>
                         </div>

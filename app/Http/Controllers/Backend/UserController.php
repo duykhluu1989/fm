@@ -453,7 +453,7 @@ class UserController extends Controller
                 'title' => 'Tổng Khối Lượng',
                 'data' => function($row) {
                     if(!empty($row->customerInformation))
-                        echo Utility::formatNumber($row->customerInformation->total_weight);
+                        $row->customerInformation->total_weight;
                 },
             ],
             [

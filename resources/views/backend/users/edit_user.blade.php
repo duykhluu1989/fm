@@ -97,7 +97,7 @@
                                 <div class="col-sm-4">
                                     <div class="form-group">
                                         <label>Tổng Khối Lượng</label>
-                                        <span class="form-control no-border">{{ !empty($user->customerInformation) ? \App\Libraries\Helpers\Utility::formatNumber($user->customerInformation->total_weight) : '' }}</span>
+                                        <span class="form-control no-border">{{ !empty($user->customerInformation) ? $user->customerInformation->total_weight : '' }}</span>
                                     </div>
                                 </div>
                                 <div class="col-sm-4">

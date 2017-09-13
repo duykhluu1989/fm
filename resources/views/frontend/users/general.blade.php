@@ -79,7 +79,7 @@
                                     </tr>
                                     <tr>
                                         <td>Tổng khối lượng</td>
-                                        <td>{{ !empty($user->customerInformation) ? \App\Libraries\Helpers\Utility::formatNumber($user->customerInformation->total_weight) : 0 }}</td>
+                                        <td>{{ !empty($user->customerInformation) ? $user->customerInformation->total_weight : 0 }}</td>
                                     </tr>
                                     <tr>
                                         <td>Tổng thu hộ</td>
@@ -137,7 +137,7 @@
                                         </tr>
                                         <tr>
                                             <td>Tổng khối lượng</td>
-                                            <td>{{ \App\Libraries\Helpers\Utility::formatNumber($orders->weight) }}</td>
+                                            <td>{{ $orders->weight }}</td>
                                         </tr>
                                         <tr>
                                             <td>Tổng thu hộ</td>
