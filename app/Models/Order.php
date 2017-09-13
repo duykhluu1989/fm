@@ -308,18 +308,7 @@ class Order extends Model
     {
         $shippingPrice = 0;
 
-        if(!empty($weight))
-        {
-            $temp = $weight - (int)$weight;
-            if($temp > 0)
-            {
-                if($temp <= 0.5)
-                    $weight = (int)$weight + 0.5;
-                else
-                    $weight = (int)$weight + 1;
-            }
-        }
-        else
+        if(empty($weight))
             $weight = 0;
 
         if(!empty($dimension))
@@ -338,15 +327,6 @@ class Order extends Model
             }
 
             $weightFromDimension = $volume / 5000;
-
-            $temp = $weightFromDimension - (int)$weightFromDimension;
-            if($temp > 0)
-            {
-                if($temp <= 0.5)
-                    $weightFromDimension = (int)$weightFromDimension + 0.5;
-                else
-                    $weightFromDimension = (int)$weightFromDimension + 1;
-            }
         }
         else
             $weightFromDimension = 0;
@@ -401,7 +381,18 @@ class Order extends Model
                     $netWeight -= $lastWeight;
 
                     if($netWeight > 0)
+                    {
+                        $temp = $netWeight - (int)$netWeight;
+                        if($temp > 0)
+                        {
+                            if($temp <= 0.5)
+                                $netWeight = (int)$netWeight + 0.5;
+                            else
+                                $netWeight = (int)$netWeight + 1;
+                        }
+
                         $shippingPrice += ($netWeight * $detail['price'] * 2);
+                    }
                 }
             }
         }
