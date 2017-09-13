@@ -145,7 +145,7 @@ class ShippingPriceRuleController extends Controller
                     {
                         if($key != $countWeight - 1)
                         {
-                            if(empty($weight) || !is_numeric($weight) || $weight < 0.1)
+                            if(empty($weight) || !is_numeric($weight) || $weight < 0.05)
                                 $validator->errors()->add('rule', trans('validation.in', ['attribute' => 'rule']));
                             else
                             {
