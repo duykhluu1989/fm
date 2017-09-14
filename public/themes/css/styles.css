@@ -483,7 +483,7 @@ ul.list_tinlienquan li:hover a {
 }
 .form-control {
   height: 42px;
-  line-height: 42;
+  line-height: 42px;
 }
 .section_breadcrumb_user {
   padding: 30px 0;
