@@ -69,7 +69,7 @@ class OrderController extends Controller
                         'receiver_province.' . $k => 'required|integer|min:1',
                         'receiver_district.' . $k => 'required|integer|min:1',
                         'receiver_ward.' . $k => 'required|integer|min:1',
-                        'weight.' . $k => 'nullable|numeric|min:0.1',
+                        'weight.' . $k => 'nullable|numeric|min:0.05',
                         'cod_price.' . $k => 'nullable|integer|min:1',
                         'note.' . $k => 'nullable|max:255',
                         'user_do.' . $k => 'nullable|alpha_num',
@@ -524,7 +524,7 @@ class OrderController extends Controller
 
         $validator = Validator::make($inputs, [
             'register_district' => 'required',
-            'weight' => 'nullable|numeric|min:0.1',
+            'weight' => 'nullable|numeric|min:0.05',
         ]);
 
         $validator->after(function($validator) use(&$inputs) {

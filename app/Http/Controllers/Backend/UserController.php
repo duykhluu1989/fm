@@ -658,7 +658,7 @@ class UserController extends Controller
                     OrderExcel::IMPORT_RECEIVER_PROVINCE_COLUMN_LABEL => 'required|max:255',
                     OrderExcel::IMPORT_RECEIVER_DISTRICT_COLUMN_LABEL => 'required|max:255',
                     OrderExcel::IMPORT_RECEIVER_WARD_COLUMN_LABEL => 'required|max:255',
-                    OrderExcel::IMPORT_WEIGHT_COLUMN_LABEL => 'nullable|numeric|min:0.1',
+                    OrderExcel::IMPORT_WEIGHT_COLUMN_LABEL => 'nullable|numeric|min:0.05',
                     OrderExcel::IMPORT_COD_MONEY_COLUMN_LABEL => 'nullable|integer|min:1',
                     OrderExcel::IMPORT_NOTE_COLUMN_LABEL => 'nullable|max:255',
                 ]);
