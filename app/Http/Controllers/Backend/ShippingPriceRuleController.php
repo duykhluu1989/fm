@@ -333,4 +333,59 @@ class ShippingPriceRuleController extends Controller
             ]);
         }
     }
+
+    public function deleteShippingPriceRule($id)
+    {
+        $rule = ShippingPriceRule::with('shippingPriceRuleAreas', 'shippingPriceRuleUsers')->find($id);
+
+        if(empty($rule))
+            return view('backend.errors.404');
+
+        try
+        {
+            DB::beginTransaction();
+
+            $rule->doDelete();
+
+            DB::commit();
+
+            return redirect(Utility::getBackUrlCookie(action('Backend\ShippingPriceRuleController@adminShippingPriceRule')))->with('messageSuccess', 'Thành Công');
+        }
+        catch(\Exception $e)
+        {
+            DB::rollBack();
+
+            return redirect()->action('Backend\ShippingPriceRuleController@editShippingPriceRule', ['id' => $id])->with('messageError', $e->getMessage());
+        }
+    }
+
+    public function controlDeleteShippingPriceRule(Request $request)
+    {
+        $ids = $request->input('ids');
+
+        $rules = ShippingPriceRule::with('shippingPriceRuleAreas', 'shippingPriceRuleUsers')->whereIn('id', explode(';', $ids))->get();
+
+        foreach($rules as $rule)
+        {
+            try
+            {
+                DB::beginTransaction();
+
+                $rule->doDelete();
+
+                DB::commit();
+            }
+            catch(\Exception $e)
+            {
+                DB::rollBack();
+
+                return redirect()->action('Backend\ShippingPriceRuleController@adminShippingPriceRule')->with('messageError', $e->getMessage());
+            }
+        }
+
+        if($request->headers->has('referer'))
+            return redirect($request->headers->get('referer'))->with('messageSuccess', 'Thành Công');
+        else
+            return redirect()->action('Backend\ShippingPriceRuleController@adminShippingPriceRule')->with('messageSuccess', 'Thành Công');
+    }
 }

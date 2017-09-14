@@ -19,4 +19,15 @@ class ShippingPriceRule extends Model
     {
         return $this->hasMany('App\Models\ShippingPriceRuleUser', 'shipping_price_rule_id');
     }
+
+    public function doDelete()
+    {
+        $this->delete();
+
+        foreach($this->shippingPriceRuleAreas as $shippingPriceRuleArea)
+            $shippingPriceRuleArea->delete();
+
+        foreach($this->shippingPriceRuleUsers as $shippingPriceRuleUser)
+            $shippingPriceRuleUser->delete();
+    }
 }

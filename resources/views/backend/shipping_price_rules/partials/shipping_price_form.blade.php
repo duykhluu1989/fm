@@ -2,6 +2,10 @@
     <div class="box-header with-border">
         <button type="submit" class="btn btn-primary">{{ empty($rule->id) ? 'Tạo Mới' : 'Cập Nhật' }}</button>
         <a href="{{ \App\Libraries\Helpers\Utility::getBackUrlCookie(action('Backend\ShippingPriceRuleController@adminShippingPriceRule')) }}" class="btn btn-default">Quay Lại</a>
+
+        @if(!empty($rule->id))
+            <a href="{{ action('Backend\ShippingPriceRuleController@deleteShippingPriceRule', ['id' => $rule->id]) }}" class="btn btn-primary pull-right Confirmation">Xóa</a>
+        @endif
     </div>
     <div class="box-body">
         <div class="row">
@@ -172,6 +176,10 @@
     <div class="box-footer">
         <button type="submit" class="btn btn-primary">{{ empty($rule->id) ? 'Tạo Mới' : 'Cập Nhật' }}</button>
         <a href="{{ \App\Libraries\Helpers\Utility::getBackUrlCookie(action('Backend\ShippingPriceRuleController@adminShippingPriceRule')) }}" class="btn btn-default">Quay Lại</a>
+
+        @if(!empty($rule->id))
+            <a href="{{ action('Backend\ShippingPriceRuleController@deleteShippingPriceRule', ['id' => $rule->id]) }}" class="btn btn-primary pull-right Confirmation">Xóa</a>
+        @endif
     </div>
 </div>
 {{ csrf_field() }}

@@ -72,6 +72,10 @@ Route::group(['namespace' => 'Backend'], function() {
 
         Route::match(['get', 'post'], 'shippingPriceRule/{id}/edit', 'ShippingPriceRuleController@editShippingPriceRule');
 
+        Route::get('shippingPriceRule/{id}/delete', 'ShippingPriceRuleController@deleteShippingPriceRule');
+
+        Route::get('shippingPriceRule/controlDelete', 'ShippingPriceRuleController@controlDeleteShippingPriceRule');
+
         Route::get('discount', 'DiscountController@adminDiscount');
 
         Route::match(['get', 'post'], 'discount/create', 'DiscountController@createDiscount');
