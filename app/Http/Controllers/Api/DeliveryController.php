@@ -193,6 +193,19 @@ class DeliveryController extends Controller
                     catch(\Exception $e)
                     {
                         DB::rollBack();
+
+                        $response['info']['failed'] ++;
+                        $response['result'][] = [
+                            'date' => $data['date'],
+                            'do' => $data['do'],
+                            'status' => 'failed',
+                            'errors' => [
+                                [
+                                    'code' => '1006',
+                                    'message' => $e->getMessage(),
+                                ]
+                            ]
+                        ];
                     }
                 }
                 else
@@ -473,6 +486,19 @@ class DeliveryController extends Controller
                         catch(\Exception $e)
                         {
                             DB::rollBack();
+
+                            $response['info']['failed'] ++;
+                            $response['result'][] = [
+                                'date' => $data['date'],
+                                'do' => $data['do'],
+                                'status' => 'failed',
+                                'errors' => [
+                                    [
+                                        'code' => '1006',
+                                        'message' => $e->getMessage(),
+                                    ]
+                                ]
+                            ];
                         }
                     }
                     else
@@ -619,6 +645,19 @@ class DeliveryController extends Controller
                         catch(\Exception $e)
                         {
                             DB::rollBack();
+
+                            $response['info']['failed'] ++;
+                            $response['result'][] = [
+                                'date' => $data['date'],
+                                'do' => $data['do'],
+                                'status' => 'failed',
+                                'errors' => [
+                                    [
+                                        'code' => '1006',
+                                        'message' => $e->getMessage(),
+                                    ]
+                                ]
+                            ];
                         }
                     }
                     else
