@@ -82,7 +82,7 @@ class DeliveryController extends Controller
                 'status' => 'ok',
                 'failed' => 0,
             ],
-            'result' => array(),
+            'results' => array(),
         ];
 
         if(!is_array($deliveryData))
@@ -184,7 +184,7 @@ class DeliveryController extends Controller
 
                         DB::commit();
 
-                        $response['result'][] = [
+                        $response['results'][] = [
                             'date' => $data['date'],
                             'do' => $data['do'],
                             'status' => 'ok',
@@ -195,7 +195,7 @@ class DeliveryController extends Controller
                         DB::rollBack();
 
                         $response['info']['failed'] ++;
-                        $response['result'][] = [
+                        $response['results'][] = [
                             'date' => $data['date'],
                             'do' => $data['do'],
                             'status' => 'failed',
@@ -211,7 +211,7 @@ class DeliveryController extends Controller
                 else
                 {
                     $response['info']['failed'] ++;
-                    $response['result'][] = [
+                    $response['results'][] = [
                         'date' => $data['date'],
                         'do' => $data['do'],
                         'status' => 'failed',
@@ -227,7 +227,7 @@ class DeliveryController extends Controller
             else
             {
                 $response['info']['failed'] ++;
-                $response['result'][] = [
+                $response['results'][] = [
                     'status' => 'failed',
                     'errors' => [
                         [
@@ -291,7 +291,7 @@ class DeliveryController extends Controller
                 'status' => 'ok',
                 'failed' => 0,
             ],
-            'result' => array(),
+            'results' => array(),
         ];
 
         if(!is_array($deliveryData))
@@ -312,7 +312,7 @@ class DeliveryController extends Controller
                         $viewOrders[$order->do] = $order;
                     else
                     {
-                        $response['result'][] = [
+                        $response['results'][] = [
                             'date' => $data['date'],
                             'do' => $data['do'],
                             'status' => 'ok',
@@ -337,7 +337,7 @@ class DeliveryController extends Controller
                 else
                 {
                     $response['info']['failed'] ++;
-                    $response['result'][] = [
+                    $response['results'][] = [
                         'date' => $data['date'],
                         'do' => $data['do'],
                         'status' => 'failed',
@@ -353,7 +353,7 @@ class DeliveryController extends Controller
             else
             {
                 $response['info']['failed'] ++;
-                $response['result'][] = [
+                $response['results'][] = [
                     'status' => 'failed',
                     'errors' => [
                         [
@@ -384,14 +384,14 @@ class DeliveryController extends Controller
                     $responseData['delivery']['do'] = $viewOrders[$responseData['do']]->user_do;
                     $responseData['do'] = $viewOrders[$responseData['do']]->user_do;
 
-                    $response['result'][] = $responseData;
+                    $response['results'][] = $responseData;
                 }
                 else
                 {
                     $responseData['do'] = $viewOrders[$responseData['do']]->user_do;
 
                     $response['info']['failed'] ++;
-                    $response['result'][] = $responseData;
+                    $response['results'][] = $responseData;
                 }
             }
         }
@@ -415,7 +415,7 @@ class DeliveryController extends Controller
                 'status' => 'ok',
                 'failed' => 0,
             ],
-            'result' => array(),
+            'results' => array(),
         ];
 
         if(!is_array($deliveryData))
@@ -477,7 +477,7 @@ class DeliveryController extends Controller
 
                             DB::commit();
 
-                            $response['result'][] = [
+                            $response['results'][] = [
                                 'date' => $data['date'],
                                 'do' => $data['do'],
                                 'status' => 'ok',
@@ -488,7 +488,7 @@ class DeliveryController extends Controller
                             DB::rollBack();
 
                             $response['info']['failed'] ++;
-                            $response['result'][] = [
+                            $response['results'][] = [
                                 'date' => $data['date'],
                                 'do' => $data['do'],
                                 'status' => 'failed',
@@ -504,7 +504,7 @@ class DeliveryController extends Controller
                     else
                     {
                         $response['info']['failed'] ++;
-                        $response['result'][] = [
+                        $response['results'][] = [
                             'date' => $data['date'],
                             'do' => $data['do'],
                             'status' => 'failed',
@@ -520,7 +520,7 @@ class DeliveryController extends Controller
                 else
                 {
                     $response['info']['failed'] ++;
-                    $response['result'][] = [
+                    $response['results'][] = [
                         'date' => $data['date'],
                         'do' => $data['do'],
                         'status' => 'failed',
@@ -536,7 +536,7 @@ class DeliveryController extends Controller
             else
             {
                 $response['info']['failed'] ++;
-                $response['result'][] = [
+                $response['results'][] = [
                     'status' => 'failed',
                     'errors' => [
                         [
@@ -606,7 +606,7 @@ class DeliveryController extends Controller
                 'status' => 'ok',
                 'failed' => 0,
             ],
-            'result' => array(),
+            'results' => array(),
         ];
 
         if(!is_array($deliveryData))
@@ -636,7 +636,7 @@ class DeliveryController extends Controller
 
                             DB::commit();
 
-                            $response['result'][] = [
+                            $response['results'][] = [
                                 'date' => $data['date'],
                                 'do' => $data['do'],
                                 'status' => 'ok',
@@ -647,7 +647,7 @@ class DeliveryController extends Controller
                             DB::rollBack();
 
                             $response['info']['failed'] ++;
-                            $response['result'][] = [
+                            $response['results'][] = [
                                 'date' => $data['date'],
                                 'do' => $data['do'],
                                 'status' => 'failed',
@@ -663,7 +663,7 @@ class DeliveryController extends Controller
                     else
                     {
                         $response['info']['failed'] ++;
-                        $response['result'][] = [
+                        $response['results'][] = [
                             'date' => $data['date'],
                             'do' => $data['do'],
                             'status' => 'failed',
@@ -679,7 +679,7 @@ class DeliveryController extends Controller
                 else
                 {
                     $response['info']['failed'] ++;
-                    $response['result'][] = [
+                    $response['results'][] = [
                         'date' => $data['date'],
                         'do' => $data['do'],
                         'status' => 'failed',
@@ -695,7 +695,7 @@ class DeliveryController extends Controller
             else
             {
                 $response['info']['failed'] ++;
-                $response['result'][] = [
+                $response['results'][] = [
                     'status' => 'failed',
                     'errors' => [
                         [
