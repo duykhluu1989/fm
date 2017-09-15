@@ -93,7 +93,7 @@ class DeliveryController extends Controller
         $i = 0;
         foreach($deliveryData as $data)
         {
-            if(!empty($data['do']) && preg_match('/^[a-zA-Z0-9]+$/', $data['do']) && !empty($data['date']) && !empty($data['address']) && strtotime($data['date']) !== false && strtotime($data['date']) >= strtotime(date('Y-m-d')))
+            if(!empty($data['do']) && preg_match('/^[a-zA-Z0-9]+$/', $data['do']) && !empty($data['date']) && !empty($data['address']) && strtotime($data['date']) !== false)
             {
                 $validOrder = Order::select('id', 'created_at')->where('user_id', $user->id)->where('user_do', $data['do'])->first();
 
