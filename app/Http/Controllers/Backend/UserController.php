@@ -901,7 +901,7 @@ class UserController extends Controller
                             $senderAddress->district = !empty($senderDistrict) ? $senderDistrict->name : $userAddresses[0]->district;
                             $senderAddress->ward = !empty($senderWard) ? $senderWard->name : $userAddresses[0]->ward;
                             $senderAddress->province_id = !empty($senderProvince) ? $senderProvince->id : $userAddresses[0]->province_id;
-                            $senderAddress->district_id = !empty($senderDistrict) ? $senderProvince->id : $userAddresses[0]->district_id;
+                            $senderAddress->district_id = !empty($senderDistrict) ? $senderDistrict->id : $userAddresses[0]->district_id;
                             $senderAddress->ward_id = !empty($senderWard) ? $senderProvince->id : $userAddresses[0]->ward_id;
                             $senderAddress->type = OrderAddress::TYPE_SENDER_DB;
                             $senderAddress->save();
