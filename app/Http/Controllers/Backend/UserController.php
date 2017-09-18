@@ -249,7 +249,7 @@ class UserController extends Controller
         {
             $inputs = $request->all();
 
-            $validator = Validator::make($inputs, [
+            $rules = [
                 'username' => 'required|alpha_dash|min:4|max:255|unique:user,username,' . $user->id,
                 'email' => 'required|email|unique:user,email,' . $user->id,
                 'name' => 'required|max:255',
@@ -262,7 +262,47 @@ class UserController extends Controller
                     'numeric',
                     'regex:/^(01[2689]|09)[0-9]{8}$/',
                 ],
-            ]);
+            ];
+
+            if(isset($inputs['user_address_name']) && is_array($inputs['user_address_name']))
+            {
+                foreach($inputs['user_address_name'] as $addressId => $v)
+                {
+                    $rules = array_merge($rules, [
+                        'user_address_name.' . $addressId => 'required|string|max:255',
+                        'user_address_phone.' . $addressId => [
+                            'required',
+                            'numeric',
+                            'regex:/^(01[2689]|09)[0-9]{8}$/',
+                        ],
+                        'user_address_address.' . $addressId => 'required|max:255',
+                        'user_address_province.' . $addressId => 'required|integer|min:1',
+                        'user_address_district.' . $addressId => 'required|integer|min:1',
+                        'user_address_ward.' . $addressId => 'required|integer|min:1',
+                    ]);
+                }
+            }
+
+            if(isset($inputs['new_user_address_name']) && is_array($inputs['new_user_address_name']))
+            {
+                foreach($inputs['new_user_address_name'] as $k => $v)
+                {
+                    $rules = array_merge($rules, [
+                        'new_user_address_name.' . $k => 'required|string|max:255',
+                        'new_user_address_phone.' . $k => [
+                            'required',
+                            'numeric',
+                            'regex:/^(01[2689]|09)[0-9]{8}$/',
+                        ],
+                        'new_user_address_address.' . $k => 'required|max:255',
+                        'new_user_address_province.' . $k => 'required|integer|min:1',
+                        'new_user_address_district.' . $k => 'required|integer|min:1',
+                        'new_user_address_ward.' . $k => 'required|integer|min:1',
+                    ]);
+                }
+            }
+
+            $validator = Validator::make($inputs, $rules);
 
             if($validator->passes())
             {
@@ -312,6 +352,53 @@ class UserController extends Controller
                     {
                         foreach($user->userRoles as $userRole)
                             $userRole->delete();
+                    }
+
+                    foreach($user->userAddresses as $userAddress)
+                    {
+                        if(isset($inputs['user_address_name'][$userAddress->id]))
+                        {
+                            $userAddress->name = $inputs['user_address_name'][$userAddress->id];
+                            $userAddress->phone = $inputs['user_address_phone'][$userAddress->id];
+                            $userAddress->address = $inputs['user_address_address'][$userAddress->id];
+                            $userAddress->province = Area::find($inputs['user_address_province'][$userAddress->id])->name;
+                            $userAddress->district = Area::find($inputs['user_address_district'][$userAddress->id])->name;
+                            $userAddress->ward = Area::find($inputs['user_address_ward'][$userAddress->id])->name;
+                            $userAddress->province_id = $inputs['user_address_province'][$userAddress->id];
+                            $userAddress->district_id = $inputs['user_address_district'][$userAddress->id];
+                            $userAddress->ward_id = $inputs['user_address_ward'][$userAddress->id];
+                            $userAddress->save();
+                        }
+                        else if($userAddress->default == Utility::INACTIVE_DB)
+                            $userAddress->delete();
+                    }
+
+                    if(isset($inputs['new_user_address_name']) && is_array($inputs['new_user_address_name']))
+                    {
+                        $countUserAddresses = count($user->userAddresses);
+
+                        $i = 0;
+                        foreach($inputs['new_user_address_name'] as $k => $v)
+                        {
+                            $userAddress = new UserAddress();
+                            $userAddress->user_id = $user->id;
+                            $userAddress->name = $inputs['new_user_address_name'][$k];
+                            $userAddress->phone = $inputs['new_user_address_phone'][$k];
+                            $userAddress->address = $inputs['new_user_address_address'][$k];
+                            $userAddress->province = Area::find($inputs['new_user_address_province'][$k])->name;
+                            $userAddress->district = Area::find($inputs['new_user_address_district'][$k])->name;
+                            $userAddress->ward = Area::find($inputs['new_user_address_ward'][$k])->name;
+                            $userAddress->province_id = $inputs['new_user_address_province'][$k];
+                            $userAddress->district_id = $inputs['new_user_address_district'][$k];
+                            $userAddress->ward_id = $inputs['new_user_address_ward'][$k];
+
+                            if($countUserAddresses == 0 && $i == 0)
+                                $userAddress->default = Utility::ACTIVE_DB;
+
+                            $userAddress->save();
+
+                            $i ++;
+                        }
                     }
 
                     DB::commit();
@@ -567,6 +654,27 @@ class UserController extends Controller
         return view('backend.users.edit_account', [
             'user' => $user,
         ]);
+    }
+
+    public function getUserAddressForm(Request $request)
+    {
+        if($request->ajax() == false)
+            return view('backend.errors.404');
+
+        $inputs = $request->all();
+
+        $validator = Validator::make($inputs, [
+            'count_user_address' => 'required|integer|min:1',
+        ]);
+
+        if($validator->passes())
+        {
+            return view('backend.users.partials.user_address_form', [
+                'countUserAddress' => $inputs['count_user_address'],
+            ]);
+        }
+        else
+            return '';
     }
 
     public function autoCompleteUser(Request $request)

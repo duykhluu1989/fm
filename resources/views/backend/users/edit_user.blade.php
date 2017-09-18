@@ -261,7 +261,7 @@
                                                 $i = 0;
                                                 ?>
                                                 @foreach($user->userAddresses as $userAddress)
-                                                    <tr>
+                                                    <tr class="UserAddressRow">
                                                         <td>
                                                             <input type="text" class="form-control" name="user_address_name[{{ $userAddress->id }}]" value="{{ old('user_address_name.' . $userAddress->id, $userAddress->name) }}" required="required" />
                                                             @if($errors->has('user_address_name.' . $userAddress->id))
@@ -286,16 +286,200 @@
                                                                 </span>
                                                             @endif
                                                         </td>
-                                                        <td>{{ $userAddress->province }}</td>
-                                                        <td>{{ $userAddress->district }}</td>
-                                                        <td>{{ $userAddress->ward }}</td>
                                                         <td>
+                                                            <select name="user_address_province[{{ $userAddress->id }}]" class="form-control UserAddressProvince" required="required">
+                                                                <?php
+                                                                $province = old('user_address_province.' . $userAddress->id, $userAddress->province_id);
+                                                                ?>
+
+                                                                <option value=""></option>
+
+                                                                @foreach(\App\Models\Area::getProvinces() as $area)
+                                                                    @if($province == $area->id)
+                                                                        <option selected="selected" value="{{ $area->id }}">{{ $area->name }}</option>
+                                                                    @else
+                                                                        <option value="{{ $area->id }}">{{ $area->name }}</option>
+                                                                    @endif
+                                                                @endforeach
+                                                            </select>
+                                                            @if($errors->has('user_address_province.' . $userAddress->id))
+                                                                <span class="has-error">
+                                                                    <span class="help-block">* {{ $errors->first('user_address_province.' . $userAddress->id) }}</span>
+                                                                </span>
+                                                            @endif
+                                                        </td>
+                                                        <td>
+                                                            <select name="user_address_district[{{ $userAddress->id }}]" class="form-control UserAddressDistrict" required="required">
+                                                                <?php
+                                                                $district = old('user_address_district.' . $userAddress->id, $userAddress->district_id);
+                                                                ?>
+
+                                                                <option value=""></option>
+
+                                                                @if($province)
+                                                                    @foreach(\App\Models\Area::getDistricts($province) as $area)
+                                                                        @if($district && $district == $area->id)
+                                                                            <option selected="selected" value="{{ $area->id }}">{{ $area->name }}</option>
+                                                                        @else
+                                                                            <option value="{{ $area->id }}">{{ $area->name }}</option>
+                                                                        @endif
+                                                                    @endforeach
+                                                                @endif
+                                                            </select>
+                                                            @if($errors->has('user_address_district.' . $userAddress->id))
+                                                                <span class="has-error">
+                                                                    <span class="help-block">* {{ $errors->first('user_address_district.' . $userAddress->id) }}</span>
+                                                                </span>
+                                                            @endif
+                                                        </td>
+                                                        <td>
+                                                            <select name="user_address_ward[{{ $userAddress->id }}]" class="form-control UserAddressWard" required="required">
+                                                                <?php
+                                                                $ward = old('user_address_ward.' . $userAddress->id, $userAddress->ward_id);
+                                                                ?>
+
+                                                                <option value=""></option>
+
+                                                                @if($district)
+                                                                    @foreach(\App\Models\Area::getWards($district) as $area)
+                                                                        @if($ward && $ward == $area->id)
+                                                                            <option selected="selected" value="{{ $area->id }}">{{ $area->name }}</option>
+                                                                        @else
+                                                                            <option value="{{ $area->id }}">{{ $area->name }}</option>
+                                                                        @endif
+                                                                    @endforeach
+                                                                @endif
+                                                            </select>
+                                                            @if($errors->has('user_address_ward.' . $userAddress->id))
+                                                                <span class="has-error">
+                                                                    <span class="help-block">* {{ $errors->first('user_address_ward.' . $userAddress->id) }}</span>
+                                                                </span>
+                                                            @endif
+                                                        </td>
+                                                        <td class="text-center">
                                                             @if($i > 0)
-                                                                <button type="button" class="btn btnThem pull-right RemoveUserAddressButton">Xóa</button>
+                                                                <button type="button" class="btn btn-default RemoveUserAddressButton"><i class="fa fa-trash-o fa-fw"></i></button>
                                                             @endif
                                                         </td>
                                                     </tr>
+
+                                                    <?php
+                                                    $i ++;
+                                                    ?>
                                                 @endforeach
+
+                                                <?php
+                                                $newUserAddressName = old('new_user_address_name');
+                                                ?>
+                                                @if(is_array($newUserAddressName) && !empty($newUserAddressName))
+                                                    @foreach($newUserAddressName as $k => $v)
+                                                        <tr class="UserAddressRow">
+                                                            <td>
+                                                                <input type="text" class="form-control" name="new_user_address_name[{{ $k }}]" value="{{ old('new_user_address_name.' . $k) }}" required="required" />
+                                                                @if($errors->has('new_user_address_name.' . $k))
+                                                                    <span class="has-error">
+                                                                        <span class="help-block">* {{ $errors->first('new_user_address_name.' . $k) }}</span>
+                                                                    </span>
+                                                                @endif
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" class="form-control" name="new_user_address_phone[{{ $k }}]" value="{{ old('new_user_address_phone.' . $k) }}" required="required" />
+                                                                @if($errors->has('new_user_address_phone.' . $k))
+                                                                    <span class="has-error">
+                                                                        <span class="help-block">* {{ $errors->first('new_user_address_phone.' . $k) }}</span>
+                                                                    </span>
+                                                                @endif
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" class="form-control" name="new_user_address_address[{{ $k }}]" value="{{ old('new_user_address_address.' . $k) }}" required="required" />
+                                                                @if($errors->has('new_user_address_address.' . $k))
+                                                                    <span class="has-error">
+                                                                        <span class="help-block">* {{ $errors->first('new_user_address_address.' . $k) }}</span>
+                                                                    </span>
+                                                                @endif
+                                                            </td>
+                                                            <td>
+                                                                <select name="new_user_address_province[{{ $k }}]" class="form-control UserAddressProvince" required="required">
+                                                                    <?php
+                                                                    $province = old('new_user_address_province.' . $k);
+                                                                    ?>
+
+                                                                    <option value=""></option>
+
+                                                                    @foreach(\App\Models\Area::getProvinces() as $area)
+                                                                        @if($province == $area->id)
+                                                                            <option selected="selected" value="{{ $area->id }}">{{ $area->name }}</option>
+                                                                        @else
+                                                                            <option value="{{ $area->id }}">{{ $area->name }}</option>
+                                                                        @endif
+                                                                    @endforeach
+                                                                </select>
+                                                                @if($errors->has('new_user_address_province.' . $k))
+                                                                    <span class="has-error">
+                                                                        <span class="help-block">* {{ $errors->first('new_user_address_province.' . $k) }}</span>
+                                                                    </span>
+                                                                @endif
+                                                            </td>
+                                                            <td>
+                                                                <select name="new_user_address_district[{{ $k }}]" class="form-control UserAddressDistrict" required="required">
+                                                                    <?php
+                                                                    $district = old('new_user_address_district.' . $k);
+                                                                    ?>
+
+                                                                    <option value=""></option>
+
+                                                                    @if($province)
+                                                                        @foreach(\App\Models\Area::getDistricts($province) as $area)
+                                                                            @if($district && $district == $area->id)
+                                                                                <option selected="selected" value="{{ $area->id }}">{{ $area->name }}</option>
+                                                                            @else
+                                                                                <option value="{{ $area->id }}">{{ $area->name }}</option>
+                                                                            @endif
+                                                                        @endforeach
+                                                                    @endif
+                                                                </select>
+                                                                @if($errors->has('new_user_address_district.' . $k))
+                                                                    <span class="has-error">
+                                                                        <span class="help-block">* {{ $errors->first('new_user_address_district.' . $k) }}</span>
+                                                                    </span>
+                                                                @endif
+                                                            </td>
+                                                            <td>
+                                                                <select name="new_user_address_ward[{{ $k }}]" class="form-control UserAddressWard" required="required">
+                                                                    <?php
+                                                                    $ward = old('new_user_address_ward.' . $k);
+                                                                    ?>
+
+                                                                    <option value=""></option>
+
+                                                                    @if($district)
+                                                                        @foreach(\App\Models\Area::getWards($district) as $area)
+                                                                            @if($ward && $ward == $area->id)
+                                                                                <option selected="selected" value="{{ $area->id }}">{{ $area->name }}</option>
+                                                                            @else
+                                                                                <option value="{{ $area->id }}">{{ $area->name }}</option>
+                                                                            @endif
+                                                                        @endforeach
+                                                                    @endif
+                                                                </select>
+                                                                @if($errors->has('new_user_address_ward.' . $k))
+                                                                    <span class="has-error">
+                                                                        <span class="help-block">* {{ $errors->first('new_user_address_ward.' . $k) }}</span>
+                                                                    </span>
+                                                                @endif
+                                                            </td>
+                                                            <td class="text-center">
+                                                                @if($i > 0)
+                                                                    <button type="button" class="btn btn-default RemoveUserAddressButton"><i class="fa fa-trash-o fa-fw"></i></button>
+                                                                @endif
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
+                                                @else
+                                                    <?php
+                                                    $k = 0;
+                                                    ?>
+                                                @endif
                                                 </tbody>
                                             </table>
                                         </div>
@@ -376,5 +560,75 @@
                 closeButton: false
             });
         });
+
+        var countUserAddress = {{ $k + 1 }};
+
+        $('#NewUserAddressButton').click(function() {
+            $.ajax({
+                url: '{{ action('Backend\UserController@getUserAddressForm') }}',
+                type: 'get',
+                data: 'count_user_address=' + countUserAddress,
+                success: function(result) {
+                    if(result)
+                    {
+                        $('#ListUserAddress').append(result);
+
+                        countUserAddress ++;
+                    }
+                }
+            });
+        });
+
+        $('#ListUserAddress').on('click', 'button', function() {
+            if($(this).hasClass('RemoveUserAddressButton'))
+                $(this).closest('.UserAddressRow').remove();
+        }).on('change', 'select', function() {
+            var containerElem;
+
+            if($(this).hasClass('UserAddressProvince'))
+            {
+                containerElem = $(this).closest('.UserAddressRow');
+
+                changeArea($(this), containerElem.find('.UserAddressDistrict').first(), '{{ \App\Models\Area::TYPE_DISTRICT_DB }}');
+                containerElem.find('.UserAddressWard').first().html('<option value=""></option>');
+            }
+            else if($(this).hasClass('UserAddressDistrict'))
+            {
+                containerElem = $(this).closest('.UserAddressRow');
+
+                changeArea($(this), containerElem.find('.UserAddressWard').first(), '{{ \App\Models\Area::TYPE_WARD_DB }}');
+            }
+        });
+
+        function changeArea(elem, updateElem, type)
+        {
+            updateElem.html('' +
+                '<option value=""></option>' +
+            '');
+
+            if(elem != '')
+            {
+                $.ajax({
+                    url: '{{ action('Backend\UserController@getListArea') }}',
+                    type: 'get',
+                    data: 'parent_id=' + elem.val() + '&type=' + type,
+                    success: function(result) {
+                        if(result)
+                        {
+                            result = JSON.parse(result);
+
+                            var i;
+
+                            for(i = 0;i < result.length;i ++)
+                            {
+                                updateElem.append('' +
+                                    '<option value="' + result[i].id + '">' + result[i].name + '</option>' +
+                                '');
+                            }
+                        }
+                    }
+                });
+            }
+        }
     </script>
 @endpush
