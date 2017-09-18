@@ -256,16 +256,44 @@
                                                     </th>
                                                 </tr>
                                                 </thead>
-                                                <tbody>
+                                                <tbody id="ListUserAddress">
+                                                <?php
+                                                $i = 0;
+                                                ?>
                                                 @foreach($user->userAddresses as $userAddress)
                                                     <tr>
-                                                        <td>{{ $userAddress->name }}</td>
-                                                        <td>{{ $userAddress->phone }}</td>
-                                                        <td>{{ $userAddress->address }}</td>
+                                                        <td>
+                                                            <input type="text" class="form-control" name="user_address_name[{{ $userAddress->id }}]" value="{{ old('user_address_name.' . $userAddress->id, $userAddress->name) }}" required="required" />
+                                                            @if($errors->has('user_address_name.' . $userAddress->id))
+                                                                <span class="has-error">
+                                                                    <span class="help-block">* {{ $errors->first('user_address_name.' . $userAddress->id) }}</span>
+                                                                </span>
+                                                            @endif
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" class="form-control" name="user_address_phone[{{ $userAddress->id }}]" value="{{ old('user_address_phone.' . $userAddress->id, $userAddress->phone) }}" required="required" />
+                                                            @if($errors->has('user_address_phone.' . $userAddress->id))
+                                                                <span class="has-error">
+                                                                    <span class="help-block">* {{ $errors->first('user_address_phone.' . $userAddress->id) }}</span>
+                                                                </span>
+                                                            @endif
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" class="form-control" name="user_address_address[{{ $userAddress->id }}]" value="{{ old('user_address_address.' . $userAddress->id, $userAddress->address) }}" required="required" />
+                                                            @if($errors->has('user_address_address.' . $userAddress->id))
+                                                                <span class="has-error">
+                                                                    <span class="help-block">* {{ $errors->first('user_address_address.' . $userAddress->id) }}</span>
+                                                                </span>
+                                                            @endif
+                                                        </td>
                                                         <td>{{ $userAddress->province }}</td>
                                                         <td>{{ $userAddress->district }}</td>
                                                         <td>{{ $userAddress->ward }}</td>
-                                                        <td></td>
+                                                        <td>
+                                                            @if($i > 0)
+                                                                <button type="button" class="btn btnThem pull-right RemoveUserAddressButton">Xóa</button>
+                                                            @endif
+                                                        </td>
                                                     </tr>
                                                 @endforeach
                                                 </tbody>
