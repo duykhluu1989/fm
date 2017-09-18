@@ -392,6 +392,10 @@
                                         $i ++;
                                         ?>
                                     @endforeach
+                                @else
+                                    <?php
+                                    $k = 0;
+                                    ?>
                                 @endif
 
                             </div>
@@ -411,7 +415,7 @@
 
 @push('scripts')
     <script type="text/javascript">
-        var countUserAddress = 1;
+        var countUserAddress = {{ $k + 1 }};
 
         $('#AddMoreUserAddressButton').click(function() {
             $.ajax({

@@ -251,6 +251,9 @@
                                                     <th>Tỉnh / Thành Phố</th>
                                                     <th>Quận / Huyện</th>
                                                     <th>Phường / Xã</th>
+                                                    <th class="col-sm-1 text-center">
+                                                        <button type="button" class="btn btn-primary" id="NewUserAddressButton" data-container="body" data-toggle="popover" data-placement="top" data-content="Thêm Mới"><i class="fa fa-plus fa-fw"></i></button>
+                                                    </th>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
@@ -262,6 +265,7 @@
                                                         <td>{{ $userAddress->province }}</td>
                                                         <td>{{ $userAddress->district }}</td>
                                                         <td>{{ $userAddress->ward }}</td>
+                                                        <td></td>
                                                     </tr>
                                                 @endforeach
                                                 </tbody>
