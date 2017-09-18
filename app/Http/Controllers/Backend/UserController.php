@@ -220,6 +220,8 @@ class UserController extends Controller
                 $user->password = Hash::make($inputs['password']);
                 $user->save();
 
+                register_shutdown_function([\App\Http\Controllers\Frontend\UserController::class, 'sendRegisterEmail'], $user, $inputs['password']);
+
                 return redirect()->action('Backend\UserController@editUser', ['id' => $user->id])->with('messageSuccess', 'Thành Công');
             }
             else
