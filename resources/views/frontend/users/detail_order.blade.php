@@ -98,7 +98,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-3"><b>Trạng thái</b></div>
-                                    <div class="col-sm-9"><span class="label label-{{ \App\Models\Order::getOrderStatusLabel($order->status ) }}">{{ \App\Models\Order::getOrderStatus($order->status) }}</span></div>
+                                    <div class="col-sm-9"><span class="label label-{{ \App\Models\Order::getOrderStatusLabel($order->status) }}">{{ \App\Models\Order::getOrderStatus($order->status) }}</span></div>
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-3"><b>Trọng lượng (kg)</b></div>
@@ -158,6 +158,45 @@
                                 </div>
                             </div>
                         </div>
+
+                        @if(!empty($order->tracking_detail))
+                            <?php
+                            $deliveryTrackingDetail = json_decode($order->tracking_detail, true);
+                            ?>
+                            @if(isset($deliveryTrackingDetail['milestones']))
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <h3>Hành trình</h3>
+                                        <div class="table-responsive no-padding">
+                                            <table class="table table-striped table-hover table-condensed">
+                                                <thead>
+                                                <tr>
+                                                    <th>Trạng thái</th>
+                                                    <th>Người giao</th>
+                                                    <th>Thời gian</th>
+                                                    <th>Lý do</th>
+                                                    <th>Ghi chú</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+
+                                                @foreach($deliveryTrackingDetail['milestones'] as $milestones)
+                                                    <tr>
+                                                        <td><span class="label label-{{ \App\Models\Order::getOrderStatusLabel($milestones['status']) }}">{{ \App\Models\Order::getOrderStatus($milestones['status']) }}</span></td>
+                                                        <td>{{ $milestones['assign_to'] }}</td>
+                                                        <td>{{ $milestones['pod_date_time'] }}</td>
+                                                        <td>{{ $milestones['reason'] }}</td>
+                                                        <td>{{ $milestones['note'] }}</td>
+                                                    </tr>
+                                                @endforeach
+
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+                        @endif
                     </div>
                 </div>
             </div>
