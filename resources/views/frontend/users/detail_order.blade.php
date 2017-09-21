@@ -168,7 +168,7 @@
                                     <div class="col-sm-12">
                                         <h3>Hành trình</h3>
                                         <div class="table-responsive no-padding">
-                                            <table class="table table-striped table-hover table-condensed">
+                                            <table class="table table-bordered table-hover">
                                                 <thead>
                                                 <tr>
                                                     <th>Trạng thái</th>
