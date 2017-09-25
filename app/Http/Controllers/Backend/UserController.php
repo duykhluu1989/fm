@@ -742,6 +742,23 @@ class UserController extends Controller
         {
             $excelData = Excel::load($inputs['file']->getPathname())->noHeading()->toArray();
 
+            foreach($excelData as $key => $rowData)
+            {
+                $emptyRow = true;
+
+                foreach($rowData as $columnData)
+                {
+                    if(!empty($columnData))
+                    {
+                        $emptyRow = false;
+                        break;
+                    }
+                }
+
+                if($emptyRow == true)
+                    unset($excelData[$key]);
+            }
+
             if(count($excelData) > 102)
                 return redirect()->action('Backend\UserController@editUser', ['id' => $user->id])->with('messageError', 'Tối Đa 100 Đơn Hàng 1 Lần');
 
@@ -1035,9 +1052,9 @@ class UserController extends Controller
                             $order->setRelation('receiverAddress', $receiverAddress);
 
                             if($popupDos == '')
-                                $popupDos = $order->number;
+                                $popupDos = (empty($order->user_do) ? $order->do : $order->user_do);
                             else
-                                $popupDos .= ', ' . $order->number;
+                                $popupDos .= ', ' . (empty($order->user_do) ? $order->do : $order->user_do);
 
                             $placedOrders[] = $order;
                         }
