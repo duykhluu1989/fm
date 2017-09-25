@@ -876,6 +876,8 @@ class OrderController extends Controller
 
                 $exportCollectionData[] = $exportCollectionDataRow;
             }
+            else
+                $exportCollectionData[] = array();
 
             if(!empty($order->tracking_detail))
             {
@@ -972,6 +974,8 @@ class OrderController extends Controller
 
                 $exportDeliveryData[] = $exportDeliveryDataRow;
             }
+            else
+                $exportDeliveryData[] = array();
         }
 
         Excel::create('order', function($excel) use($exportCollectionData, $exportDeliveryData) {
