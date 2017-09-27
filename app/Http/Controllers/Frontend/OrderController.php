@@ -68,7 +68,7 @@ class OrderController extends Controller
                         'receiver_address.' . $k => 'required|max:255',
                         'receiver_province.' . $k => 'required|integer|min:1',
                         'receiver_district.' . $k => 'required|integer|min:1',
-                        'receiver_ward.' . $k => 'required|integer|min:1',
+                        'receiver_ward.' . $k => 'nullable|integer|min:1',
                         'weight.' . $k => 'nullable|numeric|min:0.05',
                         'cod_price.' . $k => 'nullable|integer|min:1',
                         'note.' . $k => 'nullable|max:255',
@@ -96,7 +96,7 @@ class OrderController extends Controller
                             'register_address.' . $k => 'required|max:255',
                             'register_province.' . $k => 'required|integer|min:1',
                             'register_district.' . $k => 'required|integer|min:1',
-                            'register_ward.' . $k => 'required|integer|min:1',
+                            'register_ward.' . $k => 'nullable|integer|min:1',
                         ]);
                     }
                 }
@@ -118,7 +118,7 @@ class OrderController extends Controller
                             'register_address.' . $k => 'required_if:user_address.' . $k . ',|nullable|max:255',
                             'register_province.' . $k => 'required_if:user_address.' . $k . ',|nullable|integer|min:1',
                             'register_district.' . $k => 'required_if:user_address.' . $k . ',|nullable|integer|min:1',
-                            'register_ward.' . $k => 'required_if:user_address.' . $k . ',|nullable|integer|min:1',
+                            'register_ward.' . $k => 'nullable|integer|min:1',
                         ]);
                     }
                 }
@@ -234,10 +234,10 @@ class OrderController extends Controller
                         $userAddress->address = $inputs['register_address'][$firstKey];
                         $userAddress->province = Area::find($inputs['register_province'][$firstKey])->name;
                         $userAddress->district = Area::find($inputs['register_district'][$firstKey])->name;
-                        $userAddress->ward = Area::find($inputs['register_ward'][$firstKey])->name;
+                        $userAddress->ward = (!empty($inputs['register_ward'][$firstKey]) ? Area::find($inputs['register_ward'][$firstKey])->name : null);
                         $userAddress->province_id = $inputs['register_province'][$firstKey];
                         $userAddress->district_id = $inputs['register_district'][$firstKey];
-                        $userAddress->ward_id = $inputs['register_ward'][$firstKey];
+                        $userAddress->ward_id = (!empty($inputs['register_ward'][$firstKey]) ? $inputs['register_ward'][$firstKey] : null);
                         $userAddress->default = Utility::ACTIVE_DB;
                         $userAddress->save();
 
@@ -254,10 +254,10 @@ class OrderController extends Controller
                         $userAddress->address = $inputs['register_address'][$firstKey];
                         $userAddress->province = Area::find($inputs['register_province'][$firstKey])->name;
                         $userAddress->district = Area::find($inputs['register_district'][$firstKey])->name;
-                        $userAddress->ward = Area::find($inputs['register_ward'][$firstKey])->name;
+                        $userAddress->ward = (!empty($inputs['register_ward'][$firstKey]) ? Area::find($inputs['register_ward'][$firstKey])->name : null);
                         $userAddress->province_id = $inputs['register_province'][$firstKey];
                         $userAddress->district_id = $inputs['register_district'][$firstKey];
-                        $userAddress->ward_id = $inputs['register_ward'][$firstKey];
+                        $userAddress->ward_id = (!empty($inputs['register_ward'][$firstKey]) ? $inputs['register_ward'][$firstKey] : null);
                         $userAddress->default = Utility::ACTIVE_DB;
                         $userAddress->save();
                     }
@@ -348,10 +348,10 @@ class OrderController extends Controller
                             $senderAddress->address = $inputs['register_address'][$k];
                             $senderAddress->province = Area::find($inputs['register_province'][$k])->name;
                             $senderAddress->district = Area::find($inputs['register_district'][$k])->name;
-                            $senderAddress->ward = Area::find($inputs['register_ward'][$k])->name;
+                            $senderAddress->ward = (!empty($inputs['register_ward'][$k]) ? Area::find($inputs['register_ward'][$k])->name : null);
                             $senderAddress->province_id = $inputs['register_province'][$k];
                             $senderAddress->district_id = $inputs['register_district'][$k];
-                            $senderAddress->ward_id = $inputs['register_ward'][$k];
+                            $senderAddress->ward_id = (!empty($inputs['register_ward'][$k]) ? $inputs['register_ward'][$k] : null);
                             $senderAddress->type = OrderAddress::TYPE_SENDER_DB;
                             $senderAddress->save();
 
@@ -391,10 +391,10 @@ class OrderController extends Controller
                         $receiverAddress->address = $inputs['receiver_address'][$k];
                         $receiverAddress->province = Area::find($inputs['receiver_province'][$k])->name;
                         $receiverAddress->district = Area::find($inputs['receiver_district'][$k])->name;
-                        $receiverAddress->ward = Area::find($inputs['receiver_ward'][$k])->name;
+                        $receiverAddress->ward = (!empty($inputs['receiver_ward'][$k]) ? Area::find($inputs['receiver_ward'][$k])->name : null);
                         $receiverAddress->province_id = $inputs['receiver_province'][$k];
                         $receiverAddress->district_id = $inputs['receiver_district'][$k];
-                        $receiverAddress->ward_id = $inputs['receiver_ward'][$k];
+                        $receiverAddress->ward_id = (!empty($inputs['receiver_ward'][$k]) ? $inputs['receiver_ward'][$k] : null);
                         $receiverAddress->type = OrderAddress::TYPE_RECEIVER_DB;
                         $receiverAddress->save();
 

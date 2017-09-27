@@ -93,8 +93,8 @@
                             @endif
                         </div>
                         <div class="form-group{{ $errors->has('register_ward') ? ' has-error': '' }}">
-                            <label>Phường / Xã <i>(bắt buộc)</i></label>
-                            <select name="register_ward" class="form-control" id="RegisterWard" required="required">
+                            <label>Phường / Xã</label>
+                            <select name="register_ward" class="form-control" id="RegisterWard">
                                 <?php
                                 $ward = old('register_ward', $order->senderAddress->ward_id);
                                 ?>
@@ -270,8 +270,8 @@
                             @endif
                         </div>
                         <div class="form-group{{ $errors->has('receiver_ward') ? ' has-error': '' }}">
-                            <label>Phường / Xã <i>(bắt buộc)</i></label>
-                            <select name="receiver_ward" class="form-control" id="ReceiverWard" required="required">
+                            <label>Phường / Xã</label>
+                            <select name="receiver_ward" class="form-control" id="ReceiverWard">
                                 <?php
                                 $ward = old('receiver_ward', $order->receiverAddress->ward_id);
                                 ?>

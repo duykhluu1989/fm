@@ -34,8 +34,8 @@
                 </select>
             </div>
             <div class="form-group">
-                <label>Phường / xã (*)</label>
-                <select name="new_user_address_ward[{{ $countUserAddress }}]" class="form-control UserAddressWard" required="required">
+                <label>Phường / xã</label>
+                <select name="new_user_address_ward[{{ $countUserAddress }}]" class="form-control UserAddressWard">
                     <option value=""></option>
                 </select>
             </div>

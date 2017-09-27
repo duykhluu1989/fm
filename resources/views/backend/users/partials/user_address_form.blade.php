@@ -23,7 +23,7 @@
         </select>
     </td>
     <td>
-        <select name="new_user_address_ward[{{ $countUserAddress }}]" class="form-control UserAddressWard" required="required">
+        <select name="new_user_address_ward[{{ $countUserAddress }}]" class="form-control UserAddressWard">
             <option value=""></option>
         </select>
     </td>

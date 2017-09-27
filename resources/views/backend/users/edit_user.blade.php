@@ -333,7 +333,7 @@
                                                             @endif
                                                         </td>
                                                         <td>
-                                                            <select name="user_address_ward[{{ $userAddress->id }}]" class="form-control UserAddressWard" required="required">
+                                                            <select name="user_address_ward[{{ $userAddress->id }}]" class="form-control UserAddressWard">
                                                                 <?php
                                                                 $ward = old('user_address_ward.' . $userAddress->id, $userAddress->ward_id);
                                                                 ?>
@@ -445,7 +445,7 @@
                                                                 @endif
                                                             </td>
                                                             <td>
-                                                                <select name="new_user_address_ward[{{ $k }}]" class="form-control UserAddressWard" required="required">
+                                                                <select name="new_user_address_ward[{{ $k }}]" class="form-control UserAddressWard">
                                                                     <?php
                                                                     $ward = old('new_user_address_ward.' . $k);
                                                                     ?>

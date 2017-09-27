@@ -101,7 +101,7 @@ class UserController extends Controller
             'register_address' => 'required|max:255',
             'register_province' => 'required|integer|min:1',
             'register_district' => 'required|integer|min:1',
-            'register_ward' => 'required|integer|min:1',
+            'register_ward' => 'nullable|integer|min:1',
             'register_bank_holder' => 'nullable|max:255',
             'register_bank_number' => 'nullable|numeric',
             'register_bank' => 'nullable|max:255',
@@ -178,10 +178,10 @@ class UserController extends Controller
                 $userAddress->address = $inputs['register_address'];
                 $userAddress->province = Area::find($inputs['register_province'])->name;
                 $userAddress->district = Area::find($inputs['register_district'])->name;
-                $userAddress->ward = Area::find($inputs['register_ward'])->name;
+                $userAddress->ward = (!empty($inputs['register_ward']) ? Area::find($inputs['register_ward'])->name : null);
                 $userAddress->province_id = $inputs['register_province'];
                 $userAddress->district_id = $inputs['register_district'];
-                $userAddress->ward_id = $inputs['register_ward'];
+                $userAddress->ward_id = (!empty($inputs['register_ward']) ? $inputs['register_ward'] : null);
                 $userAddress->default = Utility::ACTIVE_DB;
                 $userAddress->save();
 
@@ -440,7 +440,7 @@ class UserController extends Controller
                         'user_address_address.' . $addressId => 'required|max:255',
                         'user_address_province.' . $addressId => 'required|integer|min:1',
                         'user_address_district.' . $addressId => 'required|integer|min:1',
-                        'user_address_ward.' . $addressId => 'required|integer|min:1',
+                        'user_address_ward.' . $addressId => 'nullable|integer|min:1',
                     ]);
                 }
             }
@@ -459,7 +459,7 @@ class UserController extends Controller
                         'new_user_address_address.' . $k => 'required|max:255',
                         'new_user_address_province.' . $k => 'required|integer|min:1',
                         'new_user_address_district.' . $k => 'required|integer|min:1',
-                        'new_user_address_ward.' . $k => 'required|integer|min:1',
+                        'new_user_address_ward.' . $k => 'nullable|integer|min:1',
                     ]);
                 }
             }
@@ -541,10 +541,10 @@ class UserController extends Controller
                             $userAddress->address = $inputs['user_address_address'][$userAddress->id];
                             $userAddress->province = Area::find($inputs['user_address_province'][$userAddress->id])->name;
                             $userAddress->district = Area::find($inputs['user_address_district'][$userAddress->id])->name;
-                            $userAddress->ward = Area::find($inputs['user_address_ward'][$userAddress->id])->name;
+                            $userAddress->ward = (!empty($inputs['user_address_ward'][$userAddress->id]) ? Area::find($inputs['user_address_ward'][$userAddress->id])->name : null);
                             $userAddress->province_id = $inputs['user_address_province'][$userAddress->id];
                             $userAddress->district_id = $inputs['user_address_district'][$userAddress->id];
-                            $userAddress->ward_id = $inputs['user_address_ward'][$userAddress->id];
+                            $userAddress->ward_id = (!empty($inputs['user_address_ward'][$userAddress->id]) ? $inputs['user_address_ward'][$userAddress->id] : null);
                             $userAddress->save();
                         }
                         else if($userAddress->default == Utility::INACTIVE_DB)
@@ -565,10 +565,10 @@ class UserController extends Controller
                             $userAddress->address = $inputs['new_user_address_address'][$k];
                             $userAddress->province = Area::find($inputs['new_user_address_province'][$k])->name;
                             $userAddress->district = Area::find($inputs['new_user_address_district'][$k])->name;
-                            $userAddress->ward = Area::find($inputs['new_user_address_ward'][$k])->name;
+                            $userAddress->ward = (!empty($inputs['new_user_address_ward'][$k]) ? Area::find($inputs['new_user_address_ward'][$k])->name : null);
                             $userAddress->province_id = $inputs['new_user_address_province'][$k];
                             $userAddress->district_id = $inputs['new_user_address_district'][$k];
-                            $userAddress->ward_id = $inputs['new_user_address_ward'][$k];
+                            $userAddress->ward_id = (!empty($inputs['new_user_address_ward'][$k]) ? $inputs['new_user_address_ward'][$k] : null);
 
                             if($countUserAddresses == 0 && $i == 0)
                                 $userAddress->default = Utility::ACTIVE_DB;
@@ -803,7 +803,7 @@ class UserController extends Controller
                 'register_address' => 'required|max:255',
                 'register_province' => 'required|integer|min:1',
                 'register_district' => 'required|integer|min:1',
-                'register_ward' => 'required|integer|min:1',
+                'register_ward' => 'nullable|integer|min:1',
                 'receiver_name' => 'required|string|max:255',
                 'receiver_phone' => [
                     'required',
@@ -813,7 +813,7 @@ class UserController extends Controller
                 'receiver_address' => 'required|max:255',
                 'receiver_province' => 'required|integer|min:1',
                 'receiver_district' => 'required|integer|min:1',
-                'receiver_ward' => 'required|integer|min:1',
+                'receiver_ward' => 'nullable|integer|min:1',
                 'weight' => 'nullable|numeric|min:0.05',
                 'cod_price' => 'nullable|integer|min:0',
                 'note' => 'nullable|max:255',
@@ -899,10 +899,10 @@ class UserController extends Controller
                     $order->senderAddress->address = $inputs['register_address'];
                     $order->senderAddress->province = Area::find($inputs['register_province'])->name;
                     $order->senderAddress->district = Area::find($inputs['register_district'])->name;
-                    $order->senderAddress->ward = Area::find($inputs['register_ward'])->name;
+                    $order->senderAddress->ward = (!empty($inputs['register_ward']) ? Area::find($inputs['register_ward'])->name : null);
                     $order->senderAddress->province_id = $inputs['register_province'];
                     $order->senderAddress->district_id = $inputs['register_district'];
-                    $order->senderAddress->ward_id = $inputs['register_ward'];
+                    $order->senderAddress->ward_id = (!empty($inputs['register_ward']) ? $inputs['register_ward'] : null);
                     $order->senderAddress->save();
 
                     $order->receiverAddress->name = $inputs['receiver_name'];
@@ -910,10 +910,10 @@ class UserController extends Controller
                     $order->receiverAddress->address = $inputs['receiver_address'];
                     $order->receiverAddress->province = Area::find($inputs['receiver_province'])->name;
                     $order->receiverAddress->district = Area::find($inputs['receiver_district'])->name;
-                    $order->receiverAddress->ward = Area::find($inputs['receiver_ward'])->name;
+                    $order->receiverAddress->ward = (!empty($inputs['receiver_ward']) ? Area::find($inputs['receiver_ward'])->name : null);
                     $order->receiverAddress->province_id = $inputs['receiver_province'];
                     $order->receiverAddress->district_id = $inputs['receiver_district'];
-                    $order->receiverAddress->ward_id = $inputs['receiver_ward'];
+                    $order->receiverAddress->ward_id = (!empty($inputs['receiver_ward']) ? $inputs['receiver_ward'] : null);
                     $order->receiverAddress->save();
 
                     DB::commit();

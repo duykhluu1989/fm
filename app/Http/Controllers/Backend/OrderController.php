@@ -314,7 +314,7 @@ class OrderController extends Controller
                 'register_address' => 'required|max:255',
                 'register_province' => 'required|integer|min:1',
                 'register_district' => 'required|integer|min:1',
-                'register_ward' => 'required|integer|min:1',
+                'register_ward' => 'nullable|integer|min:1',
                 'receiver_name' => 'required|string|max:255',
                 'receiver_phone' => [
                     'required',
@@ -324,7 +324,7 @@ class OrderController extends Controller
                 'receiver_address' => 'required|max:255',
                 'receiver_province' => 'required|integer|min:1',
                 'receiver_district' => 'required|integer|min:1',
-                'receiver_ward' => 'required|integer|min:1',
+                'receiver_ward' => 'nullable|integer|min:1',
                 'weight' => 'nullable|numeric|min:0.05',
                 'cod_price' => 'nullable|integer|min:0',
                 'note' => 'nullable|max:255',
@@ -410,10 +410,10 @@ class OrderController extends Controller
                     $order->senderAddress->address = $inputs['register_address'];
                     $order->senderAddress->province = Area::find($inputs['register_province'])->name;
                     $order->senderAddress->district = Area::find($inputs['register_district'])->name;
-                    $order->senderAddress->ward = Area::find($inputs['register_ward'])->name;
+                    $order->senderAddress->ward = (!empty($inputs['register_ward']) ? Area::find($inputs['register_ward'])->name : null);
                     $order->senderAddress->province_id = $inputs['register_province'];
                     $order->senderAddress->district_id = $inputs['register_district'];
-                    $order->senderAddress->ward_id = $inputs['register_ward'];
+                    $order->senderAddress->ward_id = (!empty($inputs['register_ward']) ? $inputs['register_ward'] : null);
                     $order->senderAddress->save();
 
                     $order->receiverAddress->name = $inputs['receiver_name'];
@@ -421,10 +421,10 @@ class OrderController extends Controller
                     $order->receiverAddress->address = $inputs['receiver_address'];
                     $order->receiverAddress->province = Area::find($inputs['receiver_province'])->name;
                     $order->receiverAddress->district = Area::find($inputs['receiver_district'])->name;
-                    $order->receiverAddress->ward = Area::find($inputs['receiver_ward'])->name;
+                    $order->receiverAddress->ward = (!empty($inputs['receiver_ward']) ? Area::find($inputs['receiver_ward'])->name : null);
                     $order->receiverAddress->province_id = $inputs['receiver_province'];
                     $order->receiverAddress->district_id = $inputs['receiver_district'];
-                    $order->receiverAddress->ward_id = $inputs['receiver_ward'];
+                    $order->receiverAddress->ward_id = (!empty($inputs['receiver_ward']) ? $inputs['receiver_ward'] : null);
                     $order->receiverAddress->save();
 
                     DB::commit();

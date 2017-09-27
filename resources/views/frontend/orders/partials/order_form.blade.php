@@ -51,8 +51,8 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>Phường / xã (*)</label>
-                    <select name="register_ward[{{ $countOrder }}]" class="form-control RegisterWard" required="required">
+                    <label>Phường / xã</label>
+                    <select name="register_ward[{{ $countOrder }}]" class="form-control RegisterWard">
                         <option value=""></option>
                     </select>
                 </div>
@@ -89,8 +89,8 @@
                 </select>
             </div>
             <div class="form-group">
-                <label>Phường / xã (*)</label>
-                <select name="register_ward[{{ $countOrder }}]" class="form-control RegisterWard" required="required">
+                <label>Phường / xã</label>
+                <select name="register_ward[{{ $countOrder }}]" class="form-control RegisterWard">
                     <option value=""></option>
                 </select>
             </div>
@@ -191,8 +191,8 @@
             </select>
         </div>
         <div class="form-group">
-            <label>Phường / xã (*)</label>
-            <select name="receiver_ward[{{ $countOrder }}]" class="form-control ReceiverWard" required="required">
+            <label>Phường / xã</label>
+            <select name="receiver_ward[{{ $countOrder }}]" class="form-control ReceiverWard">
                 <option value=""></option>
             </select>
         </div>

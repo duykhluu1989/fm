@@ -145,8 +145,8 @@
                                                                 @endif
                                                             </div>
                                                             <div class="form-group">
-                                                                <label>Phường / xã (*)</label>
-                                                                <select name="register_ward[{{ $k }}]" class="form-control RegisterWard"<?php echo (empty($userAddressId) ? ' required="required"' : ''); ?>>
+                                                                <label>Phường / xã</label>
+                                                                <select name="register_ward[{{ $k }}]" class="form-control RegisterWard">
                                                                     <?php
                                                                     $ward = old('register_ward.' . $k);
                                                                     ?>
@@ -262,8 +262,8 @@
                                                             @endif
                                                         </div>
                                                         <div class="form-group">
-                                                            <label>Phường / xã (*)</label>
-                                                            <select name="register_ward[{{ $k }}]" class="form-control RegisterWard" required="required">
+                                                            <label>Phường / xã</label>
+                                                            <select name="register_ward[{{ $k }}]" class="form-control RegisterWard">
                                                                 <?php
                                                                 $ward = old('register_ward.' . $k);
                                                                 ?>
@@ -506,8 +506,8 @@
                                                         @endif
                                                     </div>
                                                     <div class="form-group">
-                                                        <label>Phường / xã (*)</label>
-                                                        <select name="receiver_ward[{{ $k }}]" class="form-control ReceiverWard" required="required">
+                                                        <label>Phường / xã</label>
+                                                        <select name="receiver_ward[{{ $k }}]" class="form-control ReceiverWard">
                                                             <?php
                                                             $ward = old('receiver_ward.' . $k);
                                                             ?>

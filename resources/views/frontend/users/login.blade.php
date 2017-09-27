@@ -134,8 +134,8 @@
                                 @endif
                             </div>
                             <div class="form-group">
-                                <label>Phường / xã (*)</label>
-                                <select id="RegisterWard" name="register_ward" class="form-control" required="required">
+                                <label>Phường / xã</label>
+                                <select id="RegisterWard" name="register_ward" class="form-control">
                                     <?php
                                     $ward = old('register_ward');
                                     ?>
