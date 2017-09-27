@@ -113,6 +113,7 @@ class OrderExcel
     public static function getExportColumnLabel()
     {
         return [
+            'User DO',
             'D.O.',
             'Attempt',
         	'Date',

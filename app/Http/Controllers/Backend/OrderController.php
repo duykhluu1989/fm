@@ -866,6 +866,8 @@ class OrderController extends Controller
 
                 $exportCollectionDataRow = array();
 
+                $exportCollectionDataRow[] = $order->user_do;
+
                 foreach($collectionKeys as $collectionKey)
                 {
                     if(is_string($collectionKey))
@@ -961,6 +963,8 @@ class OrderController extends Controller
                 ];
 
                 $exportDeliveryDataRow = array();
+
+                $exportDeliveryDataRow[] = $order->user_do;
 
                 foreach($deliveryKeys as $deliveryKey)
                 {
