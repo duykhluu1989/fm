@@ -309,7 +309,7 @@ class OrderController extends Controller
                 'register_phone' => [
                     'required',
                     'numeric',
-                    'regex:/^(01[2689]|09)[0-9]{8}$/',
+                    'regex:/^[0-9]{10,11}$/',
                 ],
                 'register_address' => 'required|max:255',
                 'register_province' => 'required|integer|min:1',
@@ -319,7 +319,7 @@ class OrderController extends Controller
                 'receiver_phone' => [
                     'required',
                     'numeric',
-                    'regex:/^(01[2689]|09)[0-9]{8}$/',
+                    'regex:/^[0-9]{10,11}$/',
                 ],
                 'receiver_address' => 'required|max:255',
                 'receiver_province' => 'required|integer|min:1',

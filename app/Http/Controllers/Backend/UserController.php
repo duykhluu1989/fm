@@ -204,7 +204,7 @@ class UserController extends Controller
                 'phone' => [
                     'nullable',
                     'numeric',
-                    'regex:/^(01[2689]|09)[0-9]{8}$/',
+                    'regex:/^[0-9]{10,11}$/',
                 ],
             ]);
 
@@ -260,7 +260,7 @@ class UserController extends Controller
                 'phone' => [
                     'nullable',
                     'numeric',
-                    'regex:/^(01[2689]|09)[0-9]{8}$/',
+                    'regex:/^[0-9]{10,11}$/',
                 ],
             ];
 
@@ -273,7 +273,7 @@ class UserController extends Controller
                         'user_address_phone.' . $addressId => [
                             'required',
                             'numeric',
-                            'regex:/^(01[2689]|09)[0-9]{8}$/',
+                            'regex:/^[0-9]{10,11}$/',
                         ],
                         'user_address_address.' . $addressId => 'required|max:255',
                         'user_address_province.' . $addressId => 'required|integer|min:1',
@@ -292,7 +292,7 @@ class UserController extends Controller
                         'new_user_address_phone.' . $k => [
                             'required',
                             'numeric',
-                            'regex:/^(01[2689]|09)[0-9]{8}$/',
+                            'regex:/^[0-9]{10,11}$/',
                         ],
                         'new_user_address_address.' . $k => 'required|max:255',
                         'new_user_address_province.' . $k => 'required|integer|min:1',
@@ -629,7 +629,7 @@ class UserController extends Controller
                 'phone' => [
                     'nullable',
                     'numeric',
-                    'regex:/^(01[2689]|09)[0-9]{8}$/',
+                    'regex:/^[0-9]{10,11}$/',
                 ],
             ]);
 
@@ -779,7 +779,7 @@ class UserController extends Controller
                     OrderExcel::IMPORT_RECEIVER_PHONE_COLUMN_LABEL => [
                         'required',
                         'numeric',
-                        'regex:/^(01[2689]|09)[0-9]{8}$/',
+                        'regex:/^[0-9]{10,11}$/',
                     ],
                     OrderExcel::IMPORT_RECEIVER_ADDRESS_COLUMN_LABEL => 'required|max:255',
                     OrderExcel::IMPORT_RECEIVER_PROVINCE_COLUMN_LABEL => 'required|max:255',
@@ -797,7 +797,7 @@ class UserController extends Controller
                         OrderExcel::IMPORT_SENDER_PHONE_COLUMN_LABEL => [
                             'required',
                             'numeric',
-                            'regex:/^(01[2689]|09)[0-9]{8}$/',
+                            'regex:/^[0-9]{10,11}$/',
                         ],
                         OrderExcel::IMPORT_SENDER_ADDRESS_COLUMN_LABEL => 'required|max:255',
                         OrderExcel::IMPORT_SENDER_PROVINCE_COLUMN_LABEL => 'required|max:255',
@@ -812,7 +812,7 @@ class UserController extends Controller
                         OrderExcel::IMPORT_SENDER_PHONE_COLUMN_LABEL => [
                             'nullable',
                             'numeric',
-                            'regex:/^(01[2689]|09)[0-9]{8}$/',
+                            'regex:/^[0-9]{10,11}$/',
                         ],
                         OrderExcel::IMPORT_SENDER_ADDRESS_COLUMN_LABEL => 'nullable|max:255',
                         OrderExcel::IMPORT_SENDER_PROVINCE_COLUMN_LABEL => 'nullable|max:255',

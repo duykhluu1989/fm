@@ -94,7 +94,7 @@ class UserController extends Controller
             'register_phone' => [
                 'required',
                 'numeric',
-                'regex:/^(01[2689]|09)[0-9]{8}$/',
+                'regex:/^[0-9]{10,11}$/',
             ],
             'register_email' => 'required|email|max:255|unique:user,email',
             'register_password' => 'required|alpha_dash|min:6|max:32',
@@ -415,7 +415,7 @@ class UserController extends Controller
                 'register_phone' => [
                     'required',
                     'numeric',
-                    'regex:/^(01[2689]|09)[0-9]{8}$/',
+                    'regex:/^[0-9]{10,11}$/',
                 ],
                 'register_email' => 'required|email|max:255|unique:user,email,' . $user->id,
                 'register_password' => 'nullable|alpha_dash|min:6|max:32',
@@ -435,7 +435,7 @@ class UserController extends Controller
                         'user_address_phone.' . $addressId => [
                             'required',
                             'numeric',
-                            'regex:/^(01[2689]|09)[0-9]{8}$/',
+                            'regex:/^[0-9]{10,11}$/',
                         ],
                         'user_address_address.' . $addressId => 'required|max:255',
                         'user_address_province.' . $addressId => 'required|integer|min:1',
@@ -454,7 +454,7 @@ class UserController extends Controller
                         'new_user_address_phone.' . $k => [
                             'required',
                             'numeric',
-                            'regex:/^(01[2689]|09)[0-9]{8}$/',
+                            'regex:/^[0-9]{10,11}$/',
                         ],
                         'new_user_address_address.' . $k => 'required|max:255',
                         'new_user_address_province.' . $k => 'required|integer|min:1',
@@ -798,7 +798,7 @@ class UserController extends Controller
                 'register_phone' => [
                     'required',
                     'numeric',
-                    'regex:/^(01[2689]|09)[0-9]{8}$/',
+                    'regex:/^[0-9]{10,11}$/',
                 ],
                 'register_address' => 'required|max:255',
                 'register_province' => 'required|integer|min:1',
@@ -808,7 +808,7 @@ class UserController extends Controller
                 'receiver_phone' => [
                     'required',
                     'numeric',
-                    'regex:/^(01[2689]|09)[0-9]{8}$/',
+                    'regex:/^[0-9]{10,11}$/',
                 ],
                 'receiver_address' => 'required|max:255',
                 'receiver_province' => 'required|integer|min:1',

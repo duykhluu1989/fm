@@ -63,7 +63,7 @@ class OrderController extends Controller
                         'receiver_phone.' . $k => [
                             'required',
                             'numeric',
-                            'regex:/^(01[2689]|09)[0-9]{8}$/',
+                            'regex:/^[0-9]{10,11}$/',
                         ],
                         'receiver_address.' . $k => 'required|max:255',
                         'receiver_province.' . $k => 'required|integer|min:1',
@@ -91,7 +91,7 @@ class OrderController extends Controller
                             'register_phone.' . $k => [
                                 'required',
                                 'numeric',
-                                'regex:/^(01[2689]|09)[0-9]{8}$/',
+                                'regex:/^[0-9]{10,11}$/',
                             ],
                             'register_address.' . $k => 'required|max:255',
                             'register_province.' . $k => 'required|integer|min:1',
@@ -113,7 +113,7 @@ class OrderController extends Controller
                                 'required_if:user_address.' . $k . ',',
                                 'nullable',
                                 'numeric',
-                                'regex:/^(01[2689]|09)[0-9]{8}$/',
+                                'regex:/^[0-9]{10,11}$/',
                             ],
                             'register_address.' . $k => 'required_if:user_address.' . $k . ',|nullable|max:255',
                             'register_province.' . $k => 'required_if:user_address.' . $k . ',|nullable|integer|min:1',
