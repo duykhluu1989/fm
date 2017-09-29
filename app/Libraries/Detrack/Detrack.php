@@ -550,11 +550,11 @@ class Detrack
 
                     if($order->collection_status == Order::STATUS_COMPLETED_DB)
                     {
-                        if(!empty($inputs['j_fee']))
+                        if(!empty($collectionTrackingData['j_fee']))
                         {
-                            if($order->shipping_price != $inputs['j_fee'])
+                            if($order->shipping_price != $collectionTrackingData['j_fee'])
                             {
-                                $order->shipping_price = $inputs['j_fee'];
+                                $order->shipping_price = $collectionTrackingData['j_fee'];
 
                                 if($order->shipping_payment == Order::SHIPPING_PAYMENT_RECEIVER_DB)
                                     $order->total_cod_price = $order->cod_price + $order->shipping_price;
