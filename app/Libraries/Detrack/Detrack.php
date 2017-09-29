@@ -47,11 +47,13 @@ class Detrack
                 'phone' => $order->receiverAddress->phone,
                 'notify_url' => action('Api\DeliveryController@handleDeliveryNotification'),
                 'instructions' => !empty($order->note) ? $order->note : '',
-                'pay_mode' => !empty($order->total_cod_price) ? 'COD' : '',
-                'pay_amt' => $order->total_cod_price,
+                'pay_mode' => !empty($order->cod_price) ? 'COD' : '',
+                'pay_amt' => $order->cod_price,
                 'group_name' => $order->user->group,
                 'j_fee' => $order->shipping_price,
                 'job_fee' => $order->shipping_price,
+                'job_type' => $order->getJobType(),
+                'order_no' => $order->user_do,
             ];
         }
 
@@ -153,11 +155,13 @@ class Detrack
                 'phone' => $order->receiverAddress->phone,
                 'notify_url' => action('Api\DeliveryController@handleDeliveryNotification'),
                 'instructions' => !empty($order->note) ? $order->note : '',
-                'pay_mode' => !empty($order->total_cod_price) ? 'COD' : '',
-                'pay_amt' => $order->total_cod_price,
+                'pay_mode' => !empty($order->cod_price) ? 'COD' : '',
+                'pay_amt' => $order->cod_price,
                 'group_name' => $order->user->group,
                 'j_fee' => $order->shipping_price,
                 'job_fee' => $order->shipping_price,
+                'job_type' => $order->getJobType(),
+                'order_no' => $order->user_do,
             ];
         }
 
@@ -322,6 +326,8 @@ class Detrack
                 'group_name' => $order->user->group,
                 'j_fee' => $order->shipping_price,
                 'job_fee' => $order->shipping_price,
+                'job_type' => $order->getJobType(),
+                'order_no' => $order->user_do,
             ];
         }
 
@@ -426,6 +432,8 @@ class Detrack
                 'group_name' => $order->user->group,
                 'j_fee' => $order->shipping_price,
                 'job_fee' => $order->shipping_price,
+                'job_type' => $order->getJobType(),
+                'order_no' => $order->user_do,
             ];
         }
 

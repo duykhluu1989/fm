@@ -195,6 +195,10 @@
                         <div class="col-sm-3"><b>Transaction Note</b></div>
                         <div class="col-sm-9">{{ $order->payment_note }}</div>
                     </div>
+                    <div class="row">
+                        <div class="col-sm-3"><b>Job Type</b></div>
+                        <div class="col-sm-9">{{ $order->getJobType() }}</div>
+                    </div>
                 </div>
             </div>
 
