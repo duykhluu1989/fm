@@ -52,6 +52,7 @@ class Detrack
                 'group_name' => $order->user->group,
                 'j_fee' => $order->shipping_price,
                 'job_fee' => $order->shipping_price,
+                'pallets' => $order->shipping_price,
                 'job_type' => $order->getJobType(),
                 'order_no' => $order->user_do,
             ];
@@ -160,6 +161,7 @@ class Detrack
                 'group_name' => $order->user->group,
                 'j_fee' => $order->shipping_price,
                 'job_fee' => $order->shipping_price,
+                'pallets' => $order->shipping_price,
                 'job_type' => $order->getJobType(),
                 'order_no' => $order->user_do,
             ];
@@ -326,6 +328,7 @@ class Detrack
                 'group_name' => $order->user->group,
                 'j_fee' => $order->shipping_price,
                 'job_fee' => $order->shipping_price,
+                'pallets' => $order->shipping_price,
                 'job_type' => $order->getJobType(),
                 'order_no' => $order->user_do,
             ];
@@ -432,6 +435,7 @@ class Detrack
                 'group_name' => $order->user->group,
                 'j_fee' => $order->shipping_price,
                 'job_fee' => $order->shipping_price,
+                'pallets' => $order->shipping_price,
                 'job_type' => $order->getJobType(),
                 'order_no' => $order->user_do,
             ];
