@@ -87,13 +87,15 @@
                                     <div class="col-sm-9">{{ $order->created_at }}</div>
                                 </div>
                                 <div class="row">
+                                    <div class="col-sm-3"><b>DO</b></div>
+                                    <div class="col-sm-9">
+                                        {{ $order->do }}
+                                    </div>
+                                </div>
+                                <div class="row">
                                     <div class="col-sm-3"><b>Mã đơn hàng</b></div>
                                     <div class="col-sm-9">
-                                        @if(empty($order->user_do))
-                                            {{ $order->do }}
-                                        @else
-                                            {{ $order->user_do }}
-                                        @endif
+                                        {{ $order->user_do }}
                                     </div>
                                 </div>
                                 <div class="row">
