@@ -419,7 +419,7 @@ class Order extends Model
 
     public function getJobType()
     {
-        if($this->type == self::SOURCE_WEBSITE_DB)
+        if($this->source == self::SOURCE_WEBSITE_DB)
         {
             if($this->shipping_payment == Order::SHIPPING_PAYMENT_SENDER_DB)
                 return 'NGTT';
