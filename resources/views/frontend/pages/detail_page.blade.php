@@ -10,7 +10,7 @@
 
     @include('frontend.layouts.partials.menu')
 
-    @include('frontend.layouts.partials.headline')
+    @include('frontend.layouts.partials.headline', ['bannerImage' => $page->image])
 
     <main>
 

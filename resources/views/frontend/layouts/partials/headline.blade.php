@@ -1,4 +1,4 @@
-<section class="banner_sub">
+<section class="banner_sub" style="{{ !empty($bannerImage) ? 'background-image: url(' . $bannerImage . ')' : '' }}">
     <div class="container">
         <div class="row">
             <div class="col-lg-12">
