@@ -12,7 +12,7 @@
                     </li>
                 </ul>
             </li>
-            <li class="treeview{{ ((request()->is('admin/area*') || request()->is('admin/shippingPriceRule*')) ? ' active' : '') }}">
+            <li class="treeview{{ ((request()->is('admin/area*', 'admin/shippingPriceRule*', 'admin/zone*', 'admin/run*')) ? ' active' : '') }}">
                 <a href="#"><i class="fa fa-truck"></i><span>Giao Hàng</span></a>
                 <ul class="treeview-menu">
                     <li class="{{ (request()->is('admin/area*') ? 'active' : '') }}">
@@ -20,6 +20,12 @@
                     </li>
                     <li class="{{ (request()->is('admin/shippingPriceRule*') ? 'active' : '') }}">
                         <a href="{{ action('Backend\ShippingPriceRuleController@adminShippingPriceRule') }}">Shipping Price Rule</a>
+                    </li>
+                    <li class="{{ (request()->is('admin/zone*') ? 'active' : '') }}">
+                        <a href="{{ action('Backend\ZoneController@adminZone') }}">Zone</a>
+                    </li>
+                    <li class="{{ (request()->is('admin/run*') ? 'active' : '') }}">
+                        <a href="{{ action('Backend\RunController@adminRun') }}">Run</a>
                     </li>
                 </ul>
             </li>

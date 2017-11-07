@@ -78,6 +78,26 @@ Route::group(['namespace' => 'Backend'], function() {
 
         Route::get('shippingPriceRule/controlDelete', 'ShippingPriceRuleController@controlDeleteShippingPriceRule');
 
+        Route::get('zone', 'ZoneController@adminZone');
+
+        Route::match(['get', 'post'], 'zone/create', 'ZoneController@createZone');
+
+        Route::match(['get', 'post'], 'zone/{id}/edit', 'ZoneController@editZone');
+
+        Route::get('zone/{id}/delete', 'ZoneController@deleteZone');
+
+        Route::get('zone/controlDelete', 'ZoneController@controlDeleteZone');
+
+        Route::get('run', 'RunController@adminRun');
+
+        Route::match(['get', 'post'], 'run/create', 'RunController@createRun');
+
+        Route::match(['get', 'post'], 'run/{id}/edit', 'RunController@editRun');
+
+        Route::get('run/{id}/delete', 'RunController@deleteRun');
+
+        Route::get('run/controlDelete', 'RunController@controlDeleteRun');
+
         Route::get('discount', 'DiscountController@adminDiscount');
 
         Route::match(['get', 'post'], 'discount/create', 'DiscountController@createDiscount');

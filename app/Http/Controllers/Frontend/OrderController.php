@@ -299,6 +299,7 @@ class OrderController extends Controller
                         $order->note = $inputs['note'][$k];
                         $order->status = Order::STATUS_INFO_RECEIVED_DB;
                         $order->collection_status = Order::STATUS_INFO_RECEIVED_DB;
+                        $order->delivery_status = Order::STATUS_INFO_RECEIVED_DB;
 
                         if($user->prepay == Utility::ACTIVE_DB && isset($inputs['prepay'][$k]))
                             $order->prepay = Utility::ACTIVE_DB;
@@ -411,7 +412,7 @@ class OrderController extends Controller
                     DB::commit();
 
                     $detrack = Detrack::make();
-                    $successDos = $detrack->addCollections($placedOrders);
+                    $successDos = $detrack->addDeliveries($placedOrders);
 
                     $countSuccessDo = count($successDos);
                     if($countSuccessDo > 0)
@@ -422,7 +423,7 @@ class OrderController extends Controller
 
                             if($key !== false)
                             {
-                                $placedOrder->collection_call_api = Utility::ACTIVE_DB;
+                                $placedOrder->call_api = Utility::ACTIVE_DB;
                                 $placedOrder->save();
 
                                 unset($successDos[$key]);

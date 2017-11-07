@@ -920,19 +920,19 @@ class UserController extends Controller
 
                     $detrack = Detrack::make();
 
-                    if($order->collection_call_api == Utility::INACTIVE_DB)
+                    if($order->call_api == Utility::INACTIVE_DB)
                     {
-                        $successDos = $detrack->addCollections([$order]);
+                        $successDos = $detrack->addDeliveries([$order]);
 
                         $countSuccessDo = count($successDos);
                         if($countSuccessDo > 0)
                         {
-                            $order->collection_call_api = Utility::ACTIVE_DB;
+                            $order->call_api = Utility::ACTIVE_DB;
                             $order->save();
                         }
                     }
                     else
-                        $detrack->editCollections([$order]);
+                        $detrack->editDeliveries([$order]);
 
                     return redirect()->action('Frontend\UserController@editOrder', ['id' => $order->id])->with('messageSuccess', 'Thành công');
                 }
@@ -967,10 +967,10 @@ class UserController extends Controller
         {
             DB::beginTransaction();
 
-            if($order->collection_call_api == Utility::ACTIVE_DB)
+            if($order->call_api == Utility::ACTIVE_DB)
             {
                 $detrack = Detrack::make();
-                $successDos = $detrack->deleteCollections([$order]);
+                $successDos = $detrack->deleteDeliveries([$order]);
 
                 if(in_array($order->do, $successDos))
                     $order->cancelOrder();

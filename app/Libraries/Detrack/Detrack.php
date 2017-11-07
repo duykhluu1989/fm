@@ -55,6 +55,12 @@ class Detrack
                 'pallets' => $order->shipping_price,
                 'job_type' => $order->getJobType(),
                 'order_no' => $order->user_do,
+                'pick_up_address' => $order->senderAddress->address . ' ' . $order->senderAddress->ward . ' ' . $order->senderAddress->district . ' ' . $order->senderAddress->province,
+                'pick_up_city' => $order->senderAddress->district,
+                'pick_up_country' => $order->senderAddress->province,
+                'pick_up_from' => $order->senderAddress->name,
+                'sender_phone' => $order->senderAddress->phone,
+
             ];
         }
 
@@ -164,6 +170,11 @@ class Detrack
                 'pallets' => $order->shipping_price,
                 'job_type' => $order->getJobType(),
                 'order_no' => $order->user_do,
+                'pick_up_address' => $order->senderAddress->address . ' ' . $order->senderAddress->ward . ' ' . $order->senderAddress->district . ' ' . $order->senderAddress->province,
+                'pick_up_city' => $order->senderAddress->district,
+                'pick_up_country' => $order->senderAddress->province,
+                'pick_up_from' => $order->senderAddress->name,
+                'sender_phone' => $order->senderAddress->phone,
             ];
         }
 

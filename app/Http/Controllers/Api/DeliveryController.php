@@ -124,6 +124,7 @@ class DeliveryController extends Controller
                         $order->note = !empty($data['instructions']) ? $data['instructions'] : '';
                         $order->status = Order::STATUS_INFO_RECEIVED_DB;
                         $order->collection_status = Order::STATUS_INFO_RECEIVED_DB;
+                        $order->delivery_status = Order::STATUS_INFO_RECEIVED_DB;
                         $order->user_do = strtoupper($data['do']);
                         $order->user_notify_url = !empty($data['notify_url']) ? $data['notify_url'] : '';
 
@@ -247,7 +248,7 @@ class DeliveryController extends Controller
         if(count($placedOrders) > 0)
         {
             $detrack = Detrack::make();
-            $successDos = $detrack->addCollections($placedOrders);
+            $successDos = $detrack->addDeliveries($placedOrders);
 
             $countSuccessDo = count($successDos);
             if($countSuccessDo > 0)
@@ -258,7 +259,7 @@ class DeliveryController extends Controller
 
                     if($key !== false)
                     {
-                        $placedOrder->collection_call_api = Utility::ACTIVE_DB;
+                        $placedOrder->call_api = Utility::ACTIVE_DB;
                         $placedOrder->save();
 
                         unset($successDos[$key]);
@@ -456,8 +457,6 @@ class DeliveryController extends Controller
                             $order->total_cod_price = $order->cod_price;
                             $order->weight = (!empty($data['wt']) && is_numeric($data['wt']) && $data['wt'] > 0) ? $data['wt'] : $order->weight;
                             $order->note = !empty($data['instructions']) ? $data['instructions'] : $order->note;
-                            $order->status = Order::STATUS_INFO_RECEIVED_DB;
-                            $order->collection_status = Order::STATUS_INFO_RECEIVED_DB;
                             $order->user_notify_url = !empty($data['notify_url']) ? $data['notify_url'] : $order->user_notify_url;
                             $order->save();
 
@@ -470,7 +469,7 @@ class DeliveryController extends Controller
                             $order->receiverAddress->district_id = !empty($receiverDistrict) ? $receiverDistrict->id : $order->receiverAddress->district_id;
                             $order->receiverAddress->save();
 
-                            if($order->collection_call_api == Utility::ACTIVE_DB)
+                            if($order->call_api == Utility::ACTIVE_DB)
                                 $editedOrders[] = $order;
                             else
                                 $placedOrders[] = $order;
@@ -556,13 +555,13 @@ class DeliveryController extends Controller
         if(count($editedOrders) > 0)
         {
             $detrack = Detrack::make();
-            $detrack->editCollections($editedOrders);
+            $detrack->editDeliveries($editedOrders);
         }
 
         if(count($placedOrders) > 0)
         {
             $detrack = Detrack::make();
-            $successDos = $detrack->addCollections($placedOrders);
+            $successDos = $detrack->addDeliveries($placedOrders);
 
             $countSuccessDo = count($successDos);
             if($countSuccessDo > 0)
@@ -573,7 +572,7 @@ class DeliveryController extends Controller
 
                     if($key !== false)
                     {
-                        $placedOrder->collection_call_api = Utility::ACTIVE_DB;
+                        $placedOrder->call_api = Utility::ACTIVE_DB;
                         $placedOrder->save();
 
                         unset($successDos[$key]);
@@ -631,7 +630,7 @@ class DeliveryController extends Controller
 
                             $order->cancelOrder();
 
-                            if($order->collection_call_api == Utility::ACTIVE_DB)
+                            if($order->call_api == Utility::ACTIVE_DB)
                                 $deletedOrders[] = $order;
 
                             DB::commit();
@@ -715,7 +714,7 @@ class DeliveryController extends Controller
         if(count($deletedOrders) > 0)
         {
             $detrack = Detrack::make();
-            $detrack->deleteCollections($deletedOrders);
+            $detrack->deleteDeliveries($deletedOrders);
         }
 
         return json_encode($response);

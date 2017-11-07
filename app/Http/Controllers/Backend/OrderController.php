@@ -431,19 +431,19 @@ class OrderController extends Controller
 
                     $detrack = Detrack::make();
 
-                    if($order->collection_call_api == Utility::INACTIVE_DB)
+                    if($order->call_api == Utility::INACTIVE_DB)
                     {
-                        $successDos = $detrack->addCollections([$order]);
+                        $successDos = $detrack->addDeliveries([$order]);
 
                         $countSuccessDo = count($successDos);
                         if($countSuccessDo > 0)
                         {
-                            $order->collection_call_api = Utility::ACTIVE_DB;
+                            $order->call_api = Utility::ACTIVE_DB;
                             $order->save();
                         }
                     }
                     else
-                        $detrack->editCollections([$order]);
+                        $detrack->editDeliveries([$order]);
 
                     return redirect()->action('Backend\OrderController@editOrder', ['id' => $order->id])->with('messageSuccess', 'Thành Công');
                 }
@@ -616,10 +616,10 @@ class OrderController extends Controller
         {
             DB::beginTransaction();
 
-            if($order->collection_call_api == Utility::ACTIVE_DB)
+            if($order->call_api == Utility::ACTIVE_DB)
             {
                 $detrack = Detrack::make();
-                $successDos = $detrack->deleteCollections([$order]);
+                $successDos = $detrack->deleteDeliveries([$order]);
 
                 if(in_array($order->do, $successDos))
                     $order->cancelOrder();
@@ -659,7 +659,7 @@ class OrderController extends Controller
                 {
                     $order->cancelOrder();
 
-                    if($order->collection_call_api == Utility::ACTIVE_DB)
+                    if($order->call_api == Utility::ACTIVE_DB)
                         $deletedOrders[] = $order;
                 }
             }
@@ -669,7 +669,7 @@ class OrderController extends Controller
             if(count($deletedOrders) > 0)
             {
                 $detrack = Detrack::make();
-                $detrack->deleteCollections($deletedOrders);
+                $detrack->deleteDeliveries($deletedOrders);
             }
         }
         catch(\Exception $e)

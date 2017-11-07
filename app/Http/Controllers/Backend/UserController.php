@@ -991,6 +991,7 @@ class UserController extends Controller
                             $order->note = $inputData[OrderExcel::IMPORT_NOTE_COLUMN_LABEL];
                             $order->status = Order::STATUS_INFO_RECEIVED_DB;
                             $order->collection_status = Order::STATUS_INFO_RECEIVED_DB;
+                            $order->delivery_status = Order::STATUS_INFO_RECEIVED_DB;
 
                             if($user->prepay == Utility::ACTIVE_DB && !empty($inputData[OrderExcel::IMPORT_PREPAY_COLUMN_LABEL]))
                                 $order->prepay = Utility::ACTIVE_DB;
@@ -1086,7 +1087,7 @@ class UserController extends Controller
                     register_shutdown_function([UserController::class, 'sendImportExcelPlaceOrderEmail'], $user, $uploadedDateTime);
 
                     $detrack = Detrack::make();
-                    $successDos = $detrack->addCollections($placedOrders);
+                    $successDos = $detrack->addDeliveries($placedOrders);
 
                     $countSuccessDo = count($successDos);
                     if($countSuccessDo > 0)
@@ -1097,7 +1098,7 @@ class UserController extends Controller
 
                             if($key !== false)
                             {
-                                $placedOrder->collection_call_api = Utility::ACTIVE_DB;
+                                $placedOrder->call_api = Utility::ACTIVE_DB;
                                 $placedOrder->save();
 
                                 unset($successDos[$key]);

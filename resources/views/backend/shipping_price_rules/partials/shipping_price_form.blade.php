@@ -100,7 +100,7 @@
                 </div>
             </div>
             <div class="col-sm-12">
-                <div class="form-group{{ $errors->has('usernames') ? ' has-error': '' }}">
+                <div class="form-group">
                     <label>Áp Dụng Cho Khu Vực</label>
                     <?php
                     $districts = array();
