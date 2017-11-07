@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\DB;
 use App\Libraries\Helpers\Utility;
 use App\Models\Setting;
 use App\Models\Order;
+use App\Models\Run;
 
 class Detrack
 {
@@ -36,6 +37,15 @@ class Detrack
 
         foreach($orders as $order)
         {
+            if(!empty($order->receiverAddress->district_id))
+            {
+                $run = Run::with('zone')
+                    ->select('run.*')
+                    ->join('run_area', 'run.id', '=', 'run_area.run_id')
+                    ->where('run_area.area_id', $order->receiverAddress->district_id)
+                    ->first();
+            }
+
             $params[] = [
                 'do' => $order->do,
                 'address' => $order->receiverAddress->address . ' ' . $order->receiverAddress->ward . ' ' . $order->receiverAddress->district . ' ' . $order->receiverAddress->province,
@@ -55,12 +65,13 @@ class Detrack
                 'pallets' => $order->shipping_price,
                 'job_type' => $order->getJobType(),
                 'order_no' => $order->user_do,
+                'run' => !empty($run) ? $run->name : '',
+                'zone' => !empty($run) ? $run->zone->name : '',
                 'pick_up_address' => $order->senderAddress->address . ' ' . $order->senderAddress->ward . ' ' . $order->senderAddress->district . ' ' . $order->senderAddress->province,
                 'pick_up_city' => $order->senderAddress->district,
                 'pick_up_country' => $order->senderAddress->province,
                 'pick_up_from' => $order->senderAddress->name,
                 'sender_phone' => $order->senderAddress->phone,
-
             ];
         }
 
@@ -151,6 +162,15 @@ class Detrack
 
         foreach($orders as $order)
         {
+            if(!empty($order->receiverAddress->district_id))
+            {
+                $run = Run::with('zone')
+                    ->select('run.*')
+                    ->join('run_area', 'run.id', '=', 'run_area.run_id')
+                    ->where('run_area.area_id', $order->receiverAddress->district_id)
+                    ->first();
+            }
+
             $params[] = [
                 'do' => $order->do,
                 'address' => $order->receiverAddress->address . ' ' . $order->receiverAddress->ward . ' ' . $order->receiverAddress->district . ' ' . $order->receiverAddress->province,
@@ -170,6 +190,8 @@ class Detrack
                 'pallets' => $order->shipping_price,
                 'job_type' => $order->getJobType(),
                 'order_no' => $order->user_do,
+                'run' => !empty($run) ? $run->name : '',
+                'zone' => !empty($run) ? $run->zone->name : '',
                 'pick_up_address' => $order->senderAddress->address . ' ' . $order->senderAddress->ward . ' ' . $order->senderAddress->district . ' ' . $order->senderAddress->province,
                 'pick_up_city' => $order->senderAddress->district,
                 'pick_up_country' => $order->senderAddress->province,
