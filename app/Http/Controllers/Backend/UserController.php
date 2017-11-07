@@ -542,7 +542,7 @@ class UserController extends Controller
                 'title' => 'Tổng Khối Lượng',
                 'data' => function($row) {
                     if(!empty($row->customerInformation))
-                        $row->customerInformation->total_weight;
+                        echo $row->customerInformation->total_weight;
                 },
             ],
             [
