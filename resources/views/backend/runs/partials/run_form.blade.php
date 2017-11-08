@@ -19,9 +19,9 @@
                 </div>
             </div>
             <div class="col-sm-12">
-                <div class="form-group">
+                <div class="form-group{{ $errors->has('zone_id') ? ' has-error': '' }}">
                     <label>Zone <i>(bắt buộc)</i></label>
-                    <select class="form-control" name="zone_id">
+                    <select class="form-control" name="zone_id" required="required">
                         @foreach(\App\Models\Zone::all() as $zone)
                             @if(old('zone_id', $run->zone_id) == $zone->id)
                                 <option selected="selected" value="{{ $zone->id }}">{{ $zone->name }}</option>
@@ -30,6 +30,9 @@
                             @endif
                         @endforeach
                     </select>
+                    @if($errors->has('zone_id'))
+                        <span class="help-block">{{ $errors->first('zone_id') }}</span>
+                    @endif
                 </div>
             </div>
             <div class="col-sm-12">
