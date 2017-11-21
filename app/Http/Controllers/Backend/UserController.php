@@ -786,7 +786,7 @@ class UserController extends Controller
                     OrderExcel::IMPORT_RECEIVER_DISTRICT_COLUMN_LABEL => 'required|max:255',
                     OrderExcel::IMPORT_RECEIVER_WARD_COLUMN_LABEL => 'nullable|max:255',
                     OrderExcel::IMPORT_WEIGHT_COLUMN_LABEL => 'nullable|numeric|min:0.05',
-                    OrderExcel::IMPORT_COD_MONEY_COLUMN_LABEL => 'nullable|integer|min:1',
+                    OrderExcel::IMPORT_COD_MONEY_COLUMN_LABEL => 'nullable|integer|min:0',
                     OrderExcel::IMPORT_NOTE_COLUMN_LABEL => 'nullable|max:255',
                 ]);
 
@@ -1001,6 +1001,13 @@ class UserController extends Controller
                             $order->user_do = $inputData[OrderExcel::IMPORT_USER_DO_COLUMN_LABEL];
                             $order->date = date('Y-m-d');
                             $order->source = Order::SOURCE_EXCEL_DB;
+
+                            $customInformation = [
+                                OrderExcel::IMPORT_BOXES_COLUMN_LABEL => $inputData[OrderExcel::IMPORT_BOXES_COLUMN_LABEL],
+                                OrderExcel::IMPORT_ASSIGN_TO_COLUMN_LABEL => $inputData[OrderExcel::IMPORT_ASSIGN_TO_COLUMN_LABEL],
+                            ];
+                            $order->custom_information = json_encode($customInformation);
+
                             $order->save();
 
                             $order->setRelation('user', $user);

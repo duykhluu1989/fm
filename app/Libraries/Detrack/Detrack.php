@@ -4,6 +4,7 @@ namespace App\Libraries\Detrack;
 
 use Illuminate\Support\Facades\DB;
 use App\Libraries\Helpers\Utility;
+use App\Libraries\Helpers\OrderExcel;
 use App\Models\Setting;
 use App\Models\Order;
 use App\Models\Run;
@@ -46,7 +47,7 @@ class Detrack
                     ->first();
             }
 
-            $params[] = [
+            $param = [
                 'do' => $order->do,
                 'address' => $order->receiverAddress->address . ' ' . $order->receiverAddress->ward . ' ' . $order->receiverAddress->district . ' ' . $order->receiverAddress->province,
                 'date' => $order->date,
@@ -73,6 +74,18 @@ class Detrack
                 'pick_up_from' => $order->senderAddress->name,
                 'sender_phone' => $order->senderAddress->phone,
             ];
+
+            if(!empty($order->custom_information))
+            {
+                $customInformation = json_decode($order->custom_information, true);
+
+                if(isset($customInformation[OrderExcel::IMPORT_BOXES_COLUMN_LABEL]))
+                    $param['boxes'] = $customInformation[OrderExcel::IMPORT_BOXES_COLUMN_LABEL];
+                if(isset($customInformation[OrderExcel::IMPORT_ASSIGN_TO_COLUMN_LABEL]))
+                    $param['assign_to'] = $customInformation[OrderExcel::IMPORT_ASSIGN_TO_COLUMN_LABEL];
+            }
+
+            $params[] = $param;
         }
 
         $params = json_encode($params);
@@ -171,7 +184,7 @@ class Detrack
                     ->first();
             }
 
-            $params[] = [
+            $param = [
                 'do' => $order->do,
                 'address' => $order->receiverAddress->address . ' ' . $order->receiverAddress->ward . ' ' . $order->receiverAddress->district . ' ' . $order->receiverAddress->province,
                 'date' => $order->date,
@@ -198,6 +211,18 @@ class Detrack
                 'pick_up_from' => $order->senderAddress->name,
                 'sender_phone' => $order->senderAddress->phone,
             ];
+
+            if(!empty($order->custom_information))
+            {
+                $customInformation = json_decode($order->custom_information, true);
+
+                if(isset($customInformation[OrderExcel::IMPORT_BOXES_COLUMN_LABEL]))
+                    $param['boxes'] = $customInformation[OrderExcel::IMPORT_BOXES_COLUMN_LABEL];
+                if(isset($customInformation[OrderExcel::IMPORT_ASSIGN_TO_COLUMN_LABEL]))
+                    $param['assign_to'] = $customInformation[OrderExcel::IMPORT_ASSIGN_TO_COLUMN_LABEL];
+            }
+
+            $params[] = $param;
         }
 
         $params = json_encode($params);

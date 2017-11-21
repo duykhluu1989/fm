@@ -29,6 +29,8 @@ class OrderExcel
     const IMPORT_BANK_NAME_COLUMN_LABEL = 'BANK_NAME';
     const IMPORT_BANK_BRANCH_COLUMN_LABEL = 'BANK_BRANCH';
     const IMPORT_PREPAY_COLUMN_LABEL = 'PREPAY';
+    const IMPORT_BOXES_COLUMN_LABEL = 'BOXES';
+    const IMPORT_ASSIGN_TO_COLUMN_LABEL = 'ASSIGN_TO';
 
     public static function getImportColumnLabel()
     {
@@ -58,6 +60,8 @@ class OrderExcel
             self::IMPORT_BANK_NAME_COLUMN_LABEL,
             self::IMPORT_BANK_BRANCH_COLUMN_LABEL,
             self::IMPORT_PREPAY_COLUMN_LABEL,
+            self::IMPORT_BOXES_COLUMN_LABEL,
+            self::IMPORT_ASSIGN_TO_COLUMN_LABEL,
         ];
     }
 
@@ -88,7 +92,9 @@ class OrderExcel
             'Số tài khoản ngân hàng',
             'Tên ngân hàng',
             'Chi nhánh ngân hàng',
-            'Ứng trước tiền thu hộ (để trống là không sử dụng, nhập 1 là sử dụng dịch vụ)'
+            'Ứng trước tiền thu hộ (để trống là không sử dụng, nhập 1 là sử dụng dịch vụ)',
+            'Boxes',
+            'Assign To',
         ];
     }
 
