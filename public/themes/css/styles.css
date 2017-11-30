@@ -117,11 +117,11 @@ ul.list_menuTop li:hover a {
 }
 .navbar-brand {
   background: url('../images/logo2.svg') no-repeat;
-  width: 350px;
-  height: 79px;
+  width: 256px;
+  height: 105px;
   text-indent: -99999px;
   display: block;
-  margin-top: 11px;
+  margin: 10px 0;
 }
 .navbar-default .navbar-nav > li > a {
   font-family: 'Anton-Regular', sans-serif;
