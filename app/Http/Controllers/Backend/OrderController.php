@@ -292,9 +292,10 @@ class OrderController extends Controller
             $query->select('id', 'prepay');
         }, 'user.userAddresses', 'discount' => function($query) {
             $query->select('id', 'code');
-        }])->find($id);
+        }])->whereNull('cancelled_at')
+            ->find($id);
 
-        if(empty($order) || Order::getOrderStatusOrder($order->status) > Order::getOrderStatusOrder(Order::STATUS_INFO_RECEIVED_DB))
+        if(empty($order))
             return view('backend.errors.404');
 
         if($request->isMethod('post'))
@@ -607,45 +608,27 @@ class OrderController extends Controller
 
     public function cancelOrder($id)
     {
-        $order = Order::find($id);
+        $order = Order::whereNull('cancelled_at')->find($id);
 
-        if(empty($order) || Order::getOrderStatusOrder($order->status) > Order::getOrderStatusOrder(Order::STATUS_INFO_RECEIVED_DB))
+        if(empty($order))
             return view('backend.errors.404');
 
-        try
+        if($order->call_api == Utility::ACTIVE_DB)
         {
-            DB::beginTransaction();
-
-            if($order->call_api == Utility::ACTIVE_DB)
-            {
-                $detrack = Detrack::make();
-                $successDos = $detrack->deleteDeliveries([$order]);
-
-                if(in_array($order->do, $successDos))
-                    $order->cancelOrder();
-                else
-                    throw new \Exception('Hệ thống xảy ra lỗi, vui lòng thử lại sau');
-            }
-            else
-                $order->cancelOrder();
-
-            DB::commit();
-
-            return redirect()->action('Backend\OrderController@detailOrder', ['id' => $id])->with('messageSuccess', 'Hủy Đơn Hàng Thành Công');
+            $detrack = Detrack::make();
+            $detrack->deleteDeliveries([$order]);
         }
-        catch(\Exception $e)
-        {
-            DB::rollBack();
 
-            return redirect()->action('Backend\OrderController@detailOrder', ['id' => $id])->with('messageError', $e->getMessage());
-        }
+        $order->cancelOrder();
+
+        return redirect()->action('Backend\OrderController@detailOrder', ['id' => $id])->with('messageSuccess', 'Hủy Đơn Hàng Thành Công');
     }
 
     public function controlCancelOrder(Request $request)
     {
         $ids = $request->input('ids');
 
-        $orders = Order::whereIn('id', explode(';', $ids))->get();
+        $orders = Order::whereIn('id', explode(';', $ids))->whereNull('cancelled_at')->get();
 
         $deletedOrders = array();
 
@@ -655,13 +638,10 @@ class OrderController extends Controller
 
             foreach($orders as $order)
             {
-                if(Order::getOrderStatusOrder($order->status) <= Order::getOrderStatusOrder(Order::STATUS_INFO_RECEIVED_DB))
-                {
-                    $order->cancelOrder();
+                $order->cancelOrder();
 
-                    if($order->call_api == Utility::ACTIVE_DB)
-                        $deletedOrders[] = $order;
-                }
+                if($order->call_api == Utility::ACTIVE_DB)
+                    $deletedOrders[] = $order;
             }
 
             DB::commit();

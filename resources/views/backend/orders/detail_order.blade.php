@@ -14,7 +14,9 @@
                 @endif
             @elseif($order->status == \App\Models\Order::STATUS_RETURN_DB)
                 <button class="btn btn-primary" id="OpenReturnPriceModalButton">Phí Return</button>
-            @elseif(\App\Models\Order::getOrderStatusOrder($order->status) <= \App\Models\Order::getOrderStatusOrder(\App\Models\Order::STATUS_INFO_RECEIVED_DB))
+            @endif
+
+            @if(empty($order->cancelled_at))
                 <a href="{{ action('Backend\OrderController@editOrder', ['id' => $order->id]) }}" class="btn btn-primary">Sửa Đơn Hàng</a>
 
                 <a href="{{ action('Backend\OrderController@cancelOrder', ['id' => $order->id]) }}" class="btn btn-primary pull-right Confirmation">Hủy</a>

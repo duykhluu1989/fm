@@ -402,7 +402,7 @@ class Order extends Model
 
     public function cancelOrder()
     {
-        if(Order::getOrderStatusOrder($this->status) <= Order::getOrderStatusOrder(Order::STATUS_INFO_RECEIVED_DB))
+        if(empty($this->cancelled_at))
         {
             $this->status = self::STATUS_CANCELLED_DB;
             $this->cancelled_at = date('Y-m-d H:i:s');
