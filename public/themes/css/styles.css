@@ -116,7 +116,7 @@ ul.list_menuTop li:hover a {
   margin-left: 0;
 }
 .navbar-brand {
-  background: url('../images/logo.svg') no-repeat;
+  background: url('../images/logo2.svg') no-repeat;
   width: 350px;
   height: 79px;
   text-indent: -99999px;
@@ -130,8 +130,8 @@ ul.list_menuTop li:hover a {
   text-transform: uppercase;
 }
 .navbar-nav > li > a {
-  padding-top: 40px;
-  padding-bottom: 40px;
+  padding-top: 52px;
+  padding-bottom: 52px;
   position: relative;
 }
 .navbar {
